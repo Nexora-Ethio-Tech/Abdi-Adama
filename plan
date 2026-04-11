@@ -1,862 +1,204 @@
-# Abdi Adama School IMS Project Plan
+# Abdi Adama School IMS Implementation Plan (Updated)
 
-This document is the working master plan for building the Abdi Adama School Integrated Management System.
+This document is the current implementation plan for the Abdi Adama School Integrated Management System (IMS), aligned with the latest direction.
 
-The current requirements are broad and some parts are still under construction, so this plan is designed to be flexible. It separates the project into phases, defines the architecture, and shows the order we should build things in so we can move fast without creating a messy system.
+## 1. Scope Clarification (Critical)
 
-## 1. Project Goal
+- Monthly student fee collection logic is out of scope for this system.
+- The school already uses a bank-side product for recurring/monthly fee processing.
+- The IMS should only support fixed registration/enrollment fee workflows where explicitly required.
 
-Build a modern web-based School Integrated Management System that manages school operations in one place.
+## 2. Delivery Strategy
 
-The system should support:
+- Build in production-oriented phases with working deliverables every week.
+- Prioritize data integrity, role-based access, and operational automation first.
+- Keep modules loosely coupled so post-launch features (LMS + AI) can scale without rewrites.
 
-- Student records and admissions
-- Class, subject, timetable, and exam management
-- Attendance tracking for students and staff
-- Parent and student portals
-- Messaging and notifications
-- HR and payroll
-- Fees, accounting, and reporting
-- Inventory, assets, and transport
-- RBAC security and backups
-- Future-ready LMS and AI modules
+## 3. Phase Roadmap
 
-The first version should be practical, stable, and easy to expand later.
+## Phase 1: Multi-Campus and Data Foundation (Week 1)
 
-## 2. Product Strategy
+### Goal
+Establish the single source of truth and dual-admin hierarchy.
 
-### 2.1 Build in Layers
+### Workstreams
 
-We should not try to finish everything at once. The best approach is:
-
-1. Core platform first
-2. Academic operations next
-3. Communication and finance next
-4. Operations and reporting next
-5. Advanced modules after the foundation is stable
+#### Cloud Infrastructure
 
-### 2.2 Prioritize Real Usage
+- Deploy production environment on Hahu Cloud for local performance and ETB cost-efficiency.
+- Configure PostgreSQL with a schema that tags every core record with a unique Branch ID:
+  - Student
+  - Fee-related registration records
+  - Staff
+  - Operational logs
+- Enable SSL encryption across all environments.
+- Set up automated daily backups with restore verification.
 
-The system should focus on what the school will use daily:
+#### Student Information System (SIS) and Vault
 
-- Admissions
-- Student profiles
-- Class assignment
-- Timetables
-- Attendance
-- Exams and report cards
-- Parent communication
-- Fees and financial visibility
+- Build comprehensive student profile fields for:
+  - Bio-data
+  - Emergency contacts
+  - Medical history
+  - Parent/guardian details
+- Implement encrypted document vault logic for:
+  - Birth certificates
+  - Transcripts
+- Enforce hard validation rule: reject any attachment above 2MB.
 
-### 2.3 Keep the Architecture Modular
+#### Registration and Access Control
+
+- Build enrollment page for admins to manage and collect fixed fees for:
+  - New students
+  - Returning students
+- Configure two-tier RBAC:
+  - School Owner: global access across all branches
+  - Branch Director: access only to assigned branch
+- Create accountant-specific view:
+  - Financial data access only for accountancy roles
+  - Bank statement auditing restricted to accountancy roles
+
+### Phase 1 Deliverables
+
+- Production cloud environment on Hahu Cloud
+- Branch-aware PostgreSQL schema
+- SSL + daily backup automation
+- SIS profile module
+- Encrypted document vault with 2MB file cap
+- Enrollment admin page (fixed fee handling only)
+- Owner/Director dual-admin RBAC
+- Accountant-only finance auditing workspace
 
-Every major feature should live in its own domain so the app stays maintainable.
+## Phase 2: Teacher Workstation and Communication (Week 2)
 
-Recommended domains:
+### Goal
+Automate classroom flow, attendance, and parent engagement.
 
-- Auth and access control
-- Student information
-- Academic structure
-- Attendance
-- Exams and grading
-- LMS
-- Communication
-- HR
-- Finance
-- Inventory and assets
-- Transport
-- Reporting and analytics
-- System settings
+### Workstreams
 
-## 3. Scope Breakdown
+#### Teacher Workstation
 
-### 3.1 Core Modules
+- Build teacher portal/dashboard with controlled entry after admin approval.
+- Limit class and section visibility to assigned teaching load.
+- Implement dynamic rosters that auto-fetch students based on teacher schedule.
+- Build grade entry interfaces for:
+  - Quizzes
+  - Assignments
+  - Tests
+  - Finals
 
-These are the modules that should exist in the first usable version.
+#### Attendance and SMS Integration
 
-#### Student Information System
+- Integrate ZKTeco fingerprint devices into staff attendance module.
+- Connect USB GSM modem for SMS dispatch pipeline.
+- Wire teacher dashboard absence action to instant SMS alert script for families.
 
-- Student bio-data
-- Parent and guardian details
-- Emergency contacts
-- Medical notes
-- Enrollment and admission pipeline
-- Grade promotion and section assignment
-- Document uploads
-- Secure document storage
-- Registration fee setup for new and returning students
+#### Scheduling and Resource Management
 
-#### Class and Timetable Management
+- Deploy conflict-free timetable engine for classes and teachers.
+- Implement resource allocation tracking for labs and computer hubs.
+- Prevent double-booking of shared resources.
 
-- Academic year and term setup
-- Grade, section, and stream setup
-- Subject assignment
-- Teacher assignment
-- Timetable generation
-- Conflict prevention
-- Classroom and lab allocation
-- Substitute teacher assignment
-
-#### Exams and Grading
-
-- Exam setup
-- Grade scales
-- GPA, percentage, and custom letter grading
-- Marks entry
-- Report card generation
-- Transcript generation
-- Result publishing
-
-#### Parent and Student Portals
-
-- Dashboard
-- Attendance view
-- Homework view
-- Exam result view
-- Report card download
-- Announcements
-
-### 3.2 Secondary Modules
-
-These should come after the core academic flow works.
-
-- SMS notifications
-- HR and staff attendance
-- Payroll
-- Accounting and auditing
-- Inventory and stock
-- Assets and maintenance
-- Transport management
-- Calendar and events
-
-### 3.3 Future Modules
-
-These are valuable, but they should be treated as phase 2 or later.
-
-- LMS content repository
-- Quizzes and assignments
-- Zoom or Google Meet integration
-- AI early warning analytics
-- Multi-campus management
-
-## 4. Technical Direction
-
-### 4.1 Recommended Stack
-
-For a fast web-first build, use:
-
-- Frontend: Next.js
-- Language: TypeScript
-- Styling: Tailwind CSS
-- UI system: shadcn/ui or equivalent component library
-- Database: PostgreSQL
-- ORM: Prisma or Drizzle
-- Authentication: Auth.js or Supabase Auth
-- Hosting: Vercel for app, managed PostgreSQL provider for database
-- File storage: Supabase Storage or S3-compatible storage
-- Validation: Zod
-- Forms: React Hook Form
-
-### 4.2 Why This Stack
-
-- One codebase is faster to ship
-- Strong TypeScript support reduces bugs
-- Next.js is good for dashboards and forms
-- PostgreSQL fits structured school data very well
-- The system can grow into a larger platform later
-
-### 4.3 Architecture Style
-
-Use a modular monolith first.
-
-This means:
-
-- One app
-- One database
-- Clear module boundaries
-- Shared auth and design system
-- Internal APIs or server actions for business logic
-
-This is simpler than splitting into microservices too early.
-
-## 5. Project Phases
-
-## Phase 0: Discovery and Alignment
-
-### Goals
-
-- Confirm the exact requirements
-- Identify what is in scope for version 1
-- Identify what is not yet ready
-- Decide the school workflows we are automating first
-
-### Tasks
-
-- Review the SRS line by line
-- Mark each requirement as MVP, phase 2, or future
-- Identify user roles
-- Identify data entities
-- Define business rules
-- Confirm hosting, domain, and deployment constraints
-- Confirm whether the school needs offline support later
-
-### Deliverables
-
-- Finalized scope list
-- User roles list
-- MVP definition
-- Risk list
-- Feature priority list
-
-## Phase 1: System Design
-
-### Goals
-
-- Design the product structure before coding
-- Design the database
-- Design the navigation and screens
-- Define permissions and data ownership
-
-### Tasks
-
-- Create the information architecture
-- Define route structure
-- Define module boundaries
-- Design the database schema
-- Define role-based access control
-- Define file storage rules
-- Define report formats
-- Define notification rules
-
-### Deliverables
-
-- Wireframe map
-- ERD/database schema draft
-- Permission matrix
-- Navigation map
-- File-handling policy
-
-## Phase 2: Foundation Setup
-
-### Goals
-
-- Build the app skeleton
-- Set up authentication
-- Set up the database
-- Set up the design system
-- Set up the deployment pipeline
-
-### Tasks
-
-- Initialize the Next.js project
-- Add TypeScript and linting
-- Set up styling and component library
-- Connect PostgreSQL
-- Create auth flow
-- Create role guard middleware
-- Set up environment variables
-- Set up seed data
-- Set up logging and error handling
-
-### Deliverables
-
-- Running application shell
-- Login/logout
-- Protected routes
-- Starter dashboard
-- Database connection
-- Base UI components
-
-## Phase 3: Core Academic Foundation
-
-### Goals
-
-- Build the master data needed by every school workflow
-
-### Tasks
-
-- Create student profile management
-- Create parent and guardian profiles
-- Create staff profiles
-- Create classes, sections, subjects, and terms
-- Create enrollment and promotion flows
-- Create document upload handling
-- Add validation and file limits
-- Create search and filtering tools
-
-### Deliverables
-
-- Student management screens
-- Staff management screens
-- Academic structure screens
-- Enrollment flow
-- Promotion flow
-- Secure document upload flow
-
-## Phase 4: Academic Operations
-
-### Goals
-
-- Support daily teaching and learning operations
-
-### Tasks
-
-- Build timetable setup and viewing
-- Add teacher assignment to subjects
-- Add classroom and resource allocation
-- Build attendance module for students
-- Build attendance module for staff
-- Add substitute teacher assignment
-- Add notifications for absences
-
-### Deliverables
-
-- Timetable system
-- Attendance system
-- Conflict detection for schedules
-- Proxy teacher workflow
-
-## Phase 5: Exams, Grades, and Results
-
-### Goals
-
-- Support assessment and reporting
-
-### Tasks
-
-- Define grading schemes
-- Create exam setup screens
-- Build marks entry screens
-- Calculate totals, averages, GPA, and grades
-- Create result publishing flow
-- Generate report cards
-- Generate transcripts
-- Support printing and PDF export
-
-### Deliverables
-
-- Exam module
-- Gradebook module
-- Report card generator
-- Transcript generator
-
-## Phase 6: Parent and Student Experience
-
-### Goals
-
-- Give parents and students useful self-service access
-
-### Tasks
-
-- Build parent portal
-- Build student portal
-- Show attendance summaries
-- Show results and progress reports
-- Show announcements and events
-- Show homework or learning tasks if available
-
-### Deliverables
-
-- Parent dashboard
-- Student dashboard
-- View-only academic access
-- Downloadable results and notices
-
-## Phase 7: Communication System
-
-### Goals
-
-- Keep the school connected with staff, parents, and students
-
-### Tasks
-
-- Add announcement management
-- Add circular distribution
-- Add SMS gateway integration
-- Add emergency alert workflows
-- Add absence alerts to parents
-- Add message templates
-
-### Deliverables
-
-- Announcement center
-- SMS dispatch tools
-- Notification logs
-
-## Phase 8: HR and Payroll
-
-### Goals
-
-- Handle staff records and compensation
-
-### Tasks
-
-- Store qualifications and contracts
-- Track staff attendance
-- Support biometric attendance integration later
-- Calculate salary, bonus, and deductions
-- Manage payroll periods
-- Generate payroll reports
-
-### Deliverables
-
-- Staff HR module
-- Payroll module
-- Staff attendance module
-
-## Phase 9: Finance and Accounting
-
-### Goals
-
-- Manage revenue, fees, expenses, and auditing
-
-### Tasks
-
-- Create fee structures
-- Track student balances
-- Record payments
-- Track expenses
-- Import bank statement data
-- Build audit review screens
-- Generate financial summaries
-
-### Deliverables
-
-- Fees module
-- Payment tracking
-- Expense tracking
-- Audit-ready reporting
-
-## Phase 10: Inventory, Assets, and Transport
-
-### Goals
-
-- Cover physical school operations
-
-### Tasks
-
-- Track inventory items
-- Define low-stock thresholds
-- Monitor stock usage
-- Create fixed asset register
-- Track maintenance schedules
-- Manage bus routes and drivers
-- Map student transport assignments
-
-### Deliverables
-
-- Inventory dashboard
-- Asset register
-- Transport management screens
-
-## Phase 11: Reporting and Analytics
-
-### Goals
-
-- Give leadership a quick view of school performance
-
-### Tasks
-
-- Build executive dashboard
-- Add attendance trend reports
-- Add academic failure reports
-- Add finance summary reports
-- Add inventory consumption reports
-- Add export tools
-
-### Deliverables
-
-- Management dashboard
-- Printable reports
-- Filters by date, class, term, and campus
-
-## Phase 12: LMS and Advanced Features
-
-### Goals
-
-- Extend the platform after core operations are stable
-
-### Tasks
-
-- Build syllabus upload
-- Build lesson plan management
-- Add digital resource repository
-- Add quizzes and assignments
-- Add video link support
-- Add virtual classroom integration
-- Add AI risk prediction experiments
-- Add multi-campus support
-
-### Deliverables
-
-- LMS foundation
-- External integration layer
-- Advanced analytics roadmap
-
-## 6. Core Data Model
-
-The database should be designed around stable school entities.
-
-### Main Entities
-
-- User
-- Role
-- Permission
-- Student
-- Parent/Guardian
-- Staff
-- Teacher
-- Class
-- Section
-- Subject
-- Enrollment
-- Academic Year
-- Term
-- Timetable Entry
-- Attendance Record
-- Exam
-- Assessment
-- Result
-- Report Card
-- Invoice
-- Payment
-- Expense
-- Payroll Record
-- Inventory Item
-- Asset
-- Maintenance Record
-- Transport Route
-- Bus
-- Announcement
-- Message Log
-- Document
-- Audit Log
-
-### Important Relationships
-
-- A student can have multiple guardians
-- A student belongs to one class/section at a time for a given term
-- A teacher can teach multiple subjects
-- A timetable entry connects class, subject, teacher, room, day, and time
-- Attendance belongs to a student or staff member and a date
-- Results belong to student, exam, and subject
-- Finance records belong to a student, payer, or school account
-- Assets can have maintenance history
-
-## 7. Permission Model
-
-The system must protect data using RBAC.
-
-### Suggested Roles
-
-- Super Admin
-- School Admin
-- Principal
-- Deputy Principal
-- Teacher
-- Attendance Officer
-- Accountant
-- HR Officer
-- Librarian or Inventory Clerk
-- Parent
-- Student
-- Transport Officer
-
-### Permission Rules
-
-- Super Admin can manage everything
-- School Admin can manage school configuration and all modules
-- Teachers can access only their classes and assigned data
-- Parents can see only their own children
-- Students can see only their own records
-- Finance staff can access financial data only
-- HR staff can access staff data only
-
-### Security Rules
-
-- Sensitive files must be encrypted or securely stored
-- Access should always be checked at the server level
-- All important actions should be logged
-- Account recovery and password reset should be controlled
-
-## 8. UI and UX Plan
-
-### Design Principles
-
-- Clean and simple dashboards
-- Fast forms with minimal friction
-- Mobile-friendly where useful
-- Strong visual hierarchy
-- Clear tables and filters
-- Printable views for school documents
-
-### Screen Types
-
-- Login screens
-- Role dashboards
-- List and detail pages
-- Create and edit forms
-- Bulk management tables
-- Reports and charts
-- Print layouts
-
-### UI Standards
-
-- Consistent button styles
-- Consistent table behavior
-- Reusable modal and dialog patterns
-- Reusable validation messages
-- Clear empty states
-
-## 9. File and Document Handling
-
-### Rules
-
-- Limit uploaded attachments to 2MB unless otherwise approved
-- Validate file type before upload
-- Store files securely
-- Link documents to the correct student or staff profile
-- Support preview and download where appropriate
-- Log document access for sensitive files
-
-### Document Types
-
-- Birth certificate
-- Transcript
-- Passport photo
-- Medical documents
-- Contract documents
-- Exam reports
-
-## 10. Notifications and Messaging
-
-### Channels
-
-- SMS
-- In-app notifications
-- Email if enabled later
-
-### Message Types
-
-- Absence alerts
-- Event notices
-- Exam notices
-- Fee reminders
-- General announcements
-
-### Logging
-
-- Every outbound message should be logged
-- Delivery status should be tracked where possible
-- Templates should be reusable
-
-## 11. Reporting Plan
-
-Reports should be designed early, not as an afterthought.
-
-### Academic Reports
-
-- Attendance by class
-- Attendance by student
-- Grade summaries
-- Failure analysis
-- Promotion eligibility
-
-### Financial Reports
-
-- Income by period
-- Outstanding balances
-- Expense breakdown
-- Fee collection summary
-- Audit trail summaries
-
-### Operational Reports
-
-- Teacher attendance trends
-- Inventory consumption
-- Asset maintenance due
-- Transport usage summary
-
-### Executive Reports
-
-- Total revenue
-- Active student count
-- Daily attendance rate
-- Academic performance trends
-
-## 12. Development Standards
-
-### Code Organization
-
-- Group code by domain
-- Keep shared utilities small and focused
-- Separate data access from UI where practical
-- Use reusable form and table components
-
-### Quality Standards
-
-- Type safety everywhere possible
-- Validation on both client and server
-- No business logic hidden in the UI only
-- No direct database access from random components
-- Every sensitive action must be authorized
-
-### Version Control
-
-- Use clear feature branches
-- Commit in small logical units
-- Protect the main branch later
-
-## 13. Testing Plan
-
-### Test Levels
-
-- Unit tests for calculations and utilities
-- Integration tests for critical workflows
-- End-to-end tests for login, enrollment, attendance, grading, and payments
-
-### Critical Scenarios
-
-- Student admission flow
-- Promotion flow
-- Attendance marking
-- Result calculation
-- Fee payment posting
-- Permission checks
-- File upload validation
-
-### Acceptance Criteria
-
-- Core workflows should work without manual database fixes
-- Reports should match stored data
-- Permission boundaries should hold
-- The app should be usable on desktop and mobile
-
-## 14. Deployment Plan
-
-### Environment Setup
-
-- Development
-- Staging
-- Production
-
-### Deployment Tasks
-
-- Configure environment variables
-- Set up database backups
-- Configure SSL
-- Set up monitoring
-- Configure error tracking
-- Configure file storage permissions
-
-### Hosting Target
-
-- Host the app on a fast web platform
-- Use local-friendly infrastructure if cost and latency matter
-- Keep backups automated and verifiable
-
-## 15. Data Migration Plan
-
-If the school has old records, migration should be handled carefully.
-
-### Steps
-
-- Collect existing spreadsheets and paper formats
-- Clean duplicate records
-- Map columns to the new schema
-- Import in stages
-- Validate imported records
-- Keep an error log for unresolved rows
-
-## 16. Risk Management
-
-### Risks
-
-- Requirements may change during development
-- Old data may be inconsistent
-- Some modules may need special hardware integration
-- SMS or biometric devices may require extra setup
-- Finance and grading logic may be politically sensitive in real use
-
-### Mitigation
-
-- Keep the design modular
-- Add validation everywhere
-- Build a staged rollout
-- Use feature flags for uncertain features
-- Confirm business rules before coding complex logic
-
-## 17. Suggested MVP
-
-The first release should include:
-
-- Authentication and roles
-- Student records
-- Parent records
-- Teacher records
-- Classes and sections
-- Subjects and timetable
-- Attendance
-- Exams and grading
-- Report cards
-- Announcements
-- Basic dashboard
-- Secure document upload
-
-This gives the school a usable operational system quickly.
-
-## 18. Later Releases
-
-After the MVP is stable, add:
-
-- SMS automation
-- HR and payroll
-- Accounting and audit tools
-- Inventory and assets
-- Transport management
-- LMS features
-- AI analytics
-- Multi-campus support
-
-## 19. Execution Order
-
-If we are building this step by step, the recommended order is:
-
-1. Finalize scope and requirements
-2. Design roles, data model, and navigation
-3. Set up the app foundation
-4. Build student and staff management
-5. Build classes, enrollment, and timetable
-6. Build attendance
-7. Build exams and grading
-8. Build portals and announcements
-9. Build finance and HR
-10. Build inventory, transport, and reporting
-11. Add advanced integrations and analytics
-
-## 20. Open Questions to Confirm
-
-These should be answered before coding begins:
-
-- Which modules are mandatory for the first release?
-- What exact roles does the school want?
-- How many campuses will be supported at launch?
-- What fee structure and grading structure should be used?
-- What SMS provider or modem setup will be used?
-- What biometric device brand will be used for staff attendance?
-- Should the system support offline-first workflows later?
-- Should parent and student portals be included in MVP or phase 2?
-
-## 21. Final Recommendation
-
-The best way to build this project is to start with a modular web app centered on school operations, not to try to build every feature at once.
-
-The correct order is:
-
-- Lock the requirements
-- Build the core school data model
-- Ship student, class, timetable, attendance, exams, and report cards first
-- Add finance, HR, transport, inventory, and communication next
-- Save LMS, AI, and multi-campus features for later phases
-
-That approach gives us a real product quickly and keeps the codebase clean enough to grow.
+### Phase 2 Deliverables
+
+- Teacher workstation with approval-based access
+- Dynamic class rosters and grade entry workflows
+- ZKTeco attendance integration (staff)
+- GSM modem SMS trigger pipeline
+- Real-time absence alert workflow
+- Conflict-free timetable module
+- Resource booking and double-booking prevention
+
+## Phase 3: Finance, Assets, and Grading Engine (Week 4)
+
+### Goal
+Generate audit-ready operations and print-ready academic intelligence.
+
+### Workstreams
+
+#### Automated Grading Engine
+
+- Implement backend calculation engine to aggregate subject scores.
+- Compute totals, averages, and GPA based on configured grading rules.
+- Apply student privacy filtering so each student sees only their own results.
+- Finalize one-click print-ready outputs:
+  - Progress reports
+  - Transcripts
+
+#### Financial Auditing and Assets
+
+- Build bank statement intake and reconciliation UI against school records.
+- Link biometric attendance to payroll computation:
+  - Salary calculation
+  - Tax deductions
+- Implement digital stock tracking for accessories and uniforms.
+- Add low-stock alerting for critical items.
+
+#### Final Handover and Training (Last Week)
+
+- Finalize executive dashboard for school owner:
+  - Total revenue
+  - Student counts
+  - Teacher attendance across branches
+- Finalize transport route mapping so families can view:
+  - Assigned bus
+  - Assigned driver
+- Conduct on-site training for:
+  - Directors
+  - Accountants
+  - Teachers
+- Conclude with final service agreement sign-off.
+
+### Phase 3 Deliverables
+
+- Grading computation engine + privacy-safe student results
+- Print-ready report cards and transcripts
+- Reconciliation and financial auditing tools
+- Biometric-linked payroll calculations
+- Inventory and low-stock monitoring
+- Executive cross-branch dashboard
+- Parent-facing transport assignment visibility
+- Completed stakeholder training and handover package
+
+## Phase 4: Future Layer (Post-Launch)
+
+### Goal
+Scale the platform with advanced academic and predictive features.
+
+### Workstreams
+
+- Complete LMS frontend integration for:
+  - Lesson plans
+  - Digital repositories
+- Start AI early-warning model training to flag students at risk.
+- Expand to headquarters-level controls for additional branches.
+
+### Phase 4 Deliverables
+
+- Functional LMS layer
+- Early-warning analytics baseline
+- Expanded multi-campus governance tooling
+
+## 4. Cross-Phase Technical Rules
+
+- Every domain record must include Branch ID where branch scoping is relevant.
+- RBAC checks must be enforced server-side, not UI-only.
+- All sensitive document storage must be encrypted.
+- Backup jobs must run daily and be monitored.
+- Audit logs must track sensitive financial and academic actions.
+- File uploads must enforce the 2MB limit consistently across API and UI.
+
+## 5. Out-of-Scope (For Now)
+
+- Monthly recurring student fee engine.
+- Replacing the bank product currently handling monthly fees.
+- Non-critical experimental integrations not listed in the four phases.
+
+## 6. Immediate Execution Sequence
+
+1. Lock Week 1 infrastructure and branch-aware schema.
+2. Implement SIS + encrypted vault + RBAC in parallel tracks.
+3. Deliver teacher workstation, attendance, and SMS automation in Week 2.
+4. Build grading engine, finance reconciliation, payroll, and inventory in Week 4.
+5. Run final training, handover, and sign-off.
+6. Start post-launch LMS and AI expansion.
