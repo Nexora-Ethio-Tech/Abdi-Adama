@@ -51,7 +51,7 @@ export const Layout = () => {
 
   if (role === 'parent') {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
         <main className="p-4 md:p-8 max-w-7xl mx-auto">
           <Outlet />
         </main>
@@ -60,7 +60,7 @@ export const Layout = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header title={getTitle(location.pathname)} />
