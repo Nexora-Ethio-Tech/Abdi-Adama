@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-export type UserRole = 'super-admin' | 'school-admin' | 'student' | 'parent';
+export type UserRole = 'super-admin' | 'school-admin' | 'student' | 'parent' | 'finance-clerk';
 
 interface Branch {
   id: string;

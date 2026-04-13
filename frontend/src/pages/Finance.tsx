@@ -1,11 +1,14 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart } from 'lucide-react';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X } from 'lucide-react';
 import { mockFinances } from '../data/mockData';
 import { useUser } from '../context/UserContext';
+import { useState } from 'react';
 
 export const Finance = () => {
   const { role } = useUser();
   const isAdmin = role === 'super-admin' || role === 'school-admin';
+  const isFinance = role === 'finance-clerk' || isAdmin;
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <div className="space-y-8">
@@ -45,9 +48,20 @@ export const Finance = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h3 className="font-semibold text-slate-800">
-            {isAdmin ? 'Financial Summaries' : 'Recent Transactions'}
-          </h3>
+          <div className="flex items-center gap-4">
+            <h3 className="font-semibold text-slate-800">
+              {isAdmin ? 'Financial Summaries' : 'Recent Transactions'}
+            </h3>
+            {isFinance && (
+              <button
+                onClick={() => setShowForm(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold"
+              >
+                <Plus size={16} />
+                <span>New TX</span>
+              </button>
+            )}
+          </div>
           <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -135,6 +149,58 @@ export const Finance = () => {
         </table>
         </div>
       </div>
+
+      {showForm && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm">Submit New Transaction</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setShowForm(false); }}>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Transaction Name / Description</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Electricity Bill, Stationery Purchase"
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Type</label>
+                  <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="in">Money In (Income)</option>
+                    <option value="out">Money Out (Expense)</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Amount (ETB)</label>
+                  <input
+                    required
+                    type="number"
+                    placeholder="0.00"
+                    className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none"
+                >
+                  Confirm Transaction
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

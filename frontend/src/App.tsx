@@ -8,6 +8,7 @@ import { Finance } from './pages/Finance';
 import { Branches } from './pages/Branches';
 import { StudentPortal } from './pages/StudentPortal';
 import { ParentPortal } from './pages/ParentPortal';
+import { ScheduleBuilder } from './pages/ScheduleBuilder';
 import { useUser } from './context/UserContext';
 
 const Placeholder = ({ title, description }: { title: string; description?: string }) => (
@@ -75,48 +76,7 @@ function App() {
                   />
                 </div>
               } />
-              <Route path="schedule-builder" element={
-                <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-8">
-                  <h2 className="text-2xl font-bold text-slate-800">Schedule Maker & Constraints</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-slate-700 border-b pb-2">School Hours</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-xs font-bold text-slate-500 uppercase">Start Time</label>
-                          <input type="time" className="w-full mt-1 p-2 bg-slate-50 border rounded-lg" defaultValue="08:00" />
-                        </div>
-                        <div>
-                          <label className="text-xs font-bold text-slate-500 uppercase">End Time</label>
-                          <input type="time" className="w-full mt-1 p-2 bg-slate-50 border rounded-lg" defaultValue="15:30" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-slate-700 border-b pb-2">Breaks</h3>
-                      <div className="space-y-2">
-                        <div className="flex gap-2">
-                          <input type="text" className="flex-1 p-2 bg-slate-50 border rounded-lg" placeholder="Break Name" defaultValue="Morning Break" />
-                          <input type="text" className="w-24 p-2 bg-slate-50 border rounded-lg" placeholder="Duration" defaultValue="20 min" />
-                        </div>
-                        <button className="text-blue-600 text-xs font-bold">+ Add Another Break</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-slate-700 border-b pb-2">Course Frequencies</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                        <span>Mathematics</span>
-                        <select className="bg-transparent font-bold">
-                          <option>5 sessions/week</option>
-                          <option>4 sessions/week</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              } />
+              <Route path="schedule-builder" element={<ScheduleBuilder />} />
             </>
           )}
 

@@ -61,6 +61,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
         ];
+      case 'finance-clerk':
+        return [
+          { icon: LayoutDashboard, label: 'Overview', path: '/' },
+          { icon: Wallet, label: 'Finance', path: '/finance' },
+        ];
       default:
         return [];
     }
