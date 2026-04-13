@@ -40,6 +40,7 @@ export const Sidebar = () => {
           { icon: Users, label: 'Students', path: '/students' },
           { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
@@ -47,14 +48,12 @@ export const Sidebar = () => {
         return [
           { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
           { icon: BookOpen, label: 'My Courses', path: '/courses' },
-          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-          { icon: Wallet, label: 'Fees', path: '/finance' },
+          { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
         ];
       case 'parent':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
-          { icon: Wallet, label: 'Fee Payments', path: '/finance' },
         ];
       default:
         return [];

@@ -1,5 +1,7 @@
 
-import { Users, GraduationCap, Clock, TrendingUp } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock } from 'lucide-react';
+import { useUser } from '../context/UserContext';
+import { useState } from 'react';
 
 const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
   <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
@@ -19,8 +21,45 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 );
 
 export const Dashboard = () => {
+  const { role } = useUser();
+  const [gradesLocked, setGradesLocked] = useState(false);
+
   return (
     <div className="space-y-8">
+      {role === 'school-admin' && (
+        <div className={`p-4 rounded-xl border flex items-center justify-between ${
+          gradesLocked ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-200'
+        }`}>
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-full ${
+              gradesLocked ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'
+            }`}>
+              {gradesLocked ? <Lock size={24} /> : <Unlock size={24} />}
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-800">
+                Grade Insertion is {gradesLocked ? 'LOCKED' : 'OPEN'}
+              </h3>
+              <p className="text-sm text-slate-600">
+                {gradesLocked
+                  ? 'System is currently performing averages and ranking.'
+                  : 'Teachers can currently enter and modify student grades.'}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setGradesLocked(!gradesLocked)}
+            className={`px-6 py-2 rounded-lg font-bold transition-colors ${
+              gradesLocked
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-amber-600 hover:bg-amber-700 text-white'
+            }`}
+          >
+            {gradesLocked ? 'Open Insertion' : 'Close Insertion'}
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           icon={Users}

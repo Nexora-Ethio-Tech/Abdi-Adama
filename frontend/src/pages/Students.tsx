@@ -1,8 +1,81 @@
 
-import { Plus, Search, Filter, MoreVertical, Download } from 'lucide-react';
+import { Plus, Search, Filter, MoreVertical, Download, ChevronRight, History } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
+import { useState } from 'react';
 
 export const Students = () => {
+  const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
+  const grades = Array.from(new Set(mockStudents.map(s => s.grade))).sort();
+
+  if (selectedGrade) {
+    const filteredStudents = mockStudents.filter(s => s.grade === selectedGrade);
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSelectedGrade(null)}
+            className="text-blue-600 hover:underline font-medium"
+          >
+            ← Back to Grades
+          </button>
+          <h2 className="text-xl font-bold text-slate-800">Students in {selectedGrade}</h2>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Student Name</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Parent/Guardian</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredStudents.map((student) => (
+                <tr key={student.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-xs">
+                        {student.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <span className="text-sm font-medium text-slate-800">{student.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-medium text-slate-800">{student.parentName}</div>
+                    <div className="text-xs text-slate-500">{student.parentPhone}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      student.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {student.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        title="Student History (Upcoming)"
+                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        <History size={18} />
+                      </button>
+                      <button className="p-1 hover:bg-slate-100 rounded transition-colors text-slate-400 hover:text-slate-600">
+                        <MoreVertical size={18} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -32,49 +105,22 @@ export const Students = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-100">
-            <tr>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Student Name</th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Grade/Section</th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Parent/Guardian</th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {mockStudents.map((student) => (
-              <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-xs">
-                      {student.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <span className="text-sm font-medium text-slate-800">{student.name}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600">{student.grade}</td>
-                <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-slate-800">{student.parentName}</div>
-                  <div className="text-xs text-slate-500">{student.parentPhone}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    student.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {student.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="p-1 hover:bg-slate-100 rounded transition-colors text-slate-400 hover:text-slate-600">
-                    <MoreVertical size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        {grades.map((grade) => (
+          <button
+            key={grade}
+            onClick={() => setSelectedGrade(grade)}
+            className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:border-blue-500 hover:shadow-md transition-all group text-left"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl font-bold text-slate-800">{grade}</span>
+              <ChevronRight size={20} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
+            </div>
+            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+              {mockStudents.filter(s => s.grade === grade).length} Students
+            </p>
+          </button>
+        ))}
       </div>
     </div>
   );
