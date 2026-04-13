@@ -63,7 +63,7 @@ export const Sidebar = () => {
   const navItems = getNavItems();
 
   return (
-    <aside className="w-64 bg-slate-900 text-white flex flex-col h-screen sticky top-0">
+    <aside className="w-64 bg-slate-900 dark:bg-black text-white flex flex-col h-screen sticky top-0 transition-colors duration-300">
       <div className="p-6 flex items-center gap-3">
         <div className="bg-blue-600 p-2 rounded-lg">
           <GraduationCap size={24} />
