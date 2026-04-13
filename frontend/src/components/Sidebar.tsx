@@ -8,25 +8,61 @@ import {
   Wallet,
   Settings,
   LogOut,
-  GraduationCap
+  GraduationCap,
+  Building2,
+  BookOpen,
+  PieChart
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useUser } from '../context/UserContext';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: Users, label: 'Students', path: '/students' },
-  { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
-  { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-  { icon: Wallet, label: 'Finance', path: '/finance' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
-];
-
 export const Sidebar = () => {
+  const { role } = useUser();
+
+  const getNavItems = () => {
+    switch (role) {
+      case 'super-admin':
+        return [
+          { icon: LayoutDashboard, label: 'Overview', path: '/' },
+          { icon: Building2, label: 'Branches', path: '/branches' },
+          { icon: PieChart, label: 'Analytics', path: '/analytics' },
+          { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Settings, label: 'Settings', path: '/settings' },
+        ];
+      case 'school-admin':
+        return [
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+          { icon: Users, label: 'Students', path: '/students' },
+          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
+          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Settings, label: 'Settings', path: '/settings' },
+        ];
+      case 'student':
+        return [
+          { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
+          { icon: BookOpen, label: 'My Courses', path: '/courses' },
+          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: Wallet, label: 'Fees', path: '/finance' },
+        ];
+      case 'parent':
+        return [
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+          { icon: Users, label: 'My Children', path: '/students' },
+          { icon: Wallet, label: 'Fee Payments', path: '/finance' },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const navItems = getNavItems();
+
   return (
     <aside className="w-64 bg-slate-900 text-white flex flex-col h-screen sticky top-0">
       <div className="p-6 flex items-center gap-3">
