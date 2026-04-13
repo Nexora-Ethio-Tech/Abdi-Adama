@@ -27,7 +27,7 @@ export const Dashboard = () => {
   return (
     <div className="space-y-8">
       {role === 'school-admin' && (
-        <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors duration-300 ${
+        <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300 ${
           gradesLocked
             ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
             : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
@@ -51,7 +51,7 @@ export const Dashboard = () => {
           </div>
           <button
             onClick={() => setGradesLocked(!gradesLocked)}
-            className={`px-6 py-2 rounded-lg font-bold transition-colors ${
+            className={`w-full sm:w-auto px-6 py-2 rounded-lg font-bold transition-colors ${
               gradesLocked
                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                 : 'bg-amber-600 hover:bg-amber-700 text-white'
@@ -62,7 +62,7 @@ export const Dashboard = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           icon={Users}
           label="Total Students"

@@ -1,10 +1,15 @@
 
-import { Bell, Search, User, ChevronDown, Moon, Sun } from 'lucide-react';
+import { Bell, Search, User, ChevronDown, Moon, Sun, Menu } from 'lucide-react';
 import { useUser, type UserRole } from '../context/UserContext';
 import { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
-export const Header = ({ title }: { title: string }) => {
+interface HeaderProps {
+  title: string;
+  onMenuClick: () => void;
+}
+
+export const Header = ({ title, onMenuClick }: HeaderProps) => {
   const { role, setRole, selectedBranch } = useUser();
   const { theme, toggleTheme } = useTheme();
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -17,23 +22,30 @@ export const Header = ({ title }: { title: string }) => {
   ];
 
   return (
-    <header className="h-16 border-b dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-8 sticky top-0 z-10 transition-colors duration-300">
+    <header className="h-16 border-b dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 transition-colors duration-300">
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{title}</h1>
+        <button
+          onClick={onMenuClick}
+          className="p-2 -ml-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg lg:hidden"
+          aria-label="Open Menu"
+        >
+          <Menu size={24} />
+        </button>
+        <h1 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px] sm:max-w-none">{title}</h1>
         {selectedBranch && role === 'super-admin' && (
-          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+          <span className="hidden sm:inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
             Branch: {selectedBranch.name}
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="relative group">
+      <div className="flex items-center gap-2 md:gap-6">
+        <div className="relative group hidden lg:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
           <input
             type="text"
             placeholder="Search..."
-            className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64"
+            className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48 xl:w-64"
           />
         </div>
 
@@ -45,24 +57,24 @@ export const Header = ({ title }: { title: string }) => {
           {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
         </button>
 
-        <button className="relative p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors">
+        <button className="relative p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors hidden sm:block">
           <Bell size={20} />
           <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
         </button>
 
-        <div className="flex items-center gap-3 pl-6 border-l dark:border-slate-800 relative">
+        <div className="flex items-center gap-3 md:pl-6 md:border-l dark:border-slate-800 relative">
           <button
             onClick={() => setShowRoleMenu(!showRoleMenu)}
-            className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 md:gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 p-1 md:p-2 rounded-lg transition-colors"
           >
-            <div className="text-right">
+            <div className="text-right hidden sm:block">
               <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Admin User</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role.replace('-', ' ')}</p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-              <User size={24} />
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+              <User size={20} className="md:w-6 md:h-6" />
             </div>
-            <ChevronDown size={16} className="text-slate-400" />
+            <ChevronDown size={14} className="text-slate-400" />
           </button>
 
           {showRoleMenu && (

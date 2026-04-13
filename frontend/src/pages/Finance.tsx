@@ -44,26 +44,28 @@ export const Finance = () => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="font-semibold text-slate-800">
             {isAdmin ? 'Financial Summaries' : 'Recent Transactions'}
           </h3>
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none w-48"
+                className="pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none w-full sm:w-48"
               />
             </div>
-            <button className="text-blue-600 text-sm font-medium hover:underline flex items-center gap-1">
+            <button className="text-blue-600 text-sm font-medium hover:underline flex items-center gap-1 whitespace-nowrap">
               <FileText size={14} />
-              Export Report
+              <span className="hidden xs:inline">Export Report</span>
+              <span className="xs:hidden">Export</span>
             </button>
           </div>
         </div>
-        <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm min-w-[700px]">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
@@ -131,6 +133,7 @@ export const Finance = () => {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
