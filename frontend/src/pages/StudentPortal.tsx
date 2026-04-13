@@ -28,8 +28,8 @@ export const StudentPortal = () => {
           <div className="bg-blue-100 p-3 rounded-lg text-blue-600 w-fit mb-4">
             <Award size={24} />
           </div>
-          <h3 className="text-slate-500 text-sm font-medium">GPA</h3>
-          <p className="text-2xl font-bold text-slate-800 mt-1">3.8</p>
+          <h3 className="text-slate-500 text-sm font-medium">CGPA</h3>
+          <p className="text-2xl font-bold text-slate-800 mt-1">92%</p>
         </div>
       </div>
 
