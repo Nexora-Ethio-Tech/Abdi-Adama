@@ -8,6 +8,9 @@ import { Finance } from './pages/Finance';
 import { Branches } from './pages/Branches';
 import { StudentPortal } from './pages/StudentPortal';
 import { ParentPortal } from './pages/ParentPortal';
+import { TeacherPortal } from './pages/TeacherPortal';
+import { TeacherAttendance } from './pages/TeacherAttendance';
+import { TeacherSchedule } from './pages/TeacherSchedule';
 import { ScheduleBuilder } from './pages/ScheduleBuilder';
 import { useUser } from './context/UserContext';
 
@@ -34,6 +37,7 @@ function App() {
           <Route index element={
             role === 'student' ? <StudentPortal /> :
             role === 'parent' ? <ParentPortal /> :
+            role === 'teacher' ? <TeacherPortal /> :
             <Dashboard />
           } />
 
@@ -100,6 +104,13 @@ function App() {
           {role === 'parent' && (
             <>
               <Route path="students" element={<Students />} />
+            </>
+          )}
+
+          {role === 'teacher' && (
+            <>
+              <Route path="attendance" element={<TeacherAttendance />} />
+              <Route path="schedule" element={<TeacherSchedule />} />
             </>
           )}
 

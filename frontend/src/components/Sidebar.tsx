@@ -50,6 +50,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
+      case 'teacher':
+        return [
+          { icon: LayoutDashboard, label: 'Teacher Portal', path: '/' },
+          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
+        ];
       case 'student':
         return [
           { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },

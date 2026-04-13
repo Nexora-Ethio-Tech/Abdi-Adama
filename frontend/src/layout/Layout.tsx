@@ -40,6 +40,15 @@ export const Layout = () => {
       }
     }
 
+    if (role === 'teacher') {
+      switch (path) {
+        case '/': return 'Teacher Portal';
+        case '/attendance': return 'Student Attendance';
+        case '/schedule': return 'My Teaching Schedule';
+        default: return 'Teacher Workstation';
+      }
+    }
+
     switch (path) {
       case '/': return 'Dashboard Overview';
       case '/students': return 'Student Information System';
