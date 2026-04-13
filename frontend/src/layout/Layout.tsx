@@ -49,6 +49,16 @@ export const Layout = () => {
     }
   };
 
+  if (role === 'parent') {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <main className="p-4 md:p-8 max-w-7xl mx-auto">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
