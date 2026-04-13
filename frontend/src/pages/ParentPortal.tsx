@@ -1,8 +1,10 @@
 
-import { Calendar, BookOpen, Award } from 'lucide-react';
+import { Calendar, BookOpen, Award, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
+import { useUser } from '../context/UserContext';
 
 export const ParentPortal = () => {
+  const { setRole } = useUser();
   const [selectedChild, setSelectedChild] = useState<any>(null);
 
   const children = [
@@ -106,9 +108,29 @@ export const ParentPortal = () => {
 
   return (
     <div className="space-y-8">
-      <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-        <h2 className="text-2xl font-bold text-slate-800">Hello, Mr. Bikila</h2>
-        <p className="text-slate-500">Monitoring your children's academic progress.</p>
+      <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800">Hello, Mr. Bikila</h2>
+          <p className="text-slate-500">Monitoring your children's academic progress.</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 pr-6 border-r">
+            <div className="text-right hidden md:block">
+              <p className="text-sm font-medium text-slate-800">Mr. Bikila</p>
+              <p className="text-xs text-slate-500 capitalize">Parent</p>
+            </div>
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+              <User size={24} />
+            </div>
+          </div>
+          <button
+            onClick={() => setRole('school-admin')}
+            className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+          >
+            <LogOut size={20} />
+            <span className="font-medium">Logout</span>
+          </button>
+        </div>
       </div>
 
       <div className="space-y-6">

@@ -93,12 +93,17 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
           <h3 className="text-lg font-semibold text-slate-800 mb-6">Recent Activity</h3>
           <div className="space-y-6">
-            {[1, 2, 3, 4].map((i) => (
+            {[
+              { text: 'Annual Sports Day event created', time: '2 hours ago', office: 'Admin Office' },
+              { text: 'Monthly newsletter sent to parents', time: '5 hours ago', office: 'Communications' },
+              { text: 'Staff meeting agenda updated', time: 'Yesterday', office: 'Academic Office' },
+              { text: 'Quarterly financial report finalized', time: '2 days ago', office: 'Finance Dept' },
+            ].map((activity, i) => (
               <div key={i} className="flex gap-4">
                 <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 flex-shrink-0"></div>
                 <div>
-                  <p className="text-sm font-medium text-slate-800">New student registration: Abebe Bikila</p>
-                  <p className="text-xs text-slate-500 mt-1">2 hours ago • Registration Office</p>
+                  <p className="text-sm font-medium text-slate-800">{activity.text}</p>
+                  <p className="text-xs text-slate-500 mt-1">{activity.time} • {activity.office}</p>
                 </div>
               </div>
             ))}
