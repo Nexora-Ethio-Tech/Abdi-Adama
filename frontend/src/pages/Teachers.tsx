@@ -18,9 +18,9 @@ export const Teachers = () => {
         >
           ← Back to Teachers List
         </button>
-        <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-          <h2 className="text-2xl font-bold text-slate-800 mb-6">Schedule for {teacher?.name}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-white p-4 md:p-8 rounded-2xl border border-slate-100 shadow-sm">
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">Schedule for {teacher?.name}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {schedule.length > 0 ? (
               schedule.map((slot, i) => (
                 <div key={i} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -43,19 +43,19 @@ export const Teachers = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-fit">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors w-full md:w-fit text-sm md:text-base">
           <UserPlus size={20} />
           <span>Approve New Teacher</span>
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="relative flex-1 md:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
               placeholder="Search teachers..."
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64"
+              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64"
             />
           </div>
           <button className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
@@ -64,8 +64,8 @@ export const Teachers = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <table className="w-full text-left">
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-x-auto">
+        <table className="w-full text-left min-w-[800px]">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Teacher</th>

@@ -3,10 +3,12 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { Header } from '../components/Header';
 import { useUser } from '../context/UserContext';
+import { useState } from 'react';
 
 export const Layout = () => {
   const location = useLocation();
   const { role } = useUser();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const getTitle = (path: string) => {
     if (role === 'student') {
@@ -61,10 +63,22 @@ export const Layout = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header title={getTitle(location.pathname)} />
-        <main className="p-8">
+      {/* Sidebar Backdrop for Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header
+          title={getTitle(location.pathname)}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
+        <main className="p-4 md:p-8">
           <Outlet />
         </main>
       </div>

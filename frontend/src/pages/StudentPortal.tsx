@@ -4,12 +4,12 @@ import { BookOpen, Award, Clock } from 'lucide-react';
 export const StudentPortal = () => {
   return (
     <div className="space-y-8">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white">
-        <h2 className="text-3xl font-bold mb-2">Welcome back, Abebe!</h2>
-        <p className="opacity-90">Keep up the great work. You have 3 assignments due this week.</p>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white">
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, Abebe!</h2>
+        <p className="opacity-90 text-sm md:text-base">Keep up the great work. You have 3 assignments due this week.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
           <div className="bg-orange-100 p-3 rounded-lg text-orange-600 w-fit mb-4">
             <BookOpen size={24} />
@@ -43,7 +43,7 @@ export const StudentPortal = () => {
               { time: '01:00 PM', subject: 'History', room: 'Room 204' },
             ].map((session, i) => (
               <div key={i} className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-100">
-                <div className="text-sm font-bold text-blue-600 w-20">{session.time}</div>
+                <div className="text-xs md:text-sm font-bold text-blue-600 w-16 md:w-20 flex-shrink-0">{session.time}</div>
                 <div>
                   <p className="text-sm font-medium text-slate-800">{session.subject}</p>
                   <p className="text-xs text-slate-500">{session.room}</p>

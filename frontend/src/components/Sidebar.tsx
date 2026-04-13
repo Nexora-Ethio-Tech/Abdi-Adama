@@ -11,7 +11,8 @@ import {
   GraduationCap,
   Building2,
   BookOpen,
-  PieChart
+  PieChart,
+  X
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -21,7 +22,12 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const Sidebar = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { role } = useUser();
 
   const getNavItems = () => {
@@ -63,19 +69,33 @@ export const Sidebar = () => {
   const navItems = getNavItems();
 
   return (
-    <aside className="w-64 bg-slate-900 dark:bg-black text-white flex flex-col h-screen sticky top-0 transition-colors duration-300">
-      <div className="p-6 flex items-center gap-3">
-        <div className="bg-blue-600 p-2 rounded-lg">
-          <GraduationCap size={24} />
+    <aside className={cn(
+      "fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 dark:bg-black text-white flex flex-col h-screen transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto",
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    )}>
+      <div className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-600 p-2 rounded-lg">
+            <GraduationCap size={24} />
+          </div>
+          <span className="font-bold text-xl tracking-tight">Abdi Adama</span>
         </div>
-        <span className="font-bold text-xl tracking-tight">Abdi Adama</span>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-slate-800 rounded-lg lg:hidden"
+        >
+          <X size={20} />
+        </button>
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-1">
+      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={() => {
+              if (window.innerWidth < 1024) onClose();
+            }}
             className={({ isActive }) => cn(
               "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
               isActive

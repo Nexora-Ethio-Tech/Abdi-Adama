@@ -22,18 +22,18 @@ export const Branches = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">School Branches</h2>
-          <p className="text-slate-500">Manage and monitor all school locations from one place.</p>
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800">School Branches</h2>
+          <p className="text-sm text-slate-500">Manage and monitor all school locations from one place.</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        <button className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base">
           <Plus size={20} />
           <span>Add New Branch</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {branches.map((branch) => (
           <div
             key={branch.id}

@@ -71,14 +71,14 @@ export const ParentPortal = () => {
           </button>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
-          <div className="flex items-center gap-6 mb-8">
-            <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl">
+        <div className="bg-white dark:bg-slate-900 p-4 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
+          <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 mb-8 text-center sm:text-left">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-2xl md:text-3xl">
               {selectedChild.name.charAt(0)}
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100">{selectedChild.name}</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-lg">Grade {selectedChild.grade} Student</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">{selectedChild.name}</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg">Grade {selectedChild.grade} Student</p>
             </div>
           </div>
 
@@ -86,11 +86,11 @@ export const ParentPortal = () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
+                  <div className="flex items-center gap-2 md:gap-3 text-slate-500 dark:text-slate-400 mb-2">
                     <Calendar size={18} />
-                    <span className="text-sm font-medium">Attendance</span>
+                    <span className="text-xs md:text-sm font-medium">Attendance</span>
                   </div>
-                  <p className="text-2xl font-bold text-emerald-600">{selectedChild.attendance}</p>
+                  <p className="text-xl md:text-2xl font-bold text-emerald-600">{selectedChild.attendance}</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
@@ -112,8 +112,8 @@ export const ParentPortal = () => {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Course Progress & Grades</h3>
                 </div>
-                <div className="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-xl">
-                  <table className="w-full text-left text-sm">
+                <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+                  <table className="w-full text-left text-sm min-w-[600px]">
                     <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
                       <tr>
                         <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Course</th>
@@ -169,8 +169,8 @@ export const ParentPortal = () => {
 
               {selectedYear && historyData[selectedYear] ? (
                 <div className="animate-in slide-in-from-bottom-4 duration-500">
-                  <div className="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-xl">
-                    <table className="w-full text-left text-sm">
+                  <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+                    <table className="w-full text-left text-sm min-w-[500px]">
                       <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
                         <tr>
                           <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Course</th>
@@ -217,13 +217,13 @@ export const ParentPortal = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex justify-between items-center transition-colors duration-300">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Hello, Mr. Bikila</h2>
-          <p className="text-slate-500 dark:text-slate-400">Monitoring your children's academic progress.</p>
+      <div className="bg-white dark:bg-slate-900 p-4 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6 transition-colors duration-300">
+        <div className="text-center md:text-left">
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100">Hello, Mr. Bikila</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Monitoring your children's academic progress.</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 pr-6 border-r dark:border-slate-800">
+        <div className="flex items-center gap-4 w-full md:w-auto justify-center">
+          <div className="flex items-center gap-3 pr-4 md:pr-6 border-r dark:border-slate-800">
             <div className="text-right hidden md:block">
               <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Mr. Bikila</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">Parent</p>
@@ -234,10 +234,10 @@ export const ParentPortal = () => {
           </div>
           <button
             onClick={() => setRole('school-admin')}
-            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 md:px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
             <LogOut size={20} />
-            <span className="font-medium">Logout</span>
+            <span className="font-medium text-sm md:text-base">Logout</span>
           </button>
         </div>
       </div>
