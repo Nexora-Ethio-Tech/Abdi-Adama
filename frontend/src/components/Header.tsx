@@ -17,8 +17,10 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
   const roles: { val: UserRole; label: string }[] = [
     { val: 'super-admin', label: 'Super Admin' },
     { val: 'school-admin', label: 'School Admin' },
+    { val: 'teacher', label: 'Teacher' },
     { val: 'student', label: 'Student' },
     { val: 'parent', label: 'Parent' },
+    { val: 'finance-clerk', label: 'Finance Clerk' },
   ];
 
   return (
