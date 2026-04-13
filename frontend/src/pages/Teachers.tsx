@@ -1,9 +1,10 @@
 
-import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical } from 'lucide-react';
+import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical, DoorOpen, DoorClosed } from 'lucide-react';
 import { mockTeachers, mockSchedules } from '../data/mockData';
 import { useState } from 'react';
 
 export const Teachers = () => {
+  const [teachers, setTeachers] = useState(mockTeachers);
   const [viewingSchedule, setViewingSchedule] = useState<string | null>(null);
 
   if (viewingSchedule) {
@@ -41,6 +42,12 @@ export const Teachers = () => {
     );
   }
 
+  const toggleInClass = (id: string) => {
+    setTeachers(prev => prev.map(t =>
+      t.id === id ? { ...t, isInClass: !t.isInClass } : t
+    ));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -71,12 +78,13 @@ export const Teachers = () => {
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Teacher</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Subjects</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Schedule</th>
+              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">In Class</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {mockTeachers.map((teacher) => (
+            {teachers.map((teacher) => (
               <tr key={teacher.id} className="hover:bg-slate-50/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -105,6 +113,19 @@ export const Teachers = () => {
                   >
                     <Calendar size={14} />
                     View Schedule
+                  </button>
+                </td>
+                <td className="px-6 py-4">
+                  <button
+                    onClick={() => toggleInClass(teacher.id)}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+                      teacher.isInClass
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-rose-100 text-rose-700'
+                    }`}
+                  >
+                    {teacher.isInClass ? <DoorOpen size={14} /> : <DoorClosed size={14} />}
+                    <span>{teacher.isInClass ? 'IN CLASS' : 'OUT'}</span>
                   </button>
                 </td>
                 <td className="px-6 py-4">
