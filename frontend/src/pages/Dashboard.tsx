@@ -1,5 +1,5 @@
 
-import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 
@@ -69,32 +69,64 @@ export const Dashboard = () => {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          icon={Users}
-          label="Total Students"
-          value="1,284"
-          trend="+4.3%"
-          color="bg-blue-600"
-        />
-        <StatCard
-          icon={GraduationCap}
-          label="Total Teachers"
-          value="76"
-          color="bg-purple-600"
-        />
-        <StatCard
-          icon={Clock}
-          label="Daily Attendance"
-          value="94.2%"
-          trend="+1.2%"
-          color="bg-orange-500"
-        />
-        <StatCard
-          icon={TrendingUp}
-          label="Monthly Revenue"
-          value="450,000 ETB"
-          color="bg-emerald-500"
-        />
+        {role === 'librarian' ? (
+          <>
+            <StatCard
+              icon={Book}
+              label="Total Books"
+              value="2,450"
+              color="bg-blue-600"
+            />
+            <StatCard
+              icon={BookOpen}
+              label="Active Loans"
+              value="184"
+              trend="+12%"
+              color="bg-purple-600"
+            />
+            <StatCard
+              icon={AlertTriangle}
+              label="Overdue Books"
+              value="12"
+              color="bg-rose-500"
+            />
+            <StatCard
+              icon={Users}
+              label="Visitors Today"
+              value="42"
+              color="bg-emerald-500"
+            />
+          </>
+        ) : (
+          <>
+            <StatCard
+              icon={Users}
+              label="Total Students"
+              value="1,284"
+              trend="+4.3%"
+              color="bg-blue-600"
+            />
+            <StatCard
+              icon={GraduationCap}
+              label="Total Teachers"
+              value="76"
+              color="bg-purple-600"
+            />
+            <StatCard
+              icon={Clock}
+              label="Daily Attendance"
+              value="94.2%"
+              trend="+1.2%"
+              color="bg-orange-500"
+            />
+            <StatCard
+              icon={TrendingUp}
+              label="Monthly Revenue"
+              value="450,000 ETB"
+              color="bg-emerald-500"
+            />
+          </>
+        )}
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
