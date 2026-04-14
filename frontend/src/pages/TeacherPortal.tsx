@@ -1,5 +1,5 @@
 
-import { BookOpen, Users, Calendar, Clock, ArrowRight } from 'lucide-react';
+import { BookOpen, Users, Calendar, Clock, ArrowRight, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { mockClasses } from '../data/mockData';
 
@@ -23,6 +23,13 @@ export const TeacherPortal = () => {
               className="bg-blue-500/30 text-white border border-blue-400/30 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500/50 transition-colors"
             >
               View Schedule
+            </Link>
+            <Link
+              to="/grades"
+              className="bg-white/10 text-white border border-white/20 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-white/20 transition-colors"
+            >
+              <Award size={18} />
+              Grade Entry
             </Link>
           </div>
         </div>

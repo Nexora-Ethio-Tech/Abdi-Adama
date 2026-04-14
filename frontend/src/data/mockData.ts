@@ -1,5 +1,27 @@
 export const mockStudents = [
-  { id: '1', name: 'Abebe Bikila', grade: '10A', status: 'Active', parentName: 'Bikila Demissie', parentPhone: '+251911111111' },
+  {
+    id: '1',
+    name: 'Abebe Bikila',
+    grade: '10A',
+    status: 'Active',
+    parentName: 'Bikila Demissie',
+    parentPhone: '+251911111111',
+    dob: '2010-05-15',
+    gender: 'Male',
+    address: 'Addis Ababa, Bole Sub-city',
+    attendanceHistory: [
+      { month: 'Sep', rate: 98 },
+      { month: 'Oct', rate: 95 },
+      { month: 'Nov', rate: 92 },
+      { month: 'Dec', rate: 96 },
+      { month: 'Jan', rate: 94 },
+      { month: 'Feb', rate: 97 },
+    ],
+    academicHistory: [
+      { year: '2014', grade: '8', average: '88%', rank: '5/42' },
+      { year: '2015', grade: '9', average: '91%', rank: '2/45' },
+    ]
+  },
   { id: '2', name: 'Sara Kebede', grade: '9B', status: 'Active', parentName: 'Kebede Tessema', parentPhone: '+251922222222' },
   { id: '3', name: 'Dawit Lema', grade: '11C', status: 'Active', parentName: 'Lema Hailu', parentPhone: '+251933333333' },
   { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444' },

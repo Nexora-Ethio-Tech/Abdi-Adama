@@ -2,6 +2,7 @@
 import { Plus, Search, Filter, MoreVertical, Download, ChevronRight, History } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export const Students = () => {
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
@@ -56,12 +57,12 @@ export const Students = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        title="Student History (Upcoming)"
+                      <Link
+                        to={`/students/${student.id}`}
                         className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <History size={18} />
-                      </button>
+                      </Link>
                       <button className="p-1 hover:bg-slate-100 rounded transition-colors text-slate-400 hover:text-slate-600">
                         <MoreVertical size={18} />
                       </button>

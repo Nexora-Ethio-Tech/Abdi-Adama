@@ -6,11 +6,14 @@ import { Students } from './pages/Students';
 import { Teachers } from './pages/Teachers';
 import { Finance } from './pages/Finance';
 import { Branches } from './pages/Branches';
+import { StudentProfile } from './pages/StudentProfile';
+import { Analytics } from './pages/Analytics';
 import { StudentPortal } from './pages/StudentPortal';
 import { ParentPortal } from './pages/ParentPortal';
 import { TeacherPortal } from './pages/TeacherPortal';
 import { TeacherAttendance } from './pages/TeacherAttendance';
 import { TeacherSchedule } from './pages/TeacherSchedule';
+import { GradeEntry } from './pages/GradeEntry';
 import { ScheduleBuilder } from './pages/ScheduleBuilder';
 import { useUser } from './context/UserContext';
 
@@ -45,18 +48,14 @@ function App() {
           {role === 'super-admin' && (
             <>
               <Route path="branches" element={<Branches />} />
-              <Route path="analytics" element={
-                <Placeholder
-                  title="Global Analytics"
-                  description="View comprehensive graphs on income, expenses, and net profit across all school branches."
-                />
-              } />
+              <Route path="analytics" element={<Analytics />} />
             </>
           )}
 
           {(role === 'school-admin' || role === 'super-admin') && (
             <>
               <Route path="students" element={<Students />} />
+              <Route path="students/:id" element={<StudentProfile />} />
               <Route path="teachers" element={<Teachers />} />
               <Route path="attendance" element={
                 <div className="space-y-6">
@@ -111,6 +110,7 @@ function App() {
             <>
               <Route path="attendance" element={<TeacherAttendance />} />
               <Route path="schedule" element={<TeacherSchedule />} />
+              <Route path="grades" element={<GradeEntry />} />
             </>
           )}
 
