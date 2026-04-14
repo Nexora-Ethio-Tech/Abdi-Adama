@@ -15,6 +15,11 @@ import { TeacherAttendance } from './pages/TeacherAttendance';
 import { TeacherSchedule } from './pages/TeacherSchedule';
 import { GradeEntry } from './pages/GradeEntry';
 import { ScheduleBuilder } from './pages/ScheduleBuilder';
+import { Inventory } from './pages/Inventory';
+import { Library } from './pages/Library';
+import { Calendar } from './pages/Calendar';
+import { Attendance } from './pages/Attendance';
+import { Settings } from './pages/Settings';
 import { useUser } from './context/UserContext';
 
 const Placeholder = ({ title, description }: { title: string; description?: string }) => (
@@ -49,6 +54,8 @@ function App() {
             <>
               <Route path="branches" element={<Branches />} />
               <Route path="analytics" element={<Analytics />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="library" element={<Library />} />
             </>
           )}
 
@@ -57,29 +64,10 @@ function App() {
               <Route path="students" element={<Students />} />
               <Route path="students/:id" element={<StudentProfile />} />
               <Route path="teachers" element={<Teachers />} />
-              <Route path="attendance" element={
-                <div className="space-y-6">
-                  <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                    <h3 className="text-lg font-bold text-slate-800 mb-4">Missed Classes & Substitutions</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-rose-50 border border-rose-100 rounded-lg">
-                        <div>
-                          <p className="font-bold text-rose-800">10A - Mathematics</p>
-                          <p className="text-sm text-rose-600">Ato Solomon is absent today.</p>
-                        </div>
-                        <button className="bg-white text-rose-600 px-4 py-2 rounded-lg text-sm font-bold shadow-sm border border-rose-200">
-                          Assign Substitute
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <Placeholder
-                    title="Attendance Tracking"
-                    description="Monitor student and teacher attendance, manage leave requests, and track daily presence."
-                  />
-                </div>
-              } />
+              <Route path="attendance" element={<Attendance />} />
               <Route path="schedule-builder" element={<ScheduleBuilder />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="library" element={<Library />} />
             </>
           )}
 
@@ -115,12 +103,8 @@ function App() {
           )}
 
           <Route path="finance" element={<Finance />} />
-          <Route path="settings" element={
-            <Placeholder
-              title="System Settings"
-              description="Configure school-wide preferences, manage user accounts, and update system constraints."
-            />
-          } />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="settings" element={<Settings />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />

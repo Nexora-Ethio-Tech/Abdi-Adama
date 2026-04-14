@@ -74,3 +74,23 @@ export const mockGrades = [
   { type: 'Final Exam', weight: '50%', score: 92, total: 100 },
   { type: 'Assignment', weight: '20%', score: 18, total: 20 },
 ];
+
+export const mockInventory = [
+  { id: 'I1', name: 'Microscope', category: 'Lab Equipment', quantity: 15, condition: 'Good', location: 'Science Lab A' },
+  { id: 'I2', name: 'Dell Latitude 3420', category: 'IT Assets', quantity: 30, condition: 'New', location: 'Computer Lab 1' },
+  { id: 'I3', name: 'Whiteboard Marker (Pack)', category: 'Stationery', quantity: 120, condition: 'Good', location: 'Central Store' },
+  { id: 'I4', name: 'Student Desk', category: 'Furniture', quantity: 450, condition: 'Fair', location: 'Main Building' },
+];
+
+export const mockLibrary = [
+  { id: 'B1', title: 'Calculus: Early Transcendentals', author: 'James Stewart', isbn: '978-0538497909', status: 'Available', shelf: 'Mathematics - Row 1' },
+  { id: 'B2', title: 'Biology: The Core', author: 'Eric Simon', isbn: '978-0134152196', status: 'Borrowed', shelf: 'Science - Row 4' },
+  { id: 'B3', title: 'Principles of Economics', author: 'N. Gregory Mankiw', isbn: '978-1305155915', status: 'Available', shelf: 'Economics - Row 2' },
+];
+
+export const mockEvents = [
+  { id: 'E1', title: 'Parent-Teacher Conference', date: '2026-04-15', type: 'Meeting' },
+  { id: 'E2', title: 'Annual Sports Day', date: '2026-05-10', type: 'Event' },
+  { id: 'E3', title: 'Mid-term Exams Start', date: '2026-05-20', type: 'Academic' },
+  { id: 'E4', title: 'Final Graduation Ceremony', date: '2026-06-15', type: 'Ceremony' },
+];
