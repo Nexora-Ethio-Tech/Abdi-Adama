@@ -1,6 +1,7 @@
 
-import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import { useState } from 'react';
 
 const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
   <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
@@ -21,6 +22,13 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 
 export const Dashboard = () => {
   const { role, gradesLocked, setGradesLocked } = useUser();
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [notices] = useState([
+    { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago' },
+    { id: 2, title: 'School Bus Maintenance', content: 'Route B buses will be undergoing maintenance this Friday. Please expect minor delays.', priority: 'Medium', time: 'Yesterday' }
+  ]);
+
+  const isAdmin = role === 'super-admin' || role === 'school-admin';
 
   return (
     <div className="space-y-8">
@@ -89,6 +97,44 @@ export const Dashboard = () => {
         />
       </div>
 
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+              <Megaphone size={20} />
+            </div>
+            <h3 className="font-bold text-slate-800 dark:text-slate-100">School Notice Board</h3>
+          </div>
+          {isAdmin && (
+            <button
+              onClick={() => setShowNoticeModal(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold"
+            >
+              <Plus size={16} />
+              <span>Post Notice</span>
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
+          {notices.map((notice) => (
+            <div key={notice.id} className="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+              <div className="flex items-center justify-between mb-3">
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                  notice.priority === 'High' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
+                }`}>
+                  {notice.priority} Priority
+                </span>
+                <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+              </div>
+              <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{notice.title}</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                {notice.content}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
           <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6">Recent Activity</h3>
@@ -128,6 +174,43 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {showNoticeModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm">Post New Notice</h3>
+              <button onClick={() => setShowNoticeModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setShowNoticeModal(false); }}>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Notice Title</label>
+                <input required type="text" placeholder="e.g. Public Holiday Announcement" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Priority Level</label>
+                <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                  <option value="Normal">Normal</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High Priority</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Content</label>
+                <textarea required rows={4} placeholder="Write the details of the notice here..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+              </div>
+              <div className="pt-4">
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">
+                  <Bell size={18} />
+                  <span>Publish Notice</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

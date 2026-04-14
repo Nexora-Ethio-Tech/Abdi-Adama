@@ -37,7 +37,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Building2, label: 'Branches', path: '/branches' },
           { icon: PieChart, label: 'Analytics', path: '/analytics' },
+          { icon: Package, label: 'Inventory', path: '/inventory' },
+          { icon: BookOpen, label: 'Library', path: '/library' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'school-admin':
@@ -47,7 +50,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
+          { icon: Package, label: 'Inventory', path: '/inventory' },
+          { icon: BookOpen, label: 'Library', path: '/library' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'teacher':
@@ -55,22 +61,26 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: 'Teacher Portal', path: '/' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       case 'student':
         return [
           { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
           { icon: BookOpen, label: 'My Courses', path: '/courses' },
           { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       case 'parent':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       case 'finance-clerk':
         return [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       default:
         return [];
