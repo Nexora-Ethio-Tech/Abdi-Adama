@@ -21,6 +21,7 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
     { val: 'student', label: 'Student' },
     { val: 'parent', label: 'Parent' },
     { val: 'finance-clerk', label: 'Finance Clerk' },
+    { val: 'librarian', label: 'Librarian' },
   ];
 
   return (
