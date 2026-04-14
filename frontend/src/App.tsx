@@ -46,6 +46,7 @@ function App() {
             role === 'student' ? <StudentPortal /> :
             role === 'parent' ? <ParentPortal /> :
             role === 'teacher' ? <TeacherPortal /> :
+            role === 'librarian' ? <Dashboard /> :
             <Dashboard />
           } />
 
@@ -67,7 +68,6 @@ function App() {
               <Route path="attendance" element={<Attendance />} />
               <Route path="schedule-builder" element={<ScheduleBuilder />} />
               <Route path="inventory" element={<Inventory />} />
-              <Route path="library" element={<Library />} />
             </>
           )}
 
@@ -99,6 +99,12 @@ function App() {
               <Route path="attendance" element={<TeacherAttendance />} />
               <Route path="schedule" element={<TeacherSchedule />} />
               <Route path="grades" element={<GradeEntry />} />
+            </>
+          )}
+
+          {role === 'librarian' && (
+            <>
+              <Route path="library" element={<Library />} />
             </>
           )}
 
