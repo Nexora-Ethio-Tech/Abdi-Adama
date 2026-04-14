@@ -1,7 +1,6 @@
 
 import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { useState } from 'react';
 
 const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
   <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
@@ -21,8 +20,7 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 );
 
 export const Dashboard = () => {
-  const { role } = useUser();
-  const [gradesLocked, setGradesLocked] = useState(false);
+  const { role, gradesLocked, setGradesLocked } = useUser();
 
   return (
     <div className="space-y-8">

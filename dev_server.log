@@ -3,12 +3,12 @@
 > vite
 
 
-  VITE v8.0.8  ready in 415 ms
+  VITE v8.0.8  ready in 252 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
-6:51:46 PM [vite] (client) page reload src/components/Header.tsx
-6:54:14 PM [vite] (client) page reload src/context/UserContext.tsx
-6:54:20 PM [vite] (client) page reload src/components/Sidebar.tsx
-6:54:22 PM [vite] (client) page reload src/layout/Layout.tsx
-6:54:29 PM [vite] (client) page reload src/App.tsx
+9:54:25 AM [vite] (client) page reload src/context/UserContext.tsx
+9:54:57 AM [vite] (client) page reload src/context/UserContext.tsx
+9:56:25 AM [vite] (client) page reload src/context/UserContext.tsx
+9:57:58 AM [vite] (client) page reload src/context/UserContext.tsx
+10:00:31 AM [vite] (client) page reload src/context/UserContext.tsx

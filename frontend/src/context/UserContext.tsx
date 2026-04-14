@@ -15,6 +15,8 @@ interface UserContextType {
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
+  gradesLocked: boolean;
+  setGradesLocked: (locked: boolean) => void;
 }
 
 const mockBranches: Branch[] = [
@@ -29,6 +31,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<UserRole>('school-admin');
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+  const [gradesLocked, setGradesLocked] = useState(false);
 
   return (
     <UserContext.Provider value={{
@@ -36,7 +39,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setRole,
       selectedBranch,
       setSelectedBranch,
-      branches: mockBranches
+      branches: mockBranches,
+      gradesLocked,
+      setGradesLocked
     }}>
       {children}
     </UserContext.Provider>
