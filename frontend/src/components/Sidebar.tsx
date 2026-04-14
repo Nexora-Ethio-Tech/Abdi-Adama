@@ -40,7 +40,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: Building2, label: 'Branches', path: '/branches' },
           { icon: PieChart, label: 'Analytics', path: '/analytics' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
-          { icon: BookOpen, label: 'Library', path: '/library' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: Settings, label: 'Settings', path: '/settings' },
@@ -53,7 +52,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
-          { icon: BookOpen, label: 'Library', path: '/library' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: Settings, label: 'Settings', path: '/settings' },
@@ -82,6 +80,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+        ];
+      case 'librarian':
+        return [
+          { icon: LayoutDashboard, label: 'Librarian Portal', path: '/' },
+          { icon: BookOpen, label: 'Library', path: '/library' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       default:
