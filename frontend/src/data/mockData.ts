@@ -83,9 +83,16 @@ export const mockInventory = [
 ];
 
 export const mockLibrary = [
-  { id: 'B1', title: 'Calculus: Early Transcendentals', author: 'James Stewart', isbn: '978-0538497909', status: 'Available', shelf: 'Mathematics - Row 1' },
-  { id: 'B2', title: 'Biology: The Core', author: 'Eric Simon', isbn: '978-0134152196', status: 'Borrowed', shelf: 'Science - Row 4' },
-  { id: 'B3', title: 'Principles of Economics', author: 'N. Gregory Mankiw', isbn: '978-1305155915', status: 'Available', shelf: 'Economics - Row 2' },
+  { id: 'B1', title: 'Calculus: Early Transcendentals', author: 'James Stewart', isbn: '978-0538497909', status: 'Available', shelf: 'Mathematics - Row 1', total: 12, available: 8 },
+  { id: 'B2', title: 'Biology: The Core', author: 'Eric Simon', isbn: '978-0134152196', status: 'Borrowed', shelf: 'Science - Row 4', total: 5, available: 0 },
+  { id: 'B3', title: 'Principles of Economics', author: 'N. Gregory Mankiw', isbn: '978-1305155915', status: 'Available', shelf: 'Economics - Row 2', total: 8, available: 5 },
+  { id: 'B4', title: 'Sapiens: A Brief History of Humankind', author: 'Yuval Noah Harari', isbn: '978-0062316097', status: 'Available', shelf: 'History - Row 3', total: 15, available: 12 },
+];
+
+export const mockOverdueLoans = [
+  { id: 'L1', studentName: 'Abebe Bikila', bookTitle: 'Calculus: Early Transcendentals', dueDate: '2026-04-05', daysOverdue: 15, studentId: '1' },
+  { id: 'L2', studentName: 'Sara Kebede', bookTitle: 'Biology: The Core', dueDate: '2026-04-10', daysOverdue: 10, studentId: '2' },
+  { id: 'L3', studentName: 'Biniyam Yosef', bookTitle: 'Principles of Economics', dueDate: '2026-04-12', daysOverdue: 8, studentId: '6' },
 ];
 
 export const mockEvents = [
