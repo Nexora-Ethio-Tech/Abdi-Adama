@@ -12,6 +12,8 @@ import {
   Building2,
   BookOpen,
   PieChart,
+  Package,
+  Calendar,
   X
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';

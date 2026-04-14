@@ -1,5 +1,5 @@
 
-import { Search, Filter, CheckCircle, XCircle, Clock, ChevronDown, UserCheck } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
 

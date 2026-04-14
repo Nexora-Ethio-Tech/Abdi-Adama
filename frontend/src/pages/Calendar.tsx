@@ -1,5 +1,5 @@
 
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, MapPin, Clock, Tag } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Tag } from 'lucide-react';
 import { mockEvents } from '../data/mockData';
 import { useState } from 'react';
 
