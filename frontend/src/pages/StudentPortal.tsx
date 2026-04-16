@@ -1,5 +1,6 @@
 
-import { BookOpen, Award, Clock } from 'lucide-react';
+import { BookOpen, Award, Clock, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const StudentPortal = () => {
   return (
@@ -56,20 +57,39 @@ export const StudentPortal = () => {
         <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
           <h3 className="text-lg font-semibold text-slate-800 mb-6">Upcoming Deadlines</h3>
           <div className="space-y-4">
-            {[
-              { date: 'Tomorrow', title: 'Math Assignment 4', type: 'Homework' },
-              { date: 'Fri, Apr 18', title: 'Physics Mid-term', type: 'Exam' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between p-4 rounded-lg border border-slate-100">
-                <div>
-                  <p className="text-sm font-medium text-slate-800">{item.title}</p>
-                  <p className="text-xs text-slate-500">{item.type}</p>
-                </div>
-                <div className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">
-                  {item.date}
-                </div>
+            <div className="flex items-center justify-between p-4 rounded-lg border border-slate-100">
+              <div>
+                <p className="text-sm font-medium text-slate-800">Math Assignment 4</p>
+                <p className="text-xs text-slate-500">Homework</p>
               </div>
-            ))}
+              <div className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                Tomorrow
+              </div>
+            </div>
+
+            <Link
+              to="/exam/math-101"
+              className="flex items-center justify-between p-4 rounded-lg border border-blue-100 bg-blue-50/50 hover:bg-blue-50 transition-colors group"
+            >
+              <div>
+                <p className="text-sm font-medium text-blue-900">Mathematics Mid-term</p>
+                <p className="text-xs text-blue-600 font-semibold">Live Exam • 60 mins</p>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
+                <span>Start Now</span>
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            <div className="flex items-center justify-between p-4 rounded-lg border border-slate-100 opacity-60">
+              <div>
+                <p className="text-sm font-medium text-slate-800">Physics Mid-term</p>
+                <p className="text-xs text-slate-500">Exam</p>
+              </div>
+              <div className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">
+                Fri, Apr 18
+              </div>
+            </div>
           </div>
         </div>
       </div>
