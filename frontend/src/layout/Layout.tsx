@@ -61,16 +61,7 @@ export const Layout = () => {
     }
   };
 
-  if (role === 'parent') {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        <main className="p-4 md:p-8 max-w-7xl mx-auto">
-          <Outlet />
-        </main>
-        <Chatbot />
-      </div>
-    );
-  }
+  const isExamPage = location.pathname.startsWith('/exam/');
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
@@ -82,17 +73,19 @@ export const Layout = () => {
         />
       )}
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      {role !== 'parent' && (
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      )}
 
       <div className="flex-1 flex flex-col min-w-0">
         <Header
           title={getTitle(location.pathname)}
           onMenuClick={() => setIsSidebarOpen(true)}
         />
-        <main className="p-4 md:p-8">
+        <main className={`p-4 md:p-8 ${role === 'parent' ? 'max-w-7xl mx-auto w-full' : ''}`}>
           <Outlet />
         </main>
-        <Chatbot />
+        {!isExamPage && <Chatbot />}
       </div>
     </div>
   );

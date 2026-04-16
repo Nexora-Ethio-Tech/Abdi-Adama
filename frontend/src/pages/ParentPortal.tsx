@@ -1,10 +1,8 @@
 
-import { Calendar, BookOpen, Award, LogOut, User, History, Megaphone } from 'lucide-react';
+import { Calendar, BookOpen, Award, User, History, Megaphone } from 'lucide-react';
 import { useState } from 'react';
-import { useUser } from '../context/UserContext';
 
 export const ParentPortal = () => {
-  const { setRole } = useUser();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
@@ -221,99 +219,99 @@ export const ParentPortal = () => {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* School Notices */}
-      <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-md">
-              <Megaphone size={28} />
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Hero Welcome Section */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 rounded-[2rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-slate-700/50">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-widest">
+              Parent Portal
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight">Hello, Mr. Bikila</h2>
+            <p className="text-slate-300 text-lg max-w-md">Stay connected with your children's educational journey and academic milestones.</p>
+          </div>
+          <div className="flex items-center gap-6 bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10">
+            <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg rotate-3">
+              <User size={32} />
             </div>
             <div>
-              <h3 className="text-xl font-bold">Important School Notices</h3>
-              <p className="text-blue-100 text-sm">Stay updated with latest announcements.</p>
-            </div>
-          </div>
-          <div className="flex -space-x-3 overflow-hidden">
-            <div className="inline-block h-8 w-8 rounded-full ring-2 ring-blue-600 bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold">
-              +{notices.length}
+              <p className="text-sm font-bold text-white">Primary Account</p>
+              <p className="text-xs text-blue-300">Guardian Status: Verified</p>
             </div>
           </div>
         </div>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {notices.map(notice => (
-            <div key={notice.id} className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
-              <div className="flex items-center justify-between mb-2">
-                <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest ${
-                  notice.priority === 'High' ? 'bg-rose-500 text-white' : 'bg-blue-400 text-white'
-                }`}>
-                  {notice.priority}
-                </span>
-                <span className="text-[10px] text-blue-100">{notice.time}</span>
-              </div>
-              <h4 className="font-bold text-sm mb-1">{notice.title}</h4>
-              <p className="text-xs text-blue-50/80 line-clamp-2">{notice.content}</p>
-            </div>
-          ))}
-        </div>
-        <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -mr-48 -mt-48" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] -ml-32 -mb-32" />
       </div>
 
-      <div className="bg-white dark:bg-slate-900 p-4 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6 transition-colors duration-300">
-        <div className="text-center md:text-left">
-          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100">Hello, Mr. Bikila</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Monitoring your children's academic progress.</p>
+      {/* School Notices */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 px-2">
+          <Megaphone className="text-blue-600 dark:text-blue-400" size={20} />
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">School Announcements</h3>
         </div>
-        <div className="flex items-center gap-4 w-full md:w-auto justify-center">
-          <div className="flex items-center gap-3 pr-4 md:pr-6 border-r dark:border-slate-800">
-            <div className="text-right hidden md:block">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Mr. Bikila</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">Parent</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {notices.map(notice => (
+            <div key={notice.id} className="group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                  notice.priority === 'High'
+                  ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+                  : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                }`}>
+                  {notice.priority} Priority
+                </span>
+                <span className="text-xs font-medium text-slate-400">{notice.time}</span>
+              </div>
+              <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 transition-colors">{notice.title}</h4>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{notice.content}</p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400">
-              <User size={24} />
-            </div>
-          </div>
-          <button
-            onClick={() => setRole('school-admin')}
-            className="flex items-center gap-2 px-3 md:px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
-          >
-            <LogOut size={20} />
-            <span className="font-medium text-sm md:text-base">Logout</span>
-          </button>
+          ))}
         </div>
       </div>
 
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">My Children</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex items-center justify-between px-2">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">My Children</h3>
+          <div className="h-px flex-1 bg-slate-100 dark:bg-slate-800 mx-6 hidden md:block" />
+          <span className="text-sm font-medium text-slate-500">{children.length} Enrolled</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {children.map((child, i) => (
-            <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
-                  {child.name.charAt(0)}
+            <div key={i} className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+              <div className="relative bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div className="flex items-center gap-5 mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-2xl shadow-inner">
+                    {child.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-800 dark:text-slate-100">{child.name}</h4>
+                    <p className="text-sm font-medium text-slate-400 uppercase tracking-tighter">Grade {child.grade}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 dark:text-slate-100">{child.name}</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Grade {child.grade}</p>
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Attendance</p>
+                    <p className="text-lg font-bold text-emerald-600">{child.attendance}</p>
+                  </div>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Performance</p>
+                    <p className="text-lg font-bold text-blue-600">{child.performance}</p>
+                  </div>
                 </div>
+
+                <button
+                  onClick={() => setSelectedChild(child)}
+                  className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-lg shadow-slate-200 dark:shadow-blue-900/20"
+                >
+                  View Academic Profile
+                </button>
               </div>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Attendance</span>
-                  <span className="font-medium text-emerald-600">{child.attendance}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Performance</span>
-                  <span className="font-medium text-blue-600">{child.performance}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedChild(child)}
-                className="w-full mt-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors border border-blue-100 dark:border-blue-900/50"
-              >
-                View Full Report
-              </button>
             </div>
           ))}
         </div>

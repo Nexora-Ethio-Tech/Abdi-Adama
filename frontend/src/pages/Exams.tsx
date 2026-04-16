@@ -11,7 +11,9 @@ import {
   Filter,
   Trash2,
   Save,
-  X
+  X,
+  FileText,
+  Upload
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { mockExams } from '../data/examData';
@@ -22,6 +24,7 @@ const Exams = () => {
   const navigate = useNavigate();
   const [exams, setExams] = useState<Exam[]>(mockExams);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [creationType, setCreationType] = useState<'Exam' | 'Assignment'>('Exam');
   const [filterCategory, setFilterCategory] = useState<ExamCategory | 'All'>('All');
 
   // School Admin and Teacher views
@@ -38,31 +41,44 @@ const Exams = () => {
   });
 
   if (showCreateForm && isTeacher) {
-    return <ExamCreator onCancel={() => setShowCreateForm(false)} onSave={(newExam) => {
-      setExams([...exams, newExam]);
-      setShowCreateForm(false);
-    }} />;
+    return <ExamCreator
+      type={creationType}
+      onCancel={() => setShowCreateForm(false)}
+      onSave={(newExam) => {
+        setExams([...exams, newExam]);
+        setShowCreateForm(false);
+      }}
+    />;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Exams & Assessments</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Exams & Assignments</h1>
           <p className="text-slate-500 dark:text-slate-400">
-            {isSchoolAdmin && "Monitor and manage school-wide examinations."}
-            {isTeacher && "Manage your course examinations and student results."}
-            {isStudent && "View and attempt your active examinations."}
+            {isSchoolAdmin && "Monitor and manage school-wide examinations and coursework."}
+            {isTeacher && "Manage your course examinations, assignments, and student results."}
+            {isStudent && "View and attempt your active examinations and assignments."}
           </p>
         </div>
         {isTeacher && (
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-          >
-            <Plus size={20} />
-            Create Exam
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => { setCreationType('Assignment'); setShowCreateForm(true); }}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <FileText size={20} />
+              New Assignment
+            </button>
+            <button
+              onClick={() => { setCreationType('Exam'); setShowCreateForm(true); }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <Plus size={20} />
+              New Exam
+            </button>
+          </div>
         )}
       </div>
 
@@ -76,7 +92,7 @@ const Exams = () => {
             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
           }`}
         >
-          All Exams
+          All Items
         </button>
         {categories.map(cat => (
           <button
@@ -172,13 +188,19 @@ const ExamCard = ({ exam, role, onStart }: { exam: Exam, role: string, onStart: 
   );
 };
 
-const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam: Exam) => void }) => {
+const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', onCancel: () => void, onSave: (exam: Exam) => void }) => {
   const [examData, setExamData] = useState<Partial<Exam>>({
     title: '',
-    category: 'Quiz',
+    category: type === 'Assignment' ? 'Assignment' : 'Quiz',
     durationMinutes: 60,
     courseName: '',
     questions: []
+  });
+
+  const [assignmentDetails, setAssignmentDetails] = useState({
+    description: '',
+    dueDate: '',
+    fileName: ''
   });
 
   const [questions, setQuestions] = useState<Question[]>([
@@ -226,14 +248,14 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
   const handleSave = () => {
     const newExam: Exam = {
       id: Date.now().toString(),
-      title: examData.title || 'Untitled Exam',
+      title: examData.title || `Untitled ${type}`,
       courseId: 'mock-course',
       courseName: examData.courseName || 'General Course',
       teacherId: 't1',
       teacherName: 'Current Teacher',
       category: examData.category as ExamCategory,
       durationMinutes: examData.durationMinutes || 60,
-      questions: questions,
+      questions: type === 'Exam' ? questions : [],
       status: 'available'
     };
     onSave(newExam);
@@ -246,7 +268,7 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
           <button onClick={onCancel} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500">
             <X size={24} />
           </button>
-          <h1 className="text-2xl font-bold dark:text-white">Create New Examination</h1>
+          <h1 className="text-2xl font-bold dark:text-white">Create New {type}</h1>
         </div>
         <div className="flex gap-3">
           <button onClick={onCancel} className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
@@ -254,7 +276,7 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
           </button>
           <button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
             <Save size={20} />
-            Publish Exam
+            Publish {type}
           </button>
         </div>
       </div>
@@ -307,10 +329,44 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
         </div>
       </div>
 
-      {/* Questions Section */}
+      {/* Type-Specific Form */}
+      {type === 'Assignment' ? (
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Assignment Description</label>
+            <textarea
+              rows={4}
+              placeholder="Provide clear instructions for the assignment..."
+              className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white"
+              value={assignmentDetails.description}
+              onChange={e => setAssignmentDetails({...assignmentDetails, description: e.target.value})}
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Due Date</label>
+              <input
+                type="date"
+                className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white"
+                value={assignmentDetails.dueDate}
+                onChange={e => setAssignmentDetails({...assignmentDetails, dueDate: e.target.value})}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Supporting Document (Max 2MB)</label>
+              <div className="flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:border-blue-500 transition-colors group cursor-pointer">
+                <div className="text-center">
+                  <Upload className="mx-auto text-slate-400 group-hover:text-blue-500 mb-2" size={24} />
+                  <p className="text-xs text-slate-500">{assignmentDetails.fileName || 'Click to upload PDF or DOCX'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold dark:text-white">Questions</h2>
+          <h2 className="text-lg font-bold dark:text-white">Exam Questions</h2>
           <button
             onClick={addQuestion}
             className="text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
@@ -373,6 +429,7 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };
