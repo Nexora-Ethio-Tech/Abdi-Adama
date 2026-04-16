@@ -1,12 +1,50 @@
 
-import { Plus, Search, Filter, MoreVertical, Download, ChevronRight, History } from 'lucide-react';
+import { Plus, Search, Filter, MoreVertical, Download, ChevronRight, History, UserPlus, List } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { StudentRegistration } from '../components/StudentRegistration';
+import { useUser } from '../context/UserContext';
 
 export const Students = () => {
+  const { role } = useUser();
+  const [activeTab, setActiveTab] = useState<'list' | 'registration'>('list');
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const grades = Array.from(new Set(mockStudents.map(s => s.grade))).sort();
+
+  const isAdmin = role === 'school-admin' || role === 'super-admin';
+
+  if (activeTab === 'registration' && isAdmin) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 border-b border-slate-200 dark:border-slate-800">
+          <button
+            onClick={() => setActiveTab('list')}
+            className={`px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
+              activeTab === 'list'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <List size={18} />
+            Student List
+          </button>
+          <button
+            onClick={() => setActiveTab('registration')}
+            className={`px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
+              activeTab === 'registration'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <UserPlus size={18} />
+            Registration
+          </button>
+        </div>
+        <StudentRegistration />
+      </div>
+    );
+  }
 
   if (selectedGrade) {
     const filteredStudents = mockStudents.filter(s => s.grade === selectedGrade);
@@ -79,9 +117,39 @@ export const Students = () => {
 
   return (
     <div className="space-y-6">
+      {isAdmin && (
+        <div className="flex items-center gap-4 border-b border-slate-200 dark:border-slate-800">
+          <button
+            onClick={() => setActiveTab('list')}
+            className={`px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
+              activeTab === 'list'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <List size={18} />
+            Student List
+          </button>
+          <button
+            onClick={() => setActiveTab('registration')}
+            className={`px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
+              activeTab === 'registration'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            <UserPlus size={18} />
+            Registration
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <button className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm md:text-base">
+          <button
+            onClick={() => isAdmin && setActiveTab('registration')}
+            className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm md:text-base"
+          >
             <Plus size={20} />
             <span>Add Student</span>
           </button>
