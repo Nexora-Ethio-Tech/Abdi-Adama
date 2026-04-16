@@ -1,4 +1,6 @@
 
+export type ExamCategory = 'Mid-term' | 'Final' | 'Quiz' | 'Assignment';
+
 export interface Option {
   id: string;
   text: string;
@@ -13,8 +15,14 @@ export interface Question {
 export interface Exam {
   id: string;
   title: string;
+  courseId: string;
+  courseName: string;
+  teacherId: string;
+  teacherName: string;
+  category: ExamCategory;
   durationMinutes: number;
   questions: Question[];
+  status: 'available' | 'completed' | 'draft';
 }
 
 export interface AnswerPayload {
@@ -32,60 +40,54 @@ export interface ViolationEvent {
   timestamp: string;
 }
 
-export const mockExam: Exam = {
-  id: 'math-101',
-  title: 'Mathematics Mid-term Exam',
-  durationMinutes: 60,
-  questions: [
-    {
-      id: 'q1',
-      text: 'What is the square root of 144?',
-      options: [
-        { id: 'a', text: '10' },
-        { id: 'b', text: '12' },
-        { id: 'c', text: '14' },
-        { id: 'd', text: '16' },
-      ],
-    },
-    {
-      id: 'q2',
-      text: 'Solve for x: 2x + 5 = 15',
-      options: [
-        { id: 'a', text: 'x = 5' },
-        { id: 'b', text: 'x = 10' },
-        { id: 'c', text: 'x = 2' },
-        { id: 'd', text: 'x = 7.5' },
-      ],
-    },
-    {
-      id: 'q3',
-      text: 'Which of these is a prime number?',
-      options: [
-        { id: 'a', text: '9' },
-        { id: 'b', text: '15' },
-        { id: 'c', text: '17' },
-        { id: 'd', text: '21' },
-      ],
-    },
-    {
-      id: 'q4',
-      text: 'What is the value of Pi (to two decimal places)?',
-      options: [
-        { id: 'a', text: '3.12' },
-        { id: 'b', text: '3.14' },
-        { id: 'c', text: '3.16' },
-        { id: 'd', text: '3.18' },
-      ],
-    },
-    {
-      id: 'q5',
-      text: 'A triangle with all sides of equal length is called:',
-      options: [
-        { id: 'a', text: 'Isosceles' },
-        { id: 'b', text: 'Scalene' },
-        { id: 'c', text: 'Equilateral' },
-        { id: 'd', text: 'Right-angled' },
-      ],
-    },
-  ],
-};
+export const mockExams: Exam[] = [
+  {
+    id: 'math-mid-2024',
+    title: 'Mathematics Mid-term Exam',
+    courseId: 'math-101',
+    courseName: 'Advanced Calculus',
+    teacherId: 't1',
+    teacherName: 'Dr. Smith',
+    category: 'Mid-term',
+    durationMinutes: 60,
+    status: 'available',
+    questions: [
+      {
+        id: 'q1',
+        text: 'What is the square root of 144?',
+        options: [
+          { id: 'a', text: '10' },
+          { id: 'b', text: '12' },
+          { id: 'c', text: '14' },
+          { id: 'd', text: '16' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'phys-final-2024',
+    title: 'Physics Final Assessment',
+    courseId: 'phys-202',
+    courseName: 'Quantum Mechanics',
+    teacherId: 't2',
+    teacherName: 'Prof. Einstein',
+    category: 'Final',
+    durationMinutes: 120,
+    status: 'available',
+    questions: [],
+  },
+  {
+    id: 'chem-quiz-1',
+    title: 'Organic Chemistry Quiz #1',
+    courseId: 'chem-301',
+    courseName: 'Organic Chemistry',
+    teacherId: 't1',
+    teacherName: 'Dr. Smith',
+    category: 'Quiz',
+    durationMinutes: 30,
+    status: 'available',
+    questions: [],
+  }
+];
+
+export const mockExam = mockExams[0];
