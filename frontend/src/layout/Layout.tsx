@@ -2,6 +2,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { Header } from '../components/Header';
+import { Chatbot } from '../components/Chatbot';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 
@@ -66,6 +67,7 @@ export const Layout = () => {
         <main className="p-4 md:p-8 max-w-7xl mx-auto">
           <Outlet />
         </main>
+        <Chatbot />
       </div>
     );
   }
@@ -90,6 +92,7 @@ export const Layout = () => {
         <main className="p-4 md:p-8">
           <Outlet />
         </main>
+        <Chatbot />
       </div>
     </div>
   );

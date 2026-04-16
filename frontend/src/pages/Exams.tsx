@@ -182,14 +182,15 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
   });
 
   const [questions, setQuestions] = useState<Question[]>([
-    { id: '1', text: '', options: [{ id: 'a', text: '' }, { id: 'b', text: '' }] }
+    { id: '1', text: '', options: [{ id: 'a', text: '' }, { id: 'b', text: '' }], correctOptionId: 'a' }
   ]);
 
   const addQuestion = () => {
     setQuestions([...questions, {
       id: Date.now().toString(),
       text: '',
-      options: [{ id: 'a', text: '' }, { id: 'b', text: '' }]
+      options: [{ id: 'a', text: '' }, { id: 'b', text: '' }],
+      correctOptionId: 'a'
     }]);
   };
 
@@ -213,6 +214,12 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
   const updateOptionText = (qIdx: number, oIdx: number, text: string) => {
     const newQuestions = [...questions];
     newQuestions[qIdx].options[oIdx].text = text;
+    setQuestions(newQuestions);
+  };
+
+  const setCorrectOption = (qIdx: number, oId: string) => {
+    const newQuestions = [...questions];
+    newQuestions[qIdx].correctOptionId = oId;
     setQuestions(newQuestions);
   };
 
@@ -330,6 +337,14 @@ const ExamCreator = ({ onCancel, onSave }: { onCancel: () => void, onSave: (exam
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {q.options.map((opt, oIdx) => (
                     <div key={opt.id} className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name={`correct-${q.id}`}
+                        checked={q.correctOptionId === opt.id}
+                        onChange={() => setCorrectOption(qIdx, opt.id)}
+                        className="w-4 h-4 text-blue-600"
+                        title="Mark as correct"
+                      />
                       <span className="text-slate-400 font-medium uppercase">{opt.id}.</span>
                       <input
                         type="text"
