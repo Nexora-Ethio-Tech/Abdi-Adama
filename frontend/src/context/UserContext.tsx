@@ -10,8 +10,8 @@ interface Branch {
 }
 
 interface UserContextType {
-  role: UserRole;
-  setRole: (role: UserRole) => void;
+  role: UserRole | null;
+  setRole: (role: UserRole | null) => void;
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
@@ -29,7 +29,7 @@ const mockBranches: Branch[] = [
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [role, setRole] = useState<UserRole>('school-admin');
+  const [role, setRole] = useState<UserRole | null>(null);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
 

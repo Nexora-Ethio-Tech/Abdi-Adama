@@ -33,7 +33,7 @@ export const Students = () => {
             Registration
           </button>
         </div>
-        <StudentRegistration />
+        <StudentRegistration isAdminView={true} />
       </div>
     );
   }
