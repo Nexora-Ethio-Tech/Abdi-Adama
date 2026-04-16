@@ -55,7 +55,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
-          { icon: ClipboardList, label: 'Exams', path: '/exams' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'teacher':
@@ -64,7 +64,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
-          { icon: ClipboardList, label: 'Exams', path: '/exams' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'student':
         return [
@@ -72,14 +72,14 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'My Courses', path: '/courses' },
           { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
-          { icon: ClipboardList, label: 'Exams', path: '/exams' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'parent':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
-          { icon: ClipboardList, label: 'Exams', path: '/exams' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'finance-clerk':
         return [

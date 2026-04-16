@@ -1,11 +1,14 @@
 
-import { BookOpen, Users, Calendar, Clock, ArrowRight, Award } from 'lucide-react';
+import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { mockClasses } from '../data/mockData';
+import { mockExams } from '../data/examData';
 
 export const TeacherPortal = () => {
+  const pendingAssignments = mockExams.filter(e => e.category === 'Assignment').length;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-700">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-3xl font-bold mb-2">Welcome back, Ato Solomon!</h2>
@@ -59,11 +62,11 @@ export const TeacherPortal = () => {
 
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-            <Clock size={24} />
+            <ClipboardList size={24} />
           </div>
-          <p className="text-slate-500 text-sm font-medium">Weekly Hours</p>
-          <h3 className="text-2xl font-bold text-slate-800">18</h3>
-          <p className="text-xs text-slate-400 mt-1">Target: 22 hours</p>
+          <p className="text-slate-500 text-sm font-medium">Active Assignments</p>
+          <h3 className="text-2xl font-bold text-slate-800">{pendingAssignments}</h3>
+          <p className="text-xs text-slate-400 mt-1">Pending student submissions</p>
         </div>
       </div>
 
