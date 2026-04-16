@@ -20,6 +20,7 @@ import { Library } from './pages/Library';
 import { Calendar } from './pages/Calendar';
 import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
+import { ExamSession } from './pages/ExamSession';
 import { useUser } from './context/UserContext';
 
 const Placeholder = ({ title, description }: { title: string; description?: string }) => (
@@ -111,6 +112,7 @@ function App() {
           <Route path="finance" element={<Finance />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="exam/:examId" element={<ExamSession />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
