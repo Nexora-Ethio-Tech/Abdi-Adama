@@ -43,7 +43,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
-          { icon: ClipboardList, label: 'Exams', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'school-admin':
