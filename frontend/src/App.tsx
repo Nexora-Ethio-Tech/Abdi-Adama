@@ -21,6 +21,7 @@ import { Calendar } from './pages/Calendar';
 import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';
+import Exams from './pages/Exams';
 import { useUser } from './context/UserContext';
 
 const Placeholder = ({ title, description }: { title: string; description?: string }) => (
@@ -111,6 +112,7 @@ function App() {
 
           <Route path="finance" element={<Finance />} />
           <Route path="calendar" element={<Calendar />} />
+          <Route path="exams" element={<Exams />} />
           <Route path="settings" element={<Settings />} />
           <Route path="exam/:examId" element={<ExamSession />} />
 
