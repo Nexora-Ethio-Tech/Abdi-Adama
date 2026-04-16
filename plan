@@ -179,6 +179,30 @@ Scale the platform with advanced academic and predictive features.
 - Early-warning analytics baseline
 - Expanded multi-campus governance tooling
 
+## Phase 5: Exams and Grading (Assessment Integrity)
+
+### Goal
+Deliver secure virtual assessments with role-controlled exam operations and reliable submission handling at scale.
+
+### Virtual Assessment and Integrity Engine
+
+- Teacher Module: Subject-specific question bank supporting multiple-choice (MCQ) formatting and exam batching (e.g., "G12 4th Model").
+- Admin Command Center: Centralized control for exam scheduling, duration management, and invigilator assignment.
+- Student Secure Environment:
+  - Tab-Lock Technology: Detects and logs any attempt to switch tabs or minimize the browser.
+  - Dynamic Navigation: Allows students to move freely between questions while providing a collapsible live countdown.
+  - Auto-Submit Protocol: Ensures exams are closed and saved precisely when time expires, or upon manual submission.
+  - Persistence: Local-state saving to protect student progress against local connectivity issues.
+
+### Technical Note for Nexora
+
+Since the platform is hosted on HahuCloud, the Submit_Exam API endpoint must be optimized for burst traffic. When many students submit at the same time, the system must avoid duplicate writes and DB overload.
+
+- Optimization requirement:
+  - On "Finish", immediately show a "Submitting..." loader.
+  - Disable the submit button until the API responds.
+  - Enforce idempotent submit handling server-side to prevent repeated inserts from multi-click attempts.
+
 ## 4. Cross-Phase Technical Rules
 
 - Every domain record must include Branch ID where branch scoping is relevant.
@@ -192,7 +216,7 @@ Scale the platform with advanced academic and predictive features.
 
 - Monthly recurring student fee engine.
 - Replacing the bank product currently handling monthly fees.
-- Non-critical experimental integrations not listed in the four phases.
+- Non-critical experimental integrations not listed in the five phases.
 
 ## 6. Immediate Execution Sequence
 
