@@ -20,22 +20,14 @@ export const Students = () => {
         <div className="flex items-center gap-4 border-b border-slate-200 dark:border-slate-800">
           <button
             onClick={() => setActiveTab('list')}
-            className={`px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
-              activeTab === 'list'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
+            className="px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
           >
             <List size={18} />
             Student List
           </button>
           <button
             onClick={() => setActiveTab('registration')}
-            className={`px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
-              activeTab === 'registration'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
+            className="px-4 py-2 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 border-blue-600 text-blue-600"
           >
             <UserPlus size={18} />
             Registration
