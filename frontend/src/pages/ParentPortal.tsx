@@ -1,5 +1,5 @@
 
-import { Calendar, BookOpen, Award, LogOut, User, History } from 'lucide-react';
+import { Calendar, BookOpen, Award, LogOut, User, History, Megaphone } from 'lucide-react';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 
@@ -20,6 +20,11 @@ export const ParentPortal = () => {
       { name: 'English', teacher: 'W/ro Aster', grades: { mid: '29/30', quiz: '10/10', assignment: '10/10', final: '48/50', total: '97%' } },
     ]
   };
+
+  const [notices] = useState([
+    { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago' },
+    { id: 2, title: 'School Bus Maintenance', content: 'Route B buses will be undergoing maintenance this Friday. Please expect minor delays.', priority: 'Medium', time: 'Yesterday' }
+  ]);
 
   const children = [
     {
@@ -217,6 +222,43 @@ export const ParentPortal = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {/* School Notices */}
+      <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-md">
+              <Megaphone size={28} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Important School Notices</h3>
+              <p className="text-blue-100 text-sm">Stay updated with latest announcements.</p>
+            </div>
+          </div>
+          <div className="flex -space-x-3 overflow-hidden">
+            <div className="inline-block h-8 w-8 rounded-full ring-2 ring-blue-600 bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold">
+              +{notices.length}
+            </div>
+          </div>
+        </div>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {notices.map(notice => (
+            <div key={notice.id} className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
+              <div className="flex items-center justify-between mb-2">
+                <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest ${
+                  notice.priority === 'High' ? 'bg-rose-500 text-white' : 'bg-blue-400 text-white'
+                }`}>
+                  {notice.priority}
+                </span>
+                <span className="text-[10px] text-blue-100">{notice.time}</span>
+              </div>
+              <h4 className="font-bold text-sm mb-1">{notice.title}</h4>
+              <p className="text-xs text-blue-50/80 line-clamp-2">{notice.content}</p>
+            </div>
+          ))}
+        </div>
+        <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+      </div>
+
       <div className="bg-white dark:bg-slate-900 p-4 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6 transition-colors duration-300">
         <div className="text-center md:text-left">
           <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100">Hello, Mr. Bikila</h2>

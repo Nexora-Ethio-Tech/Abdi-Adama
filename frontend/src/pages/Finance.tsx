@@ -1,14 +1,23 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X } from 'lucide-react';
-import { mockFinances } from '../data/mockData';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell } from 'lucide-react';
+import { mockFinances, mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 
 export const Finance = () => {
   const { role } = useUser();
   const isAdmin = role === 'super-admin' || role === 'school-admin';
-  const isFinance = role === 'finance-clerk' || isAdmin;
+  const isClerk = role === 'finance-clerk';
+  const isFinance = isClerk || isAdmin;
   const [showForm, setShowForm] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<Record<string, boolean>>({
+    '1': true,
+    '2': false,
+  });
+
+  const togglePayment = (id: string) => {
+    setPaymentStatus(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   return (
     <div className="space-y-8">
@@ -79,74 +88,138 @@ export const Finance = () => {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm min-w-[700px]">
-          <thead className="bg-slate-50 border-b border-slate-100">
-            <tr>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
-                {isAdmin ? 'Category' : 'TX ID'}
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
-                {isAdmin ? 'Description' : 'Student'}
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
-                {isAdmin ? 'Details' : 'Type'}
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {isAdmin ? (
-              mockFinances.summaries.map((summary) => (
-                <tr key={summary.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        summary.category === 'Student Fees' ? 'bg-blue-50 text-blue-600' :
-                        summary.category === 'Staff Payment' ? 'bg-purple-50 text-purple-600' :
-                        'bg-amber-50 text-amber-600'
+          {isClerk ? (
+            <table className="w-full text-left text-sm min-w-[800px]">
+              <thead className="bg-slate-50 border-b border-slate-100">
+                <tr>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Student</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-center">Payment Status</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-center">Alerts</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {mockStudents.map((student) => {
+                  const isPaid = paymentStatus[student.id];
+                  return (
+                    <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-xs">
+                            {student.name[0]}
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-800">{student.name}</p>
+                            <p className="text-[10px] text-slate-500">Grade {student.grade}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => togglePayment(student.id)}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                              isPaid
+                                ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                            }`}
+                          >
+                            {isPaid ? <Check size={14} /> : <div className="w-3.5" />}
+                            <span>{isPaid ? 'PAID' : 'PENDING'}</span>
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {!isPaid && (
+                          <div className="flex items-center justify-center gap-1.5 text-rose-500 font-bold text-[10px] animate-pulse">
+                            <AlertCircle size={14} />
+                            <span>OVERDUE + 150 ETB Penalty</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {!isPaid && (
+                          <button className="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 ml-auto">
+                            <Bell size={14} />
+                            Notify Parent
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <table className="w-full text-left text-sm min-w-[700px]">
+              <thead className="bg-slate-50 border-b border-slate-100">
+                <tr>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
+                    {isAdmin ? 'Category' : 'TX ID'}
+                  </th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
+                    {isAdmin ? 'Description' : 'Student'}
+                  </th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
+                    {isAdmin ? 'Details' : 'Type'}
+                  </th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {isAdmin ? (
+                  mockFinances.summaries.map((summary) => (
+                    <tr key={summary.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${
+                            summary.category === 'Student Fees' ? 'bg-blue-50 text-blue-600' :
+                            summary.category === 'Staff Payment' ? 'bg-purple-50 text-purple-600' :
+                            'bg-amber-50 text-amber-600'
+                          }`}>
+                            {summary.category === 'Student Fees' && <Users size={16} />}
+                            {summary.category === 'Staff Payment' && <Briefcase size={16} />}
+                            {summary.category === 'Item Purchase' && <ShoppingCart size={16} />}
+                          </div>
+                          <span className="font-medium text-slate-800">{summary.category}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600">{summary.description}</td>
+                      <td className="px-6 py-4">
+                        <span className="text-xs text-slate-500">
+                          {summary.category === 'Student Fees' && `From ${summary.count} students`}
+                          {summary.category === 'Staff Payment' && `To ${summary.count} staff members`}
+                          {summary.category === 'Item Purchase' && `${summary.count} items bought`}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">{summary.date}</td>
+                      <td className={`px-6 py-4 text-right font-bold ${
+                        summary.type === 'Income' ? 'text-emerald-600' : 'text-rose-600'
                       }`}>
-                        {summary.category === 'Student Fees' && <Users size={16} />}
-                        {summary.category === 'Staff Payment' && <Briefcase size={16} />}
-                        {summary.category === 'Item Purchase' && <ShoppingCart size={16} />}
-                      </div>
-                      <span className="font-medium text-slate-800">{summary.category}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-slate-600">{summary.description}</td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs text-slate-500">
-                      {summary.category === 'Student Fees' && `From ${summary.count} students`}
-                      {summary.category === 'Staff Payment' && `To ${summary.count} staff members`}
-                      {summary.category === 'Item Purchase' && `${summary.count} items bought`}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-slate-500">{summary.date}</td>
-                  <td className={`px-6 py-4 text-right font-bold ${
-                    summary.type === 'Income' ? 'text-emerald-600' : 'text-rose-600'
-                  }`}>
-                    {summary.type === 'Expense' && '-'}
-                    {summary.amount.toLocaleString()} ETB
-                  </td>
-                </tr>
-              ))
-            ) : (
-              mockFinances.recentTransactions.map((tx) => (
-                <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-500">{tx.id}</td>
-                  <td className="px-6 py-4 font-medium text-slate-800">{tx.student}</td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                      {tx.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-slate-500">{tx.date}</td>
-                  <td className="px-6 py-4 text-right font-bold text-slate-800">{tx.amount.toLocaleString()} ETB</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                        {summary.type === 'Expense' && '-'}
+                        {summary.amount.toLocaleString()} ETB
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  mockFinances.recentTransactions.map((tx) => (
+                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4 font-mono text-slate-500">{tx.id}</td>
+                      <td className="px-6 py-4 font-medium text-slate-800">{tx.student}</td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                          {tx.type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">{tx.date}</td>
+                      <td className="px-6 py-4 text-right font-bold text-slate-800">{tx.amount.toLocaleString()} ETB</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

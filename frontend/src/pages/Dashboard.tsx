@@ -24,8 +24,8 @@ export const Dashboard = () => {
   const { role, gradesLocked, setGradesLocked } = useUser();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
   const [notices] = useState([
-    { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago' },
-    { id: 2, title: 'School Bus Maintenance', content: 'Route B buses will be undergoing maintenance this Friday. Please expect minor delays.', priority: 'Medium', time: 'Yesterday' }
+    { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago', expiresAt: '2024-06-30' },
+    { id: 2, title: 'School Bus Maintenance', content: 'Route B buses will be undergoing maintenance this Friday. Please expect minor delays.', priority: 'Medium', time: 'Yesterday', expiresAt: '2024-05-15' }
   ]);
 
   const isAdmin = role === 'super-admin' || role === 'school-admin';
@@ -156,7 +156,10 @@ export const Dashboard = () => {
                 }`}>
                   {notice.priority} Priority
                 </span>
-                <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+                  {notice.expiresAt && <span className="text-[10px] text-rose-400 italic font-medium">Expires: {notice.expiresAt}</span>}
+                </div>
               </div>
               <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{notice.title}</h4>
               <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -232,6 +235,10 @@ export const Dashboard = () => {
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Content</label>
                 <textarea required rows={4} placeholder="Write the details of the notice here..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Expiry Date</label>
+                <input type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
               <div className="pt-4">
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">

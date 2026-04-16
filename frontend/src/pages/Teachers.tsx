@@ -3,7 +3,11 @@ import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical, DoorOpen
 import { mockTeachers, mockSchedules } from '../data/mockData';
 import { useState } from 'react';
 
+import { useUser } from '../context/UserContext';
+
 export const Teachers = () => {
+  const { role } = useUser();
+  const isAdmin = role === 'school-admin';
   const [teachers, setTeachers] = useState(mockTeachers);
   const [viewingSchedule, setViewingSchedule] = useState<string | null>(null);
 
@@ -78,7 +82,7 @@ export const Teachers = () => {
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Teacher</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Subjects</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Schedule</th>
-              <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">In Class</th>
+              {!isAdmin && <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">In Class</th>}
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
               <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
             </tr>
@@ -115,19 +119,21 @@ export const Teachers = () => {
                     View Schedule
                   </button>
                 </td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => toggleInClass(teacher.id)}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                      teacher.isInClass
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-rose-100 text-rose-700'
-                    }`}
-                  >
-                    {teacher.isInClass ? <DoorOpen size={14} /> : <DoorClosed size={14} />}
-                    <span>{teacher.isInClass ? 'IN CLASS' : 'OUT'}</span>
-                  </button>
-                </td>
+                {!isAdmin && (
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => toggleInClass(teacher.id)}
+                      className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+                        teacher.isInClass
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-rose-100 text-rose-700'
+                      }`}
+                    >
+                      {teacher.isInClass ? <DoorOpen size={14} /> : <DoorClosed size={14} />}
+                      <span>{teacher.isInClass ? 'IN CLASS' : 'OUT'}</span>
+                    </button>
+                  </td>
+                )}
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2 text-emerald-600">
                     <ShieldCheck size={14} />

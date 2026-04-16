@@ -33,6 +33,9 @@ export const ScheduleBuilder = () => {
     { id: '1', label: 'Max Teacher Hours', value: '25 hrs/week' }
   ]);
 
+  const [startTime, setStartTime] = useState('08:00');
+  const [endTime, setEndTime] = useState('15:30');
+
   const addBreak = () => {
     setBreaks([...breaks, { id: Date.now().toString(), name: '', duration: '' }]);
   };
@@ -79,11 +82,21 @@ export const ScheduleBuilder = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Start Time</label>
-              <input type="time" className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue="08:00" />
+              <input
+                type="time"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">End Time</label>
-              <input type="time" className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue="15:30" />
+              <input
+                type="time"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
             </div>
           </div>
         </div>
@@ -179,6 +192,43 @@ export const ScheduleBuilder = () => {
           ))}
         </div>
       </div>
+
+      {/* Teacher Unavailability - Only shown when times are set */}
+      {startTime && endTime && (
+        <div className="p-6 bg-rose-50/30 rounded-2xl border border-rose-100 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-2 text-rose-600 font-bold text-sm uppercase tracking-wider">
+            <Users size={18} />
+            <span>Teacher Unavailability Constraints</span>
+          </div>
+          <p className="text-xs text-slate-500">Specify sessions where specific teachers are unavailable to teach.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-slate-800">Dr. Smith</span>
+                <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded uppercase">Restricted</span>
+              </div>
+              <div className="space-y-2">
+                {['Monday', 'Wednesday'].map(day => (
+                  <div key={day} className="flex items-center justify-between text-xs">
+                    <span className="text-slate-500">{day}</span>
+                    <div className="flex gap-1">
+                      {[1, 2, 3].map(s => (
+                        <button key={s} className={`w-6 h-6 rounded flex items-center justify-center font-bold ${s === 1 ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="w-full py-1.5 text-xs text-blue-600 font-bold hover:bg-blue-50 rounded-lg transition-colors border border-blue-100 border-dashed mt-2">
+                + Add Restriction
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Richer Constraints */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

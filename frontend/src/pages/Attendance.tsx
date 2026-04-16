@@ -2,8 +2,11 @@
 import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
+import { useUser } from '../context/UserContext';
 
 export const Attendance = () => {
+  const { role } = useUser();
+  const isAdmin = role === 'school-admin';
   const [selectedGrade, setSelectedGrade] = useState('10A');
   const [attendance, setAttendance] = useState<Record<string, 'present' | 'absent' | 'late'>>({});
 
@@ -23,6 +26,13 @@ export const Attendance = () => {
     });
     setAttendance(newAttendance);
   };
+
+  const gradeStats = [
+    { grade: '10A', enrollment: 24, present: 22, percentage: '91.6%' },
+    { grade: '9B', enrollment: 30, present: 28, percentage: '93.3%' },
+    { grade: '11C', enrollment: 18, present: 15, percentage: '83.3%' },
+    { grade: '12A', enrollment: 25, present: 25, percentage: '100%' },
+  ];
 
   return (
     <div className="space-y-6">
@@ -66,92 +76,131 @@ export const Attendance = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => markAll('present')}
-            className="text-[10px] font-bold text-emerald-600 border border-emerald-100 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors uppercase tracking-wider"
-          >
-            Mark All Present
-          </button>
-          <button
-            onClick={() => markAll('absent')}
-            className="text-[10px] font-bold text-rose-600 border border-rose-100 bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition-colors uppercase tracking-wider"
-          >
-            Mark All Absent
-          </button>
-        </div>
+        {!isAdmin && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => markAll('present')}
+              className="text-[10px] font-bold text-emerald-600 border border-emerald-100 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors uppercase tracking-wider"
+            >
+              Mark All Present
+            </button>
+            <button
+              onClick={() => markAll('absent')}
+              className="text-[10px] font-bold text-rose-600 border border-rose-100 bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition-colors uppercase tracking-wider"
+            >
+              Mark All Absent
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors duration-300">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-              <tr>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Student Name</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Last 30 Days</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {students.map((student) => (
-                <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold text-xs">
-                        {student.name[0]}
-                      </div>
-                      <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{student.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => toggleStatus(student.id, 'present')}
-                        className={`p-2 rounded-lg border transition-all ${
-                          attendance[student.id] === 'present'
-                            ? 'bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-100'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:border-emerald-500 hover:text-emerald-500'
-                        }`}
-                        title="Present"
-                      >
-                        <CheckCircle size={20} />
-                      </button>
-                      <button
-                        onClick={() => toggleStatus(student.id, 'absent')}
-                        className={`p-2 rounded-lg border transition-all ${
-                          attendance[student.id] === 'absent'
-                            ? 'bg-rose-600 border-rose-600 text-white shadow-md shadow-rose-100'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:border-rose-500 hover:text-rose-500'
-                        }`}
-                        title="Absent"
-                      >
-                        <XCircle size={20} />
-                      </button>
-                      <button
-                        onClick={() => toggleStatus(student.id, 'late')}
-                        className={`p-2 rounded-lg border transition-all ${
-                          attendance[student.id] === 'late'
-                            ? 'bg-amber-500 border-amber-500 text-white shadow-md shadow-amber-100'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:border-amber-500 hover:text-amber-500'
-                        }`}
-                        title="Late"
-                      >
-                        <Clock size={20} />
-                      </button>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <span className="text-sm font-bold text-slate-700 dark:text-slate-300">96%</span>
-                      <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: '96%' }} />
-                      </div>
-                    </div>
-                  </td>
+          {isAdmin ? (
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Grade/Section</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Enrollment</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Present Today</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Attendance Rate</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {gradeStats.map((stat, i) => (
+                  <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold text-xs">
+                          {stat.grade}
+                        </div>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100">Grade {stat.grade}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center text-sm font-medium text-slate-600 dark:text-slate-400">{stat.enrollment} Students</td>
+                    <td className="px-6 py-4 text-center text-sm font-medium text-slate-600 dark:text-slate-400">{stat.present} Students</td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{stat.percentage}</span>
+                        <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500 rounded-full" style={{ width: stat.percentage }} />
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Student Name</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Last 30 Days</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {students.map((student) => (
+                  <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold text-xs">
+                          {student.name[0]}
+                        </div>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{student.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => toggleStatus(student.id, 'present')}
+                          className={`p-2 rounded-lg border transition-all ${
+                            attendance[student.id] === 'present'
+                              ? 'bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-100'
+                              : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:border-emerald-500 hover:text-emerald-500'
+                          }`}
+                          title="Present"
+                        >
+                          <CheckCircle size={20} />
+                        </button>
+                        <button
+                          onClick={() => toggleStatus(student.id, 'absent')}
+                          className={`p-2 rounded-lg border transition-all ${
+                            attendance[student.id] === 'absent'
+                              ? 'bg-rose-600 border-rose-600 text-white shadow-md shadow-rose-100'
+                              : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:border-rose-500 hover:text-rose-500'
+                          }`}
+                          title="Absent"
+                        >
+                          <XCircle size={20} />
+                        </button>
+                        <button
+                          onClick={() => toggleStatus(student.id, 'late')}
+                          className={`p-2 rounded-lg border transition-all ${
+                            attendance[student.id] === 'late'
+                              ? 'bg-amber-500 border-amber-500 text-white shadow-md shadow-amber-100'
+                              : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:border-amber-500 hover:text-amber-500'
+                          }`}
+                          title="Late"
+                        >
+                          <Clock size={20} />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="text-sm font-bold text-slate-700 dark:text-slate-300">96%</span>
+                        <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500 rounded-full" style={{ width: '96%' }} />
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

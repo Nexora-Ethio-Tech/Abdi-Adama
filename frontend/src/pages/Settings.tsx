@@ -1,5 +1,5 @@
 
-import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 
 export const Settings = () => {
@@ -9,6 +9,7 @@ export const Settings = () => {
     { id: 'General', icon: Building },
     { id: 'Notifications', icon: Bell },
     { id: 'Security', icon: Shield },
+    { id: 'Financial Policy', icon: CreditCard },
     { id: 'Appearance', icon: Palette },
     { id: 'Regional', icon: Globe },
   ];
@@ -78,6 +79,26 @@ export const Settings = () => {
               </div>
             )}
 
+            {activeTab === 'Financial Policy' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Monthly Late Penalty (ETB)</label>
+                    <input type="number" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue="150" />
+                    <p className="text-[10px] text-slate-400">Applied automatically when payment exceeds the deadline.</p>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Payment Deadline (Day of Month)</label>
+                    <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                      {[5, 10, 15, 20, 25, 30].map(day => (
+                        <option key={day} value={day} selected={day === 10}>Day {day}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {activeTab === 'Appearance' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -99,7 +120,7 @@ export const Settings = () => {
               </div>
             )}
 
-            {activeTab !== 'General' && activeTab !== 'Appearance' && (
+            {activeTab !== 'General' && activeTab !== 'Appearance' && activeTab !== 'Financial Policy' && (
               <div className="flex flex-col items-center justify-center py-12 text-slate-400">
                 <SettingsIcon size={48} className="mb-4 opacity-20" />
                 <p className="text-sm font-medium">{activeTab} settings are under configuration for the current branch.</p>
