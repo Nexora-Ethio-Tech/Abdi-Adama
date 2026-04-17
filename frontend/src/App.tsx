@@ -21,7 +21,6 @@ import { Calendar } from './pages/Calendar';
 import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';
-import { LMS } from './pages/LMS';
 import Exams from './pages/Exams';
 import { LandingPage } from './pages/LandingPage';
 import { useUser } from './context/UserContext';
@@ -86,14 +85,14 @@ function App() {
             </>
           )}
 
-          {(role === 'student' || role === 'teacher') && (
-            <>
-              <Route path="courses" element={<LMS />} />
-            </>
-          )}
-
           {role === 'student' && (
             <>
+              <Route path="courses" element={
+                <Placeholder
+                  title="My Courses"
+                  description="Access your enrolled courses and track your grades for each subject."
+                />
+              } />
               <Route path="attendance" element={
                 <Placeholder
                   title="Academic History"

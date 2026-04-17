@@ -13,11 +13,14 @@ import {
   Save,
   X,
   FileText,
-  Upload
+  Upload,
+  AlignLeft,
+  CheckSquare,
+  Layers
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { mockExams } from '../data/examData';
-import type { Exam, ExamCategory, Question } from '../data/examData';
+import type { Exam, ExamCategory } from '../data/examData';
 
 const Exams = () => {
   const { role } = useUser();
@@ -188,6 +191,15 @@ const ExamCard = ({ exam, role, onStart }: { exam: Exam, role: string | null, on
   );
 };
 
+interface FlexibleQuestion {
+  id: string;
+  text: string;
+  type: 'explain' | 'options' | 'group';
+  options?: { id: string; text: string }[];
+  correctOptionId?: string;
+  subQuestions?: FlexibleQuestion[];
+}
+
 const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', onCancel: () => void, onSave: (exam: Exam) => void }) => {
   const [examData, setExamData] = useState<Partial<Exam>>({
     title: '',
@@ -200,49 +212,103 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
   const [assignmentDetails, setAssignmentDetails] = useState({
     description: '',
     dueDate: '',
-    fileName: ''
+    fileName: '',
+    isDocumentOnly: false
   });
 
-  const [questions, setQuestions] = useState<Question[]>([
-    { id: '1', text: '', options: [{ id: 'a', text: '' }, { id: 'b', text: '' }], correctOptionId: 'a' }
+  const [questions, setQuestions] = useState<FlexibleQuestion[]>([
+    { id: '1', text: '', type: 'options', options: [{ id: 'a', text: '' }, { id: 'b', text: '' }], correctOptionId: 'a' }
   ]);
 
-  const addQuestion = () => {
-    setQuestions([...questions, {
+  const addQuestion = (parentId?: string) => {
+    const newQuestion: FlexibleQuestion = {
       id: Date.now().toString(),
       text: '',
-      options: [{ id: 'a', text: '' }, { id: 'b', text: '' }],
-      correctOptionId: 'a'
-    }]);
+      type: 'explain'
+    };
+
+    if (parentId) {
+      const updateSubQuestions = (qs: FlexibleQuestion[]): FlexibleQuestion[] => {
+        return qs.map(q => {
+          if (q.id === parentId) {
+            return { ...q, subQuestions: [...(q.subQuestions || []), newQuestion] };
+          }
+          if (q.subQuestions) {
+            return { ...q, subQuestions: updateSubQuestions(q.subQuestions) };
+          }
+          return q;
+        });
+      };
+      setQuestions(updateSubQuestions(questions));
+    } else {
+      setQuestions([...questions, newQuestion]);
+    }
   };
 
-  const removeQuestion = (idx: number) => {
-    setQuestions(questions.filter((_, i) => i !== idx));
+  const removeQuestion = (id: string) => {
+    const filterQuestions = (qs: FlexibleQuestion[]): FlexibleQuestion[] => {
+      return qs.filter(q => q.id !== id).map(q => ({
+        ...q,
+        subQuestions: q.subQuestions ? filterQuestions(q.subQuestions) : undefined
+      }));
+    };
+    setQuestions(filterQuestions(questions));
   };
 
-  const addOption = (qIdx: number) => {
-    const newQuestions = [...questions];
-    const nextId = String.fromCharCode(97 + newQuestions[qIdx].options.length);
-    newQuestions[qIdx].options.push({ id: nextId, text: '' });
-    setQuestions(newQuestions);
+  const updateQuestion = (id: string, updates: Partial<FlexibleQuestion>) => {
+    const updateQs = (qs: FlexibleQuestion[]): FlexibleQuestion[] => {
+      return qs.map(q => {
+        if (q.id === id) {
+          const newQ = { ...q, ...updates };
+          if (updates.type === 'options' && !newQ.options) {
+            newQ.options = [{ id: 'a', text: '' }, { id: 'b', text: '' }];
+            newQ.correctOptionId = 'a';
+          }
+          if (updates.type === 'group' && !newQ.subQuestions) {
+            newQ.subQuestions = [];
+          }
+          return newQ;
+        }
+        if (q.subQuestions) {
+          return { ...q, subQuestions: updateQs(q.subQuestions) };
+        }
+        return q;
+      });
+    };
+    setQuestions(updateQs(questions));
   };
 
-  const updateQuestionText = (idx: number, text: string) => {
-    const newQuestions = [...questions];
-    newQuestions[idx].text = text;
-    setQuestions(newQuestions);
+  const addOption = (qId: string) => {
+    const updateQs = (qs: FlexibleQuestion[]): FlexibleQuestion[] => {
+      return qs.map(q => {
+        if (q.id === qId && q.options) {
+          const nextId = String.fromCharCode(97 + q.options.length);
+          return { ...q, options: [...q.options, { id: nextId, text: '' }] };
+        }
+        if (q.subQuestions) {
+          return { ...q, subQuestions: updateQs(q.subQuestions) };
+        }
+        return q;
+      });
+    };
+    setQuestions(updateQs(questions));
   };
 
-  const updateOptionText = (qIdx: number, oIdx: number, text: string) => {
-    const newQuestions = [...questions];
-    newQuestions[qIdx].options[oIdx].text = text;
-    setQuestions(newQuestions);
-  };
-
-  const setCorrectOption = (qIdx: number, oId: string) => {
-    const newQuestions = [...questions];
-    newQuestions[qIdx].correctOptionId = oId;
-    setQuestions(newQuestions);
+  const updateOption = (qId: string, oIdx: number, text: string) => {
+    const updateQs = (qs: FlexibleQuestion[]): FlexibleQuestion[] => {
+      return qs.map(q => {
+        if (q.id === qId && q.options) {
+          const newOptions = [...q.options];
+          newOptions[oIdx] = { ...newOptions[oIdx], text };
+          return { ...q, options: newOptions };
+        }
+        if (q.subQuestions) {
+          return { ...q, subQuestions: updateQs(q.subQuestions) };
+        }
+        return q;
+      });
+    };
+    setQuestions(updateQs(questions));
   };
 
   const handleSave = () => {
@@ -255,11 +321,105 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
       teacherName: 'Current Teacher',
       category: examData.category as ExamCategory,
       durationMinutes: examData.durationMinutes || 60,
-      questions: type === 'Exam' ? questions : [],
+      questions: assignmentDetails.isDocumentOnly ? [] : questions as any,
       status: 'available'
     };
     onSave(newExam);
   };
+
+  const QuestionNode = ({ q, level = 0 }: { q: FlexibleQuestion, level?: number }) => (
+    <div className={`bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4 relative group ${level > 0 ? 'ml-8 mt-4' : ''}`}>
+      <div className="flex items-start gap-4">
+        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 font-bold shrink-0">
+          {level === 0 ? questions.indexOf(q) + 1 : '•'}
+        </span>
+        <div className="flex-1 space-y-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <input
+              type="text"
+              placeholder="Enter question text..."
+              className="flex-1 text-lg font-medium bg-transparent border-none focus:ring-0 dark:text-white"
+              value={q.text}
+              onChange={e => updateQuestion(q.id, { text: e.target.value })}
+            />
+            <div className="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-1 border dark:border-slate-700">
+              <button
+                onClick={() => updateQuestion(q.id, { type: 'explain' })}
+                className={`p-1.5 rounded-md transition-all ${q.type === 'explain' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
+                title="Explain Question"
+              >
+                <AlignLeft size={16} />
+              </button>
+              <button
+                onClick={() => updateQuestion(q.id, { type: 'options' })}
+                className={`p-1.5 rounded-md transition-all ${q.type === 'options' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
+                title="Multiple Choice"
+              >
+                <CheckSquare size={16} />
+              </button>
+              <button
+                onClick={() => updateQuestion(q.id, { type: 'group' })}
+                className={`p-1.5 rounded-md transition-all ${q.type === 'group' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
+                title="Question Group"
+              >
+                <Layers size={16} />
+              </button>
+            </div>
+          </div>
+
+          {q.type === 'options' && q.options && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
+              {q.options.map((opt, oIdx) => (
+                <div key={opt.id} className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name={`correct-${q.id}`}
+                    checked={q.correctOptionId === opt.id}
+                    onChange={() => updateQuestion(q.id, { correctOptionId: opt.id })}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <span className="text-slate-400 font-medium uppercase">{opt.id}.</span>
+                  <input
+                    type="text"
+                    placeholder={`Option ${opt.id.toUpperCase()}`}
+                    className="flex-1 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 dark:text-white"
+                    value={opt.text}
+                    onChange={e => updateOption(q.id, oIdx, e.target.value)}
+                  />
+                </div>
+              ))}
+              <button
+                onClick={() => addOption(q.id)}
+                className="flex items-center gap-2 text-sm text-slate-400 hover:text-blue-600 transition-colors"
+              >
+                <Plus size={16} /> Add Option
+              </button>
+            </div>
+          )}
+
+          {q.type === 'group' && (
+            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+              {q.subQuestions?.map(subQ => (
+                <QuestionNode key={subQ.id} q={subQ} level={level + 1} />
+              ))}
+              <button
+                onClick={() => addQuestion(q.id)}
+                className="flex items-center gap-2 text-sm text-blue-600 font-bold ml-8 hover:underline"
+              >
+                <Plus size={16} /> Add Sub-question
+              </button>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => removeQuestion(q.id)}
+          className="p-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+        >
+          <Trash2 size={20} />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -330,105 +490,91 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
       </div>
 
       {/* Type-Specific Form */}
-      {type === 'Assignment' ? (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Assignment Description</label>
-            <textarea
-              rows={4}
-              placeholder="Provide clear instructions for the assignment..."
-              className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white"
-              value={assignmentDetails.description}
-              onChange={e => setAssignmentDetails({...assignmentDetails, description: e.target.value})}
-            />
+      {type === 'Assignment' && (
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="text-blue-600" size={20} />
+              <h3 className="font-bold dark:text-white">Assignment Mode</h3>
+            </div>
+            <button
+              onClick={() => setAssignmentDetails({...assignmentDetails, isDocumentOnly: !assignmentDetails.isDocumentOnly})}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                assignmentDetails.isDocumentOnly
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-slate-100 dark:bg-slate-900 text-slate-500'
+              }`}
+            >
+              {assignmentDetails.isDocumentOnly ? 'DOCUMENT-ONLY MODE ACTIVE' : 'SWITCH TO DOCUMENT-ONLY'}
+            </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="space-y-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Due Date</label>
-              <input
-                type="date"
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Assignment Description</label>
+              <textarea
+                rows={4}
+                placeholder="Provide clear instructions for the assignment..."
                 className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white"
-                value={assignmentDetails.dueDate}
-                onChange={e => setAssignmentDetails({...assignmentDetails, dueDate: e.target.value})}
+                value={assignmentDetails.description}
+                onChange={e => setAssignmentDetails({...assignmentDetails, description: e.target.value})}
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Supporting Document (Max 2MB)</label>
-              <div className="flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:border-blue-500 transition-colors group cursor-pointer">
-                <div className="text-center">
-                  <Upload className="mx-auto text-slate-400 group-hover:text-blue-500 mb-2" size={24} />
-                  <p className="text-xs text-slate-500">{assignmentDetails.fileName || 'Click to upload PDF or DOCX'}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold dark:text-white">Exam Questions</h2>
-          <button
-            onClick={addQuestion}
-            className="text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
-          >
-            <Plus size={18} /> Add Question
-          </button>
-        </div>
-
-        {questions.map((q, qIdx) => (
-          <div key={q.id} className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4 relative group">
-            <div className="flex items-start gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 font-bold shrink-0">
-                {qIdx + 1}
-              </span>
-              <div className="flex-1 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Due Date</label>
                 <input
-                  type="text"
-                  placeholder="Enter question text..."
-                  className="w-full text-lg font-medium bg-transparent border-none focus:ring-0 dark:text-white"
-                  value={q.text}
-                  onChange={e => updateQuestionText(qIdx, e.target.value)}
+                  type="date"
+                  className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white"
+                  value={assignmentDetails.dueDate}
+                  onChange={e => setAssignmentDetails({...assignmentDetails, dueDate: e.target.value})}
                 />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {q.options.map((opt, oIdx) => (
-                    <div key={opt.id} className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name={`correct-${q.id}`}
-                        checked={q.correctOptionId === opt.id}
-                        onChange={() => setCorrectOption(qIdx, opt.id)}
-                        className="w-4 h-4 text-blue-600"
-                        title="Mark as correct"
-                      />
-                      <span className="text-slate-400 font-medium uppercase">{opt.id}.</span>
-                      <input
-                        type="text"
-                        placeholder={`Option ${opt.id.toUpperCase()}`}
-                        className="flex-1 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 dark:text-white"
-                        value={opt.text}
-                        onChange={e => updateOptionText(qIdx, oIdx, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => addOption(qIdx)}
-                    className="flex items-center gap-2 text-sm text-slate-400 hover:text-blue-600 transition-colors"
-                  >
-                    <Plus size={16} /> Add Option
-                  </button>
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Supporting Document (Max 2MB)</label>
+                <div className="flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:border-blue-500 transition-colors group cursor-pointer h-full min-h-[80px]">
+                  <div className="text-center">
+                    <Upload className="mx-auto text-slate-400 group-hover:text-blue-500 mb-2" size={24} />
+                    <p className="text-xs text-slate-500">{assignmentDetails.fileName || 'Click to upload PDF or DOCX'}</p>
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={() => removeQuestion(qIdx)}
-                className="p-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <Trash2 size={20} />
-              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Questions Builder */}
+      {(!assignmentDetails.isDocumentOnly || type === 'Exam') && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold dark:text-white">Question Structure</h2>
+            <button
+              onClick={() => addQuestion()}
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-blue-600 px-4 py-2 rounded-lg flex items-center gap-1 font-bold text-sm hover:shadow-sm transition-all"
+            >
+              <Plus size={18} /> New Root Question
+            </button>
+          </div>
+
+          <div className="space-y-4 pb-20">
+            {questions.map((q) => (
+              <QuestionNode key={q.id} q={q} />
+            ))}
+            {questions.length === 0 && (
+              <div className="py-20 text-center bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+                <Plus className="mx-auto text-slate-300 mb-4" size={48} />
+                <p className="text-slate-500 font-medium">No questions added yet.</p>
+                <button
+                  onClick={() => addQuestion()}
+                  className="mt-4 text-blue-600 font-bold hover:underline"
+                >
+                  Add your first question
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

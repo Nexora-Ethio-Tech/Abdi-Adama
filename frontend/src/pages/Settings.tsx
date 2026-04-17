@@ -1,9 +1,11 @@
 
 import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio } from 'lucide-react';
 import { useState } from 'react';
+import { useAppearance, type UIStyle } from '../context/AppearanceContext';
 
 export const Settings = () => {
   const [activeTab, setActiveTab] = useState('General');
+  const { style, setStyle, autoDarkMode, setAutoDarkMode } = useAppearance();
 
   const tabs = [
     { id: 'General', icon: Building },
@@ -167,19 +169,26 @@ export const Settings = () => {
             {activeTab === 'Appearance' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {['Standard', 'Modern', 'Compact', 'Classic'].map((theme) => (
-                    <button key={theme} className={`p-4 rounded-xl border-2 text-center transition-all ${theme === 'Standard' ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'}`}>
-                      <p className="font-bold text-sm">{theme}</p>
+                  {(['Standard', 'Modern', 'Compact', 'Classic'] as UIStyle[]).map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setStyle(t)}
+                      className={`p-4 rounded-xl border-2 text-center transition-all ${style === t ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'}`}
+                    >
+                      <p className="font-bold text-sm">{t}</p>
                     </button>
                   ))}
                 </div>
-                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                <div
+                  onClick={() => setAutoDarkMode(!autoDarkMode)}
+                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                >
                   <div>
                     <p className="text-sm font-bold text-slate-800 dark:text-slate-100">Automatic Dark Mode</p>
                     <p className="text-xs text-slate-500">Switch theme based on system preferences.</p>
                   </div>
-                  <div className="w-12 h-6 bg-blue-600 rounded-full relative">
-                    <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
+                  <div className={`w-12 h-6 rounded-full relative transition-colors ${autoDarkMode ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${autoDarkMode ? 'right-1' : 'left-1'}`} />
                   </div>
                 </div>
               </div>
