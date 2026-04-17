@@ -5,8 +5,62 @@
 :root {
   --primary: #1e40af;
   --secondary: #0f172a;
+  --app-radius: 1rem;
+  --app-spacing: 1.5rem;
+  --app-font-size: 1rem;
 }
 
-body {
-  @apply bg-slate-50 text-slate-900;
+[data-ui-style="standard"] {
+  --app-radius: 1rem;
+  --app-spacing: 1.5rem;
+  --app-font-size: 1rem;
+}
+
+[data-ui-style="modern"] {
+  --app-radius: 2rem;
+  --app-spacing: 2rem;
+  --app-font-size: 1.05rem;
+}
+
+[data-ui-style="compact"] {
+  --app-radius: 0.5rem;
+  --app-spacing: 0.75rem;
+  --app-font-size: 0.9rem;
+}
+
+[data-ui-style="classic"] {
+  --app-radius: 0rem;
+  --app-spacing: 1.25rem;
+  --app-font-size: 1rem;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-300;
+    font-size: var(--app-font-size);
+  }
+
+  .rounded-xl {
+    border-radius: var(--app-radius);
+  }
+
+  .rounded-2xl {
+    border-radius: calc(var(--app-radius) * 1.5);
+  }
+
+  .rounded-3xl {
+    border-radius: calc(var(--app-radius) * 2);
+  }
+
+  .p-6 {
+    padding: var(--app-spacing);
+  }
+
+  .gap-6 {
+    gap: var(--app-spacing);
+  }
+
+  .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: var(--app-spacing);
+  }
 }

@@ -69,7 +69,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       case 'student':
         return [
           { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
-          { icon: BookOpen, label: 'My Courses', path: '/courses' },
+          { icon: BookOpen, label: 'Grades & Courses', path: '/courses' },
           { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
