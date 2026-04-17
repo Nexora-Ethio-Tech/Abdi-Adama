@@ -7,7 +7,7 @@ export const Chatbot = () => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: 'Hello! I am the NEXORA Smart Assistant. I can help you with school policies, schedules, and academic reports. How can I assist you today?' }
+    { role: 'assistant', text: 'Hello! I am the Abdi-Adama Smart Assistant. I can help you with school policies, schedules, and academic reports. How can I assist you today?' }
   ]);
 
   const handleSend = (e: React.FormEvent) => {
@@ -50,7 +50,7 @@ export const Chatbot = () => {
               <MessageSquare size={20} />
             </div>
             <div>
-              <p className="font-bold text-sm">NEXORA Smart Assistant</p>
+              <p className="font-bold text-sm">Abdi-Adama Smart Assistant</p>
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                 <p className="text-[10px] text-blue-100">Semantic Search Active</p>

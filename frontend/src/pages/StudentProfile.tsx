@@ -329,16 +329,16 @@ export const StudentProfile = () => {
               <div className="flex justify-between items-start border-b-2 border-slate-800 pb-8">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
-                    NX
+                    AA
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">NEXORA SMART-SCHOOL</h2>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">ABDI-ADAMA SMART-SCHOOL</h2>
                     <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Official Academic Record</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-slate-800">Date Issued: April 25, 2026</p>
-                  <p className="text-xs text-slate-400">Ref: NX-TR-{student.id}-{new Date().getFullYear()}</p>
+                  <p className="text-xs text-slate-400">Ref: AA-TR-{student.id}-{new Date().getFullYear()}</p>
                 </div>
               </div>
 
@@ -350,7 +350,7 @@ export const StudentProfile = () => {
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student ID</p>
-                  <p className="text-lg font-bold text-slate-800">NX-2026-{student.id.padStart(4, '0')}</p>
+                  <p className="text-lg font-bold text-slate-800">AA-2026-{student.id.padStart(4, '0')}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Grade</p>
