@@ -1,5 +1,5 @@
 
-import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard } from 'lucide-react';
+import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio } from 'lucide-react';
 import { useState } from 'react';
 
 export const Settings = () => {
@@ -7,6 +7,7 @@ export const Settings = () => {
 
   const tabs = [
     { id: 'General', icon: Building },
+    { id: 'Hardware', icon: Cpu },
     { id: 'Notifications', icon: Bell },
     { id: 'Security', icon: Shield },
     { id: 'Financial Policy', icon: CreditCard },
@@ -94,6 +95,70 @@ export const Settings = () => {
                         <option key={day} value={day} selected={day === 10}>Day {day}</option>
                       ))}
                     </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'Hardware' && (
+              <div className="space-y-8">
+                <div>
+                  <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Radio size={16} className="text-blue-600" />
+                    Biometric Integration (ZKTeco)
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                          <CheckCircle size={18} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 dark:text-white">Main Entrance Scanner</p>
+                          <p className="text-[10px] text-slate-400 font-medium">IP: 192.168.1.105 • Connected</p>
+                        </div>
+                      </div>
+                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">LIVE</span>
+                    </div>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center justify-between opacity-60">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-slate-200 text-slate-600 rounded-lg">
+                          <Wifi size={18} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 dark:text-white">Staff Room Scanner</p>
+                          <p className="text-[10px] text-slate-400 font-medium">IP: 192.168.1.106 • Offline</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Smartphone size={16} className="text-blue-600" />
+                    Offline SMS Gateway
+                  </h4>
+                  <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-600 shadow-sm">
+                          <Smartphone size={24} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">USB GSM Modem Status</p>
+                          <p className="text-xs text-blue-600 font-medium">Ready (Ethio Telecom SIM Detected)</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase">Balance</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">450.50 ETB</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold">Test Notification</button>
+                      <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-lg text-xs font-bold">Configure Packages</button>
+                    </div>
                   </div>
                 </div>
               </div>

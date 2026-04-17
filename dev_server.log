@@ -1,0 +1,19 @@
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.8  ready in 421 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+7:32:43 AM [vite] (client) page reload src/pages/Dashboard.tsx
+7:39:26 AM [vite] (client) page reload src/data/mockData.ts
+7:40:15 AM [vite] (client) page reload src/pages/StudentProfile.tsx
+7:40:37 AM [vite] (client) page reload src/pages/Analytics.tsx
+7:41:08 AM [vite] (client) page reload src/App.tsx
+7:41:16 AM [vite] (client) page reload src/components/Chatbot.tsx
+7:41:30 AM [vite] (client) page reload src/pages/Attendance.tsx
+7:41:42 AM [vite] (client) page reload src/pages/Settings.tsx
+7:42:25 AM [vite] (client) page reload src/pages/Attendance.tsx
+7:42:31 AM [vite] (client) page reload src/pages/StudentProfile.tsx

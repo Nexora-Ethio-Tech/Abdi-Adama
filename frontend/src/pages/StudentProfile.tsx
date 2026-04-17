@@ -11,11 +11,19 @@ import {
   TrendingUp,
   Clock,
   FileText,
-  Mail
+  Mail,
+  Heart,
+  ShieldAlert,
+  Printer,
+  FileUp,
+  AlertTriangle,
+  X
 } from 'lucide-react';
+import { useState } from 'react';
 
 export const StudentProfile = () => {
   const { id } = useParams();
+  const [showTranscript, setShowTranscript] = useState(false);
   const student = mockStudents.find(s => s.id === id) as any;
 
   if (!student) {
@@ -111,10 +119,68 @@ export const StudentProfile = () => {
               Contact Parent
             </button>
           </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+              <Heart size={16} className="text-rose-500" />
+              Medical Records
+            </h4>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Blood Group</span>
+                <span className="font-bold text-slate-700">{student.bloodGroup || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Allergies</span>
+                <span className="font-bold text-slate-700">{student.allergies || 'None'}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Medications</span>
+                <span className="font-bold text-slate-700">{student.medications || 'None'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+              <ShieldAlert size={16} className="text-orange-500" />
+              Emergency Contact
+            </h4>
+            <div className="p-3 bg-slate-50 rounded-2xl space-y-1">
+              <p className="text-sm font-bold text-slate-800">{student.emergencyContact?.name || student.parentName}</p>
+              <p className="text-xs text-slate-500">{student.emergencyContact?.relation || 'Parent'}</p>
+              <p className="text-sm font-medium text-blue-600 mt-1">{student.emergencyContact?.phone || student.parentPhone}</p>
+            </div>
+          </div>
         </div>
 
         {/* Content Tabs/Details */}
         <div className="lg:col-span-2 space-y-8">
+          {/* Action Header */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${
+              student.riskLevel === 'High' ? 'bg-rose-50 border-rose-100 text-rose-700' :
+              student.riskLevel === 'Medium' ? 'bg-amber-50 border-amber-100 text-amber-700' :
+              'bg-emerald-50 border-emerald-100 text-emerald-700'
+            }`}>
+              <AlertTriangle size={20} />
+              <div>
+                <p className="text-[10px] font-bold uppercase opacity-70">AI Academic Health Monitor</p>
+                <p className="text-sm font-bold">{student.riskLevel} Risk Status</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowTranscript(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-bold"
+              >
+                <Printer size={18} />
+                Generate Transcript
+              </button>
+            </div>
+          </div>
+
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
@@ -209,8 +275,154 @@ export const StudentProfile = () => {
               ))}
             </div>
           </div>
+
+          {/* Document Vault */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                <FileUp size={20} className="text-blue-600" />
+                Encrypted Document Vault
+              </h4>
+              <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">2MB LIMIT</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 border border-dashed border-slate-200 rounded-2xl flex items-center gap-4 hover:bg-slate-50 transition-colors cursor-pointer group">
+                <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-blue-600 transition-colors">
+                  <FileText size={24} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-700">Birth Certificate.pdf</p>
+                  <p className="text-xs text-slate-400">Verified • 1.2 MB</p>
+                </div>
+              </div>
+              <div className="p-4 border border-dashed border-slate-200 rounded-2xl flex items-center justify-center gap-2 text-slate-400 hover:border-blue-400 hover:text-blue-600 transition-all cursor-pointer">
+                <FileUp size={20} />
+                <span className="text-sm font-bold">Upload Document</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Transcript Modal */}
+      {showTranscript && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl animate-in zoom-in duration-300">
+            <div className="sticky top-0 bg-white border-b border-slate-100 px-8 py-4 flex items-center justify-between z-10">
+              <h3 className="text-xl font-bold text-slate-800">Academic Transcript</h3>
+              <div className="flex items-center gap-2">
+                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-bold">
+                  <Printer size={18} />
+                  Print Now
+                </button>
+                <button
+                  onClick={() => setShowTranscript(false)}
+                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-12 space-y-8" id="transcript-content">
+              {/* Transcript Header */}
+              <div className="flex justify-between items-start border-b-2 border-slate-800 pb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
+                    AA
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">ABDI-ADAMA SMART-SCHOOL</h2>
+                    <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Official Academic Record</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-slate-800">Date Issued: April 25, 2026</p>
+                  <p className="text-xs text-slate-400">Ref: AA-TR-{student.id}-{new Date().getFullYear()}</p>
+                </div>
+              </div>
+
+              {/* Student Info */}
+              <div className="grid grid-cols-2 gap-8 py-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Name</p>
+                  <p className="text-lg font-bold text-slate-800">{student.name}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student ID</p>
+                  <p className="text-lg font-bold text-slate-800">AA-2026-{student.id.padStart(4, '0')}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Grade</p>
+                  <p className="text-lg font-bold text-slate-800">Grade {student.grade}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Year</p>
+                  <p className="text-lg font-bold text-slate-800">2026 EC</p>
+                </div>
+              </div>
+
+              {/* Results Table */}
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-800 text-sm uppercase tracking-widest border-l-4 border-slate-800 pl-3">Summary of Results</h4>
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50">
+                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase">Subject</th>
+                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-center">Score</th>
+                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-center">Grade</th>
+                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-right">Credit</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {['Mathematics', 'Physics', 'Biology', 'Chemistry', 'English', 'Amharic', 'History'].map((subject) => (
+                      <tr key={subject}>
+                        <td className="py-3 px-4 font-bold text-slate-700">{subject}</td>
+                        <td className="py-3 px-4 text-center text-slate-600 font-medium">92%</td>
+                        <td className="py-3 px-4 text-center font-bold text-emerald-600">A+</td>
+                        <td className="py-3 px-4 text-right text-slate-500">4.0</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-slate-800 text-white">
+                      <td className="py-4 px-4 font-bold rounded-bl-2xl">CUMULATIVE AVERAGE</td>
+                      <td className="py-4 px-4 text-center font-black text-lg">94.2%</td>
+                      <td className="py-4 px-4 text-center font-bold">A+</td>
+                      <td className="py-4 px-4 text-right font-bold rounded-br-2xl">4.0 GPA</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              {/* Verification Section */}
+              <div className="pt-12 flex items-end justify-between">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-300">
+                      <Printer size={20} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Verification QR Code</p>
+                      <p className="text-xs text-slate-600">Scan to verify authenticity online</p>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 italic">This is a computer-generated transcript, no physical signature required for internal use.</p>
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="w-32 h-1 bg-slate-800 mx-auto"></div>
+                  <p className="text-sm font-bold text-slate-800">School Registrar</p>
+                  <div className="w-24 h-24 border-4 border-double border-blue-600/20 rounded-full flex items-center justify-center mx-auto opacity-50">
+                    <div className="text-[10px] font-black text-blue-600 uppercase text-center rotate-12">
+                      OFFICIAL<br/>SEAL
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

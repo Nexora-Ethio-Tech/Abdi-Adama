@@ -1,7 +1,9 @@
 
-import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
+import { mockStudents } from '../data/mockData';
+import { Link } from 'react-router-dom';
 
 const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
   <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
@@ -171,6 +173,36 @@ export const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {isAdmin && (
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <ShieldAlert size={20} className="text-rose-600" />
+                Priority Watchlist
+              </h3>
+              <Link to="/analytics" className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest">
+                Full Report
+              </Link>
+            </div>
+            <div className="space-y-4">
+              {mockStudents.filter(s => s.riskLevel === 'High' || s.riskLevel === 'Medium').slice(0, 4).map((student, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${student.riskLevel === 'High' ? 'bg-rose-500' : 'bg-amber-500'}`} />
+                    <div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{student.name}</p>
+                      <p className="text-[10px] text-slate-400 font-medium uppercase">Grade {student.grade} • {student.riskLevel} Risk</p>
+                    </div>
+                  </div>
+                  <Link to={`/students/${student.id}`} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
           <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6">Recent Activity</h3>
           <div className="space-y-6">
