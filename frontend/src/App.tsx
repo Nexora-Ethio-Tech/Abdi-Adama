@@ -27,18 +27,6 @@ import Exams from './pages/Exams';
 import { LandingPage } from './pages/LandingPage';
 import { useUser } from './context/UserContext';
 
-const Placeholder = ({ title, description }: { title: string; description?: string }) => (
-  <div className="flex items-center justify-center h-[60vh]">
-    <div className="text-center max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-slate-800 mb-2">{title}</h2>
-      {description && <p className="text-slate-600 mb-4">{description}</p>}
-      <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm inline-block">
-        This module is part of Phase 2/3 and will be fully implemented soon.
-      </div>
-    </div>
-  </div>
-);
-
 function App() {
   const { role } = useUser();
 

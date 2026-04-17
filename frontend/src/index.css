@@ -13,10 +13,10 @@
 }
 
 [data-ui-style="standard"] {
-  --app-radius: 1rem;
+  --app-radius: 1.25rem;
   --app-spacing: 1.5rem;
   --app-font-size: 1rem;
-  --app-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --app-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
   --app-font-weight: 500;
 }
 
@@ -50,6 +50,8 @@
     @apply bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500;
     font-size: var(--app-font-size);
     font-weight: var(--app-font-weight);
+    background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.03) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.03) 0px, transparent 50%);
   }
 
   .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
@@ -90,8 +92,22 @@
   }
 
   .card {
-    @apply bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 transition-all duration-300;
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 transition-all duration-300;
     border-radius: var(--app-radius);
     box-shadow: var(--app-shadow);
+  }
+
+  .glass {
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/20 shadow-xl;
+  }
+
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+
+  @keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
   }
 }
