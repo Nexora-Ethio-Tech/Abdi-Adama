@@ -7,8 +7,13 @@ import {
   DollarSign,
   Building2,
   Filter,
-  Download
+  Download,
+  AlertCircle,
+  ChevronRight,
+  ShieldAlert
 } from 'lucide-react';
+import { mockStudents } from '../data/mockData';
+import { Link } from 'react-router-dom';
 
 export const Analytics = () => {
   const metrics = [
@@ -129,6 +134,91 @@ export const Analytics = () => {
       </div>
 
       {/* Recent High-Value Transactions or Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* AI Early Warning System Watchlist */}
+        <div className="lg:col-span-2 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-rose-50 text-rose-600 rounded-xl">
+                <ShieldAlert size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800">Priority Watchlist</h3>
+                <p className="text-xs text-slate-500 font-medium">AI-detected academic and attendance risks</p>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-full uppercase">High Attention</span>
+          </div>
+
+          <div className="space-y-4">
+            {mockStudents.filter(s => s.riskLevel === 'High' || s.riskLevel === 'Medium').map((student: any) => (
+              <div key={student.id} className="group flex items-center justify-between p-4 border border-slate-50 rounded-2xl hover:border-rose-100 hover:bg-rose-50/30 transition-all">
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                    student.riskLevel === 'High' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'
+                  }`}>
+                    {student.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">{student.name}</h4>
+                    <p className="text-[10px] font-medium text-slate-500 uppercase">Grade {student.grade} • {student.riskFactor || 'Multiple risk factors detected'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="hidden sm:block text-right">
+                    <p className={`text-xs font-bold ${student.riskLevel === 'High' ? 'text-rose-600' : 'text-amber-600'}`}>
+                      {student.riskLevel} RISK
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-medium">Detected 2 days ago</p>
+                  </div>
+                  <Link to={`/students/${student.id}`} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-white rounded-xl transition-all shadow-sm">
+                    <ChevronRight size={20} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button className="w-full mt-6 py-3 border border-dashed border-slate-200 rounded-2xl text-sm font-bold text-slate-400 hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50 transition-all">
+            View All Flagged Students
+          </button>
+        </div>
+
+        {/* Behavioral Correlation */}
+        <div className="bg-slate-900 rounded-3xl p-6 md:p-8 text-white">
+          <h3 className="font-bold mb-2">Behavioral Insights</h3>
+          <p className="text-xs text-slate-400 mb-8 font-medium">Correlation between attendance & grades</p>
+
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400">Attendance Impact</span>
+                <span className="text-rose-400 font-bold">-12.5% Avg Score</span>
+              </div>
+              <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-rose-500 w-[85%]"></div>
+              </div>
+              <p className="text-[10px] text-white/40 leading-relaxed italic">
+                * Students with &lt;85% attendance show a 12.5% drop in Math/Physics.
+              </p>
+            </div>
+
+            <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="flex items-center gap-2 mb-2 text-blue-400">
+                <AlertCircle size={16} />
+                <span className="text-xs font-bold uppercase tracking-wider">AI Suggestion</span>
+              </div>
+              <p className="text-xs leading-relaxed text-slate-300">
+                Early intervention for "Sara Kebede" could improve final grades by an estimated 8%.
+              </p>
+              <button className="mt-3 text-[10px] font-bold text-white bg-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-500 transition-colors">
+                Intervene Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-slate-900 rounded-3xl p-8 text-white">
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-bold text-lg">Cross-Branch Financial Alerts</h3>

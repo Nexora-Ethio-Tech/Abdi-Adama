@@ -9,6 +9,16 @@ export const mockStudents = [
     dob: '2010-05-15',
     gender: 'Male',
     address: 'Addis Ababa, Bole Sub-city',
+    bloodGroup: 'A+',
+    allergies: 'Peanuts',
+    medications: 'None',
+    emergencyContact: {
+      name: 'Bikila Demissie',
+      relation: 'Father',
+      phone: '+251911111111'
+    },
+    riskLevel: 'Low',
+    riskFactor: 'Stable performance and attendance.',
     attendanceHistory: [
       { month: 'Sep', rate: 98 },
       { month: 'Oct', rate: 95 },
@@ -22,12 +32,46 @@ export const mockStudents = [
       { year: '2015', grade: '9', average: '91%', rank: '2/45' },
     ]
   },
-  { id: '2', name: 'Sara Kebede', grade: '9B', status: 'Active', parentName: 'Kebede Tessema', parentPhone: '+251922222222' },
-  { id: '3', name: 'Dawit Lema', grade: '11C', status: 'Active', parentName: 'Lema Hailu', parentPhone: '+251933333333' },
-  { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444' },
-  { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', parentName: 'Tesfaye Belay', parentPhone: '+251955555555' },
-  { id: '6', name: 'Biniyam Yosef', grade: '10A', status: 'Active', parentName: 'Yosef Kassa', parentPhone: '+251911223344' },
-  { id: '7', name: 'Tigist Walelign', grade: '9B', status: 'Active', parentName: 'Walelign Tadesse', parentPhone: '+251911556677' },
+  {
+    id: '2',
+    name: 'Sara Kebede',
+    grade: '9B',
+    status: 'Active',
+    parentName: 'Kebede Tessema',
+    parentPhone: '+251922222222',
+    bloodGroup: 'O+',
+    allergies: 'None',
+    medications: 'None',
+    emergencyContact: {
+      name: 'Kebede Tessema',
+      relation: 'Father',
+      phone: '+251922222222'
+    },
+    riskLevel: 'Medium',
+    riskFactor: 'Slight decline in Mathematics scores recently.'
+  },
+  {
+    id: '3',
+    name: 'Dawit Lema',
+    grade: '11C',
+    status: 'Active',
+    parentName: 'Lema Hailu',
+    parentPhone: '+251933333333',
+    bloodGroup: 'B-',
+    allergies: 'Dust',
+    medications: 'Antihistamines',
+    emergencyContact: {
+      name: 'Lema Hailu',
+      relation: 'Father',
+      phone: '+251933333333'
+    },
+    riskLevel: 'High',
+    riskFactor: 'Frequent absenteeism in the last month.'
+  },
+  { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444', riskLevel: 'Low' },
+  { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', parentName: 'Tesfaye Belay', parentPhone: '+251955555555', riskLevel: 'Low' },
+  { id: '6', name: 'Biniyam Yosef', grade: '10A', status: 'Active', parentName: 'Yosef Kassa', parentPhone: '+251911223344', riskLevel: 'Medium', riskFactor: 'Sudden drop in Physics attendance.' },
+  { id: '7', name: 'Tigist Walelign', grade: '9B', status: 'Active', parentName: 'Walelign Tadesse', parentPhone: '+251911556677', riskLevel: 'Low' },
 ];
 
 export const mockTeachers = [

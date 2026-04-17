@@ -1,14 +1,16 @@
 
-import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck } from 'lucide-react';
-import { mockStudents } from '../data/mockData';
+import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck, Users, ShieldAlert, ArrowRight, X } from 'lucide-react';
+import { mockStudents, mockTeachers } from '../data/mockData';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 
 export const Attendance = () => {
   const { role } = useUser();
-  const isAdmin = role === 'school-admin';
+  const isAdmin = role === 'school-admin' || role === 'super-admin';
   const [selectedGrade, setSelectedGrade] = useState('10A');
   const [attendance, setAttendance] = useState<Record<string, 'present' | 'absent' | 'late'>>({});
+  const [showSubModal, setShowSubModal] = useState(false);
+  const [absentTeacher, setAbsentTeacher] = useState<any>(null);
 
   const students = mockStudents.filter(s => s.grade === selectedGrade);
 
@@ -209,12 +211,92 @@ export const Attendance = () => {
           <UserCheck size={20} />
         </div>
         <div>
-          <h4 className="text-sm font-bold text-blue-900 dark:text-blue-100">Smart Substitution System</h4>
+          <h4 className="text-sm font-bold text-blue-900 dark:text-blue-100">Staff Continuity Module</h4>
           <p className="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
-            If a teacher is marked absent, the system will automatically notify eligible substitute teachers.
+            Manage rapid proxy teacher assignments for staff absences.
           </p>
         </div>
+        <button
+          onClick={() => {
+            setAbsentTeacher(mockTeachers[1]);
+            setShowSubModal(true);
+          }}
+          className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors"
+        >
+          Manage Absences
+        </button>
       </div>
+
+      {showSubModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl animate-in zoom-in duration-300 overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-50 text-rose-600 rounded-xl">
+                  <ShieldAlert size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 dark:text-white">Staff Substitution</h3>
+                  <p className="text-xs text-slate-500 font-medium tracking-tight">Rapid Proxy Teacher Assignment</p>
+                </div>
+              </div>
+              <button onClick={() => setShowSubModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-8 space-y-8">
+              <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-rose-200 rounded-full flex items-center justify-center text-rose-700 font-bold text-xl">
+                    {absentTeacher?.name[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-rose-900">{absentTeacher?.name}</p>
+                    <p className="text-xs text-rose-700 font-medium">Reported Absent Today</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-bold text-rose-400 uppercase">Impact</p>
+                  <p className="text-sm font-bold text-rose-900">{absentTeacher?.classes} Active Classes</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-widest flex items-center gap-2">
+                  <Users size={16} className="text-blue-600" />
+                  Eligible Substitutes
+                </h4>
+                <div className="grid grid-cols-1 gap-3">
+                  {mockTeachers.filter(t => !t.isInClass && t.id !== absentTeacher?.id).map((teacher) => (
+                    <div key={teacher.id} className="flex items-center justify-between p-4 border border-slate-100 dark:border-slate-800 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold">
+                          {teacher.name[0]}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 dark:text-white">{teacher.name}</p>
+                          <p className="text-[10px] text-slate-400 font-medium uppercase">{teacher.subjects.join(', ')}</p>
+                        </div>
+                      </div>
+                      <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold opacity-0 group-hover:opacity-100 transition-all">
+                        Assign Proxy
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-center">
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                Automated SMS & App notifications will be sent to parents and the assigned teacher.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
