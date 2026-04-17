@@ -119,6 +119,87 @@ export const mockGrades = [
   { type: 'Assignment', weight: '20%', score: 18, total: 20 },
 ];
 
+export const studentCurrentCourses = [
+  {
+    id: 'c1',
+    name: 'Mathematics',
+    code: 'MATH-10A',
+    teacher: 'Dr. Solomon',
+    progress: 65,
+    grades: {
+      quizzes: [{ name: 'Quiz 1', score: 15, total: 20 }, { name: 'Quiz 2', score: null, total: 20 }],
+      tests: [{ name: 'Test 1', score: 32, total: 40 }],
+      midterm: { name: 'Midterm', score: null, total: 100 },
+      assignments: [{ name: 'Assignment 1', score: 18, total: 20 }, { name: 'Assignment 2', score: null, total: 20 }],
+      final: { name: 'Final Exam', score: null, total: 100 }
+    }
+  },
+  {
+    id: 'c2',
+    name: 'Physics',
+    code: 'PHYS-10A',
+    teacher: 'Dr. Solomon',
+    progress: 40,
+    grades: {
+      quizzes: [{ name: 'Quiz 1', score: 12, total: 20 }],
+      tests: [{ name: 'Test 1', score: null, total: 40 }],
+      midterm: { name: 'Midterm', score: null, total: 100 },
+      assignments: [{ name: 'Assignment 1', score: 15, total: 20 }],
+      final: { name: 'Final Exam', score: null, total: 100 }
+    }
+  },
+  {
+    id: 'c3',
+    name: 'Biology',
+    code: 'BIOL-10A',
+    teacher: 'W/ro Selam',
+    progress: 80,
+    grades: {
+      quizzes: [{ name: 'Quiz 1', score: 18, total: 20 }, { name: 'Quiz 2', score: 19, total: 20 }],
+      tests: [{ name: 'Test 1', score: 38, total: 40 }],
+      midterm: { name: 'Midterm', score: 88, total: 100 },
+      assignments: [{ name: 'Assignment 1', score: 20, total: 20 }],
+      final: { name: 'Final Exam', score: null, total: 100 }
+    }
+  }
+];
+
+export const studentAcademicHistory = [
+  {
+    year: '2024/2025',
+    semester: 'Semester 2',
+    gpa: '3.85',
+    courses: [
+      { name: 'Amharic', grade: 'A', score: 92 },
+      { name: 'English', grade: 'A', score: 95 },
+      { name: 'Chemistry', grade: 'B+', score: 88 },
+      { name: 'Civics', grade: 'A', score: 90 }
+    ]
+  },
+  {
+    year: '2024/2025',
+    semester: 'Semester 1',
+    gpa: '3.72',
+    courses: [
+      { name: 'Amharic', grade: 'A-', score: 89 },
+      { name: 'English', grade: 'A', score: 93 },
+      { name: 'General Science', grade: 'B', score: 84 },
+      { name: 'Art', grade: 'A+', score: 98 }
+    ]
+  },
+  {
+    year: '2023/2024',
+    semester: 'Full Year',
+    gpa: '3.65',
+    courses: [
+      { name: 'Grade 9 Mathematics', grade: 'B+', score: 87 },
+      { name: 'Grade 9 Physics', grade: 'A-', score: 90 },
+      { name: 'Grade 9 Biology', grade: 'A', score: 94 },
+      { name: 'Geography', grade: 'B', score: 82 }
+    ]
+  }
+];
+
 export const mockInventory = [
   { id: 'I1', name: 'Microscope', category: 'Lab Equipment', quantity: 15, condition: 'Good', location: 'Science Lab A' },
   { id: 'I2', name: 'Dell Latitude 3420', category: 'IT Assets', quantity: 30, condition: 'New', location: 'Computer Lab 1' },

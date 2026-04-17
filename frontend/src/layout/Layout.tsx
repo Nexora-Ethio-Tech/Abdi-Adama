@@ -15,8 +15,8 @@ export const Layout = () => {
     if (role === 'student') {
       switch (path) {
         case '/': return 'Student Dashboard';
-        case '/courses': return 'My Courses';
-        case '/attendance': return 'Attendance Record';
+        case '/courses': return 'Grades & Courses';
+        case '/attendance': return 'Academic History';
         case '/finance': return 'Fee Payments';
         default: return 'Student Portal';
       }

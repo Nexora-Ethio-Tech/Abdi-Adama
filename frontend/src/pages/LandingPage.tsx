@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useUser, type UserRole } from '../context/UserContext';
 import { StudentRegistration } from '../components/StudentRegistration';
+import { Chatbot } from '../components/Chatbot';
 import {
   GraduationCap,
   Users,
@@ -139,6 +140,8 @@ export const LandingPage = () => {
         </div>
         <p>Providing excellence in education since 2005.</p>
       </footer>
+
+      <Chatbot />
     </div>
   );
 };

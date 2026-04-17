@@ -9,6 +9,8 @@ import { Branches } from './pages/Branches';
 import { StudentProfile } from './pages/StudentProfile';
 import { Analytics } from './pages/Analytics';
 import { StudentPortal } from './pages/StudentPortal';
+import { StudentCourses } from './pages/StudentCourses';
+import { AcademicHistory } from './pages/AcademicHistory';
 import { ParentPortal } from './pages/ParentPortal';
 import { TeacherPortal } from './pages/TeacherPortal';
 import { TeacherAttendance } from './pages/TeacherAttendance';
@@ -87,18 +89,8 @@ function App() {
 
           {role === 'student' && (
             <>
-              <Route path="courses" element={
-                <Placeholder
-                  title="My Courses"
-                  description="Access your enrolled courses and track your grades for each subject."
-                />
-              } />
-              <Route path="attendance" element={
-                <Placeholder
-                  title="Academic History"
-                  description="Review your previous courses and historical grade records."
-                />
-              } />
+              <Route path="courses" element={<StudentCourses />} />
+              <Route path="attendance" element={<AcademicHistory />} />
             </>
           )}
 
