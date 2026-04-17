@@ -22,6 +22,7 @@ import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';
 import Exams from './pages/Exams';
+import { LandingPage } from './pages/LandingPage';
 import { useUser } from './context/UserContext';
 
 const Placeholder = ({ title, description }: { title: string; description?: string }) => (
@@ -38,6 +39,17 @@ const Placeholder = ({ title, description }: { title: string; description?: stri
 
 function App() {
   const { role } = useUser();
+
+  if (!role) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    );
+  }
 
   return (
     <BrowserRouter>

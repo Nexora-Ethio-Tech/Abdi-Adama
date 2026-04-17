@@ -137,7 +137,7 @@ const Exams = () => {
   );
 };
 
-const ExamCard = ({ exam, role, onStart }: { exam: Exam, role: string, onStart: () => void }) => {
+const ExamCard = ({ exam, role, onStart }: { exam: Exam, role: string | null, onStart: () => void }) => {
   return (
     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all group">
       <div className="flex justify-between items-start mb-4">

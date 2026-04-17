@@ -1,17 +1,28 @@
 
 import { useState } from 'react';
-import { UserPlus, RefreshCw, Upload, Search, CheckCircle, AlertCircle, FileText, Info } from 'lucide-react';
+import { UserPlus, RefreshCw, Upload, Search, CheckCircle, AlertCircle, FileText, Info, Check, X } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 
 type RegistrationTab = 'new' | 'existing';
 
-export const StudentRegistration = () => {
+interface StudentRegistrationProps {
+  isAdminView?: boolean;
+}
+
+// Mocked pending applications
+const initialPendingApplications = [
+  { id: 'APP1', name: 'Zekarias Teshome', dob: '2012-08-20', parentName: 'Teshome G/Mariam', phone: '+251911445566', previousSchool: 'St. Joseph School', lastGrade: '7', date: '2026-04-12' },
+  { id: 'APP2', name: 'Liyu Solomon', dob: '2013-05-10', parentName: 'Solomon Ayele', phone: '+251911778899', previousSchool: 'Future Talent Academy', lastGrade: '6', date: '2026-04-13' },
+];
+
+export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationProps) => {
   const [activeTab, setActiveTab] = useState<RegistrationTab>('new');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [pendingApps, setPendingApps] = useState(initialPendingApplications);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -33,7 +44,7 @@ export const StudentRegistration = () => {
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('Student registered successfully!');
+    setSuccessMessage(isAdminView ? 'Student registered successfully!' : 'Your application has been submitted successfully! We will contact you soon.');
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
@@ -41,6 +52,12 @@ export const StudentRegistration = () => {
     setSuccessMessage(`${selectedStudent.name} has been promoted/re-admitted!`);
     setSelectedStudent(null);
     setSearchQuery('');
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const handleAdmissionDecision = (appId: string, decision: 'Approve' | 'Reject') => {
+    setPendingApps(prev => prev.filter(app => app.id !== appId));
+    setSuccessMessage(`Application ${appId} has been ${decision}ed.`);
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
@@ -53,123 +70,190 @@ export const StudentRegistration = () => {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-4 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
-        <button
-          onClick={() => setActiveTab('new')}
-          className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
-            activeTab === 'new'
-              ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-          }`}
-        >
-          New Admission
-        </button>
-        <button
-          onClick={() => setActiveTab('existing')}
-          className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
-            activeTab === 'existing'
-              ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-          }`}
-        >
-          Existing Student
-        </button>
-      </div>
+      {isAdminView && (
+        <div className="flex flex-col sm:flex-row gap-4 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
+          <button
+            onClick={() => setActiveTab('new')}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === 'new'
+                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            Admission Requests
+          </button>
+          <button
+            onClick={() => setActiveTab('existing')}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === 'existing'
+                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+            }`}
+          >
+            Promotion & Re-admission
+          </button>
+        </div>
+      )}
 
       {activeTab === 'new' ? (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-            <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-              <UserPlus size={20} className="text-blue-600" />
-              Admission Form (New Student)
-            </h3>
-          </div>
-          <form onSubmit={handleRegister} className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
-                <input required type="text" placeholder="Enter student full name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Date of Birth</label>
-                <input required type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Gender</label>
-                <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Parent/Guardian Name</label>
-                <input required type="text" placeholder="Enter parent name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Parent Phone</label>
-                <input required type="tel" placeholder="+251..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Address</label>
-                <input required type="text" placeholder="City, Sub-city, Woreda" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Previous School</label>
-                <input type="text" placeholder="Name of previous school" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Last Grade Completed</label>
-                <input type="text" placeholder="e.g. Grade 9" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Registration Fee Status</label>
-                <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Paid</option>
-                  <option>Pending</option>
-                </select>
-              </div>
+        isAdminView ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Pending Admissions</h3>
+              <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-bold">
+                {pendingApps.length} New Requests
+              </span>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-slate-500 uppercase block">Last Transcript (Max 2MB)</label>
-              <div className={`relative border-2 border-dashed rounded-2xl p-8 transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer ${
-                fileError ? 'border-rose-300 bg-rose-50 dark:bg-rose-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600'
-              }`}>
-                <input
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleFileUpload}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                />
-                <div className={`p-4 rounded-full ${fileError ? 'bg-rose-100 text-rose-600' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600'}`}>
-                  {fileName ? <FileText size={32} /> : <Upload size={32} />}
+            <div className="grid grid-cols-1 gap-4">
+              {pendingApps.map(app => (
+                <div key={app.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400">
+                      <UserPlus size={24} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100">{app.name}</h4>
+                      <p className="text-xs text-slate-500 font-medium">Applied for Grade {app.lastGrade} • {app.date}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-8 flex-1 max-w-xl">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Parent</p>
+                      <p className="text-xs font-bold dark:text-slate-200">{app.parentName}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Phone</p>
+                      <p className="text-xs font-bold dark:text-slate-200">{app.phone}</p>
+                    </div>
+                    <div className="hidden md:block">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Prev School</p>
+                      <p className="text-xs font-bold dark:text-slate-200">{app.previousSchool}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-50 dark:border-slate-800">
+                    <button
+                      onClick={() => handleAdmissionDecision(app.id, 'Reject')}
+                      className="flex-1 md:flex-none p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-colors flex items-center justify-center gap-2 text-xs font-bold"
+                    >
+                      <X size={18} />
+                      Reject
+                    </button>
+                    <button
+                      onClick={() => handleAdmissionDecision(app.id, 'Approve')}
+                      className="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center justify-center gap-2 text-xs font-bold"
+                    >
+                      <Check size={18} />
+                      Approve
+                    </button>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                    {fileName || 'Click to upload transcript'}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1">PDF, PNG, JPG (Max 2MB)</p>
-                </div>
-              </div>
-              {fileError && (
-                <div className="flex items-center gap-2 text-rose-600 text-xs font-bold">
-                  <AlertCircle size={14} />
-                  <span>{fileError}</span>
+              ))}
+              {pendingApps.length === 0 && (
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-12 text-center space-y-3">
+                   <CheckCircle size={48} className="mx-auto text-slate-200" />
+                   <p className="text-slate-500 font-medium">No pending admission requests at this time.</p>
                 </div>
               )}
             </div>
-
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-200 dark:shadow-none"
-              >
-                Complete Registration
-              </button>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <UserPlus size={20} className="text-blue-600" />
+                Admission Form (New Student)
+              </h3>
             </div>
-          </form>
-        </div>
+            <form onSubmit={handleRegister} className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
+                  <input required type="text" placeholder="Enter student full name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Date of Birth</label>
+                  <input required type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Gender</label>
+                  <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Parent/Guardian Name</label>
+                  <input required type="text" placeholder="Enter parent name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Parent Phone</label>
+                  <input required type="tel" placeholder="+251..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Address</label>
+                  <input required type="text" placeholder="City, Sub-city, Woreda" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Previous School</label>
+                  <input type="text" placeholder="Name of previous school" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Last Grade Completed</label>
+                  <input type="text" placeholder="e.g. Grade 9" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Registration Fee Status</label>
+                  <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>Paid</option>
+                    <option>Pending</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-slate-500 uppercase block">Last Transcript (Max 2MB)</label>
+                <div className={`relative border-2 border-dashed rounded-2xl p-8 transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer ${
+                  fileError ? 'border-rose-300 bg-rose-50 dark:bg-rose-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600'
+                }`}>
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleFileUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                  <div className={`p-4 rounded-full ${fileError ? 'bg-rose-100 text-rose-600' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600'}`}>
+                    {fileName ? <FileText size={32} /> : <Upload size={32} />}
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                      {fileName || 'Click to upload transcript'}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">PDF, PNG, JPG (Max 2MB)</p>
+                  </div>
+                </div>
+                {fileError && (
+                  <div className="flex items-center gap-2 text-rose-600 text-xs font-bold">
+                    <AlertCircle size={14} />
+                    <span>{fileError}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-200 dark:shadow-none"
+                >
+                  Submit Admission Application
+                </button>
+              </div>
+            </form>
+          </div>
+        )
       ) : (
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">

@@ -72,7 +72,7 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
           >
             <div className="text-right hidden sm:block">
               <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Admin User</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role.replace('-', ' ')}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role?.replace('-', ' ') || 'Guest'}</p>
             </div>
             <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
               <User size={20} className="md:w-6 md:h-6" />
