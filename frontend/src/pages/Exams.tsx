@@ -327,100 +327,6 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
     onSave(newExam);
   };
 
-  const QuestionNode = ({ q, level = 0 }: { q: FlexibleQuestion, level?: number }) => (
-    <div className={`bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4 relative group ${level > 0 ? 'ml-8 mt-4' : ''}`}>
-      <div className="flex items-start gap-4">
-        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 font-bold shrink-0">
-          {level === 0 ? questions.indexOf(q) + 1 : '•'}
-        </span>
-        <div className="flex-1 space-y-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <input
-              type="text"
-              placeholder="Enter question text..."
-              className="flex-1 text-lg font-medium bg-transparent border-none focus:ring-0 dark:text-white"
-              value={q.text}
-              onChange={e => updateQuestion(q.id, { text: e.target.value })}
-            />
-            <div className="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-1 border dark:border-slate-700">
-              <button
-                onClick={() => updateQuestion(q.id, { type: 'explain' })}
-                className={`p-1.5 rounded-md transition-all ${q.type === 'explain' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
-                title="Explain Question"
-              >
-                <AlignLeft size={16} />
-              </button>
-              <button
-                onClick={() => updateQuestion(q.id, { type: 'options' })}
-                className={`p-1.5 rounded-md transition-all ${q.type === 'options' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
-                title="Multiple Choice"
-              >
-                <CheckSquare size={16} />
-              </button>
-              <button
-                onClick={() => updateQuestion(q.id, { type: 'group' })}
-                className={`p-1.5 rounded-md transition-all ${q.type === 'group' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
-                title="Question Group"
-              >
-                <Layers size={16} />
-              </button>
-            </div>
-          </div>
-
-          {q.type === 'options' && q.options && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
-              {q.options.map((opt, oIdx) => (
-                <div key={opt.id} className="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name={`correct-${q.id}`}
-                    checked={q.correctOptionId === opt.id}
-                    onChange={() => updateQuestion(q.id, { correctOptionId: opt.id })}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <span className="text-slate-400 font-medium uppercase">{opt.id}.</span>
-                  <input
-                    type="text"
-                    placeholder={`Option ${opt.id.toUpperCase()}`}
-                    className="flex-1 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 dark:text-white"
-                    value={opt.text}
-                    onChange={e => updateOption(q.id, oIdx, e.target.value)}
-                  />
-                </div>
-              ))}
-              <button
-                onClick={() => addOption(q.id)}
-                className="flex items-center gap-2 text-sm text-slate-400 hover:text-blue-600 transition-colors"
-              >
-                <Plus size={16} /> Add Option
-              </button>
-            </div>
-          )}
-
-          {q.type === 'group' && (
-            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-              {q.subQuestions?.map(subQ => (
-                <QuestionNode key={subQ.id} q={subQ} level={level + 1} />
-              ))}
-              <button
-                onClick={() => addQuestion(q.id)}
-                className="flex items-center gap-2 text-sm text-blue-600 font-bold ml-8 hover:underline"
-              >
-                <Plus size={16} /> Add Sub-question
-              </button>
-            </div>
-          )}
-        </div>
-        <button
-          onClick={() => removeQuestion(q.id)}
-          className="p-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-        >
-          <Trash2 size={20} />
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -558,8 +464,17 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
           </div>
 
           <div className="space-y-4 pb-20">
-            {questions.map((q) => (
-              <QuestionNode key={q.id} q={q} />
+            {questions.map((q, idx) => (
+              <QuestionNode
+                key={q.id}
+                q={q}
+                index={idx}
+                onUpdate={updateQuestion}
+                onRemove={removeQuestion}
+                onAddSub={addQuestion}
+                onAddOption={addOption}
+                onUpdateOption={updateOption}
+              />
             ))}
             {questions.length === 0 && (
               <div className="py-20 text-center bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
@@ -579,5 +494,126 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
     </div>
   );
 };
+
+const QuestionNode = ({
+  q,
+  level = 0,
+  index,
+  onUpdate,
+  onRemove,
+  onAddSub,
+  onAddOption,
+  onUpdateOption
+}: {
+  q: FlexibleQuestion,
+  level?: number,
+  index?: number,
+  onUpdate: (id: string, updates: Partial<FlexibleQuestion>) => void,
+  onRemove: (id: string) => void,
+  onAddSub: (parentId?: string) => void,
+  onAddOption: (qId: string) => void,
+  onUpdateOption: (qId: string, oIdx: number, text: string) => void
+}) => (
+  <div className={`bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4 relative group ${level > 0 ? 'ml-8 mt-4' : ''}`}>
+    <div className="flex items-start gap-4">
+      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 font-bold shrink-0">
+        {level === 0 ? (index !== undefined ? index + 1 : '•') : '•'}
+      </span>
+      <div className="flex-1 space-y-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <input
+            type="text"
+            placeholder="Enter question text..."
+            className="flex-1 text-lg font-medium bg-transparent border-none focus:ring-0 dark:text-white outline-none"
+            value={q.text}
+            onChange={e => onUpdate(q.id, { text: e.target.value })}
+          />
+          <div className="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-1 border dark:border-slate-700">
+            <button
+              onClick={() => onUpdate(q.id, { type: 'explain' })}
+              className={`p-1.5 rounded-md transition-all ${q.type === 'explain' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
+              title="Explain Question"
+            >
+              <AlignLeft size={16} />
+            </button>
+            <button
+              onClick={() => onUpdate(q.id, { type: 'options' })}
+              className={`p-1.5 rounded-md transition-all ${q.type === 'options' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
+              title="Multiple Choice"
+            >
+              <CheckSquare size={16} />
+            </button>
+            <button
+              onClick={() => onUpdate(q.id, { type: 'group' })}
+              className={`p-1.5 rounded-md transition-all ${q.type === 'group' ? 'bg-white dark:bg-slate-800 shadow-sm text-blue-600' : 'text-slate-400'}`}
+              title="Question Group"
+            >
+              <Layers size={16} />
+            </button>
+          </div>
+        </div>
+
+        {q.type === 'options' && q.options && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
+            {q.options.map((opt, oIdx) => (
+              <div key={opt.id} className="flex items-center gap-3">
+                <input
+                  type="radio"
+                  name={`correct-${q.id}`}
+                  checked={q.correctOptionId === opt.id}
+                  onChange={() => onUpdate(q.id, { correctOptionId: opt.id })}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="text-slate-400 font-medium uppercase">{opt.id}.</span>
+                <input
+                  type="text"
+                  placeholder={`Option ${opt.id.toUpperCase()}`}
+                  className="flex-1 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 dark:text-white"
+                  value={opt.text}
+                  onChange={e => onUpdateOption(q.id, oIdx, e.target.value)}
+                />
+              </div>
+            ))}
+            <button
+              onClick={() => onAddOption(q.id)}
+              className="flex items-center gap-2 text-sm text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              <Plus size={16} /> Add Option
+            </button>
+          </div>
+        )}
+
+        {q.type === 'group' && (
+          <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+            {q.subQuestions?.map(subQ => (
+              <QuestionNode
+                key={subQ.id}
+                q={subQ}
+                level={level + 1}
+                onUpdate={onUpdate}
+                onRemove={onRemove}
+                onAddSub={onAddSub}
+                onAddOption={onAddOption}
+                onUpdateOption={onUpdateOption}
+              />
+            ))}
+            <button
+              onClick={() => onAddSub(q.id)}
+              className="flex items-center gap-2 text-sm text-blue-600 font-bold ml-8 hover:underline"
+            >
+              <Plus size={16} /> Add Sub-question
+            </button>
+          </div>
+        )}
+      </div>
+      <button
+        onClick={() => onRemove(q.id)}
+        className="p-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+      >
+        <Trash2 size={20} />
+      </button>
+    </div>
+  </div>
+);
 
 export default Exams;

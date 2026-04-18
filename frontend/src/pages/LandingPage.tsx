@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { useUser, type UserRole } from '../context/UserContext';
 import { StudentRegistration } from '../components/StudentRegistration';
+import { Chatbot } from '../components/Chatbot';
+import { ShootingStars } from '../components/Effects';
 import {
   GraduationCap,
   Users,
@@ -60,6 +62,7 @@ export const LandingPage = () => {
       {/* Hero Section */}
       <header className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent z-0" />
+        <ShootingStars />
 
         <div className="relative z-10 text-center px-4 space-y-6 max-w-4xl">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm font-bold mb-4 animate-bounce">
@@ -139,6 +142,8 @@ export const LandingPage = () => {
         </div>
         <p>Providing excellence in education since 2005.</p>
       </footer>
+
+      <Chatbot />
     </div>
   );
 };

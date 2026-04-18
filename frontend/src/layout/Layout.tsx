@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { Header } from '../components/Header';
 import { Chatbot } from '../components/Chatbot';
+import { ShootingStars } from '../components/Effects';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 
@@ -15,8 +16,8 @@ export const Layout = () => {
     if (role === 'student') {
       switch (path) {
         case '/': return 'Student Dashboard';
-        case '/courses': return 'My Courses';
-        case '/attendance': return 'Attendance Record';
+        case '/courses': return 'Grades & Courses';
+        case '/attendance': return 'Academic History';
         case '/finance': return 'Fee Payments';
         default: return 'Student Portal';
       }
@@ -64,7 +65,8 @@ export const Layout = () => {
   const isExamPage = location.pathname.startsWith('/exam/');
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
+      <ShootingStars />
       {/* Sidebar Backdrop for Mobile */}
       {isSidebarOpen && (
         <div
