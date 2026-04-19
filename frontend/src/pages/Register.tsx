@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, Fingerprint, Lock, Mail, User, Phone, ArrowRight } from 'lucide-react';
 import { ShootingStars } from '../components/Effects';
+import logo from '../assets/logo.jpg';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -33,8 +34,10 @@ export const Register = () => {
 
       <div className="w-full max-w-2xl relative z-10 my-8">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-school-secondary rounded-3xl text-white shadow-xl shadow-school-secondary/20 mb-4">
-            <UserPlus size={40} />
+          <div className="flex justify-center mb-6">
+            <div className="p-2 bg-white dark:bg-slate-900 rounded-3xl shadow-xl floating">
+              <img src={logo} alt="Abdi Adama School Logo" className="w-20 h-20 rounded-2xl object-cover" />
+            </div>
           </div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white">Create Account</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2">Join the Abdi Adama educational community</p>

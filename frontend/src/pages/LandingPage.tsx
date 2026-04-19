@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { StudentRegistration } from '../components/StudentRegistration';
 import { Chatbot } from '../components/Chatbot';
 import { ShootingStars } from '../components/Effects';
+import logo from '../assets/logo.jpg';
 import {
-  GraduationCap,
   ArrowRight,
   Sparkles,
   ChevronDown,
@@ -23,11 +23,12 @@ export const LandingPage = () => {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-school-primary p-2 rounded-lg text-white">
-                <GraduationCap size={32} />
+            <div className="flex items-center gap-4">
+              <img src={logo} alt="School Logo" className="w-16 h-16 rounded-2xl shadow-lg object-cover" />
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admission Portal</h1>
+                <p className="text-sm text-slate-500">Abdi Adama Integrated School</p>
               </div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Abdi Adama Admission Portal</h1>
             </div>
             <button
               onClick={() => setShowAdmission(false)}
@@ -53,8 +54,16 @@ export const LandingPage = () => {
         <ShootingStars />
 
         <div className="relative z-10 text-center px-4 space-y-6 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-primary/10 text-school-primary rounded-full text-sm font-bold mb-4 animate-bounce">
-            <Sparkles size={18} />
+          <div className="flex justify-center mb-8">
+            <div className="relative p-2 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl floating">
+              <img src={logo} alt="Abdi Adama School Logo" className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] object-cover" />
+              <div className="absolute -bottom-2 -right-2 bg-school-primary text-white p-3 rounded-2xl shadow-xl">
+                 <Sparkles size={24} />
+              </div>
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-primary/10 text-school-primary rounded-full text-sm font-bold mb-4">
             Integrated School Management System
           </div>
           <h1 className="text-6xl md:text-8xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -101,8 +110,8 @@ export const LandingPage = () => {
 
       {/* Discrete Staff Link */}
       <footer className="py-12 border-t border-slate-100 dark:border-slate-800 text-center">
-        <div className="flex items-center justify-center gap-2 mb-4 font-bold text-slate-600 dark:text-slate-300">
-           <GraduationCap className="text-school-primary" />
+        <div className="flex items-center justify-center gap-3 mb-4 font-bold text-slate-600 dark:text-slate-300">
+           <img src={logo} alt="Logo" className="w-8 h-8 rounded-lg grayscale group-hover:grayscale-0 transition-all" />
            Abdi Adama Integrated School © 2026
         </div>
         <p className="text-slate-400 text-sm mb-6">Providing excellence in education since 2005.</p>

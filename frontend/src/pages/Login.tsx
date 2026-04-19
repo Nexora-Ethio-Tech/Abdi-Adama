@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, Fingerprint, Lock, AlertCircle } from 'lucide-react';
 import { ShootingStars } from '../components/Effects';
+import logo from '../assets/logo.jpg';
 
 export const Login = () => {
   const { login } = useUser();
@@ -21,7 +22,7 @@ export const Login = () => {
     try {
       const success = await login(digitalId, password);
       if (success) {
-        navigate('/');
+        navigate('/dashboard');
       } else {
         setError('Invalid Digital ID or Password');
       }
@@ -38,8 +39,10 @@ export const Login = () => {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-school-primary rounded-3xl text-white shadow-xl shadow-school-primary/20 mb-4 floating">
-            <Fingerprint size={40} />
+          <div className="flex justify-center mb-6">
+            <div className="p-2 bg-white dark:bg-slate-900 rounded-3xl shadow-xl floating">
+              <img src={logo} alt="Abdi Adama School Logo" className="w-24 h-24 rounded-2xl object-cover" />
+            </div>
           </div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white">Sign In</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2">Access the Abdi Adama Smart-School Ecosystem</p>
