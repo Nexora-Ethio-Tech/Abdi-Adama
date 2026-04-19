@@ -1,8 +1,8 @@
 
-import { Bell, Search, User, ChevronDown, Moon, Sun, Menu } from 'lucide-react';
-import { useUser, type UserRole } from '../context/UserContext';
-import { useState } from 'react';
+import { Bell, Search, User, LogOut, Moon, Sun, Menu } from 'lucide-react';
+import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   title: string;
@@ -10,19 +10,14 @@ interface HeaderProps {
 }
 
 export const Header = ({ title, onMenuClick }: HeaderProps) => {
-  const { role, setRole, selectedBranch } = useUser();
+  const { user, logout, selectedBranch, role } = useUser();
   const { theme, toggleTheme } = useTheme();
-  const [showRoleMenu, setShowRoleMenu] = useState(false);
+  const navigate = useNavigate();
 
-  const roles: { val: UserRole; label: string }[] = [
-    { val: 'super-admin', label: 'Super Admin' },
-    { val: 'school-admin', label: 'School Admin' },
-    { val: 'teacher', label: 'Teacher' },
-    { val: 'student', label: 'Student' },
-    { val: 'parent', label: 'Parent' },
-    { val: 'finance-clerk', label: 'Finance Clerk' },
-    { val: 'librarian', label: 'Librarian' },
-  ];
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <header className="h-16 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md flex items-center justify-between px-4 md:px-8 sticky top-0 z-20 transition-colors duration-300">
@@ -66,43 +61,23 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         </button>
 
         <div className="flex items-center gap-3 md:pl-6 md:border-l dark:border-slate-800 relative">
-          <button
-            onClick={() => setShowRoleMenu(!showRoleMenu)}
-            className="flex items-center gap-2 md:gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 p-1 md:p-2 rounded-lg transition-colors"
-          >
+          <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Admin User</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role?.replace('-', ' ') || 'Guest'}</p>
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{user?.name || 'Guest'}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role?.replace('-', ' ')}</p>
             </div>
             <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
               <User size={20} className="md:w-6 md:h-6" />
             </div>
-            <ChevronDown size={14} className="text-slate-400" />
-          </button>
+          </div>
 
-          {showRoleMenu && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-lg py-2 z-50">
-              <div className="px-4 py-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                Switch Role
-              </div>
-              {roles.map((r) => (
-                <button
-                  key={r.val}
-                  onClick={() => {
-                    setRole(r.val);
-                    setShowRoleMenu(false);
-                  }}
-                  className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                    role === r.val
-                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          )}
+          <button
+            onClick={handleLogout}
+            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+            title="Sign Out"
+          >
+            <LogOut size={20} />
+          </button>
         </div>
       </div>
     </header>
