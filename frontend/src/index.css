@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --primary: #2563eb;
+  --primary: #0076BA;
   --secondary: #0f172a;
+  --accent: #C16266;
   --app-radius: 1rem;
   --app-spacing: 1.5rem;
   --app-font-size: 1rem;
@@ -42,7 +43,7 @@
   --app-font-size: 1rem;
   --app-shadow: none;
   --app-font-weight: 400;
-  --primary: #1e3a8a;
+  --primary: #0076BA;
 }
 
 @layer base {
@@ -50,8 +51,8 @@
     @apply bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500;
     font-size: var(--app-font-size);
     font-weight: var(--app-font-weight);
-    background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.03) 0px, transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.03) 0px, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, rgba(0, 118, 186, 0.03) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(193, 98, 102, 0.03) 0px, transparent 50%);
   }
 
   .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
@@ -86,7 +87,15 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-bold transition-all active:scale-95;
+    background-color: var(--primary);
+    @apply hover:opacity-90 text-white font-bold transition-all active:scale-95;
+    border-radius: var(--app-radius);
+    box-shadow: var(--app-shadow);
+  }
+
+  .btn-accent {
+    background-color: var(--accent);
+    @apply hover:opacity-90 text-white font-bold transition-all active:scale-95;
     border-radius: var(--app-radius);
     box-shadow: var(--app-shadow);
   }
