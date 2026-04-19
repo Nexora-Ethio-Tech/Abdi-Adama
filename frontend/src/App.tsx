@@ -26,7 +26,7 @@ import { ExamSession } from './pages/ExamSession';
 import Exams from './pages/Exams';
 import { LandingPage } from './pages/LandingPage';
 import { Login } from './pages/Login';
-import { Register } from './pages/Register';
+import { Signup } from './pages/Signup';
 import { useUser, type UserRole } from './context/UserContext';
 import { type ReactNode } from 'react';
 
@@ -59,7 +59,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/signup" element={<Signup />} />
 
         {!user ? (
           <>

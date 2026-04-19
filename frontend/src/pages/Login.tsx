@@ -1,124 +1,150 @@
 
 import { useState } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, Fingerprint, Lock, AlertCircle } from 'lucide-react';
-import { ShootingStars } from '../components/Effects';
-import logo from '../assets/logo.jpg';
+import { ShieldCheck, Lock, Fingerprint, ArrowRight, Loader2 } from 'lucide-react';
 
 export const Login = () => {
+  const [digitalIdOrEmail, setDigitalIdOrEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useUser();
   const navigate = useNavigate();
-  const [digitalId, setDigitalId] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const location = useLocation();
+
+  const from = (location.state as any)?.from?.pathname || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
+    setIsLoading(true);
     try {
-      // In a real system we would send {digitalIdOrEmail: digitalId, password}
-      // For the mock, we align with the current implementation if it expects specific args
-      const success = await login({ digitalIdOrEmail: digitalId, password });
-      if (success) {
-        navigate('/dashboard');
-      } else {
-        setError('Invalid Digital ID or Password');
-      }
-    } catch (err) {
-      setError('An error occurred during login');
+      await login({ digitalIdOrEmail, password });
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error('Login failed', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
-      <ShootingStars />
-
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
-            <div className="p-2 bg-white dark:bg-slate-900 rounded-3xl shadow-xl floating">
-              <img src={logo} alt="Abdi Adama School Logo" className="w-24 h-24 rounded-2xl object-cover" />
-            </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="flex justify-center">
+          <div className="bg-blue-600 p-3 rounded-2xl text-white shadow-xl shadow-blue-200 dark:shadow-none">
+            <ShieldCheck size={40} />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white">Sign In</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">Access the Abdi Adama Smart-School Ecosystem</p>
         </div>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 dark:text-white">
+          Sign in to your account
+        </h2>
+        <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+          Access the Abdi Adama Smart-School Portal
+        </p>
+      </div>
 
-        <div className="card p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm">
-                <AlertCircle size={18} />
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Digital National ID</label>
-              <div className="relative">
-                <Fingerprint className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white dark:bg-slate-900 py-8 px-4 shadow-xl border border-slate-100 dark:border-slate-800 sm:rounded-3xl sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="id" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Digital ID or Email address
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Fingerprint size={18} />
+                </div>
                 <input
+                  id="id"
+                  name="id"
                   type="text"
                   required
-                  value={digitalId}
-                  onChange={(e) => setDigitalId(e.target.value)}
-                  placeholder="Enter your Digital ID"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-school-primary focus:ring-4 focus:ring-school-primary/10 transition-all outline-none"
+                  value={digitalIdOrEmail}
+                  onChange={(e) => setDigitalIdOrEmail(e.target.value)}
+                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-transparent dark:text-white"
+                  placeholder="e.g. 123456789 or name@school.com"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Password
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Lock size={18} />
+                </div>
                 <input
+                  id="password"
+                  name="password"
                   type="password"
+                  autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-school-primary focus:ring-4 focus:ring-school-primary/10 transition-all outline-none"
+                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-transparent dark:text-white"
                 />
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-school-primary hover:bg-school-primary/90 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-school-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <LogIn size={20} />
-                  Sign In
-                </>
-              )}
-            </button>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900 dark:text-slate-300">
+                  Remember me
+                </label>
+              </div>
+
+              <div className="text-sm">
+                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                  Forgot your password?
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50 group"
+              >
+                {isLoading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Sign in
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                )}
+              </button>
+            </div>
           </form>
 
-          <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
-            <p className="text-slate-500 dark:text-slate-400">
-              New to Abdi Adama?{' '}
-              <Link to="/register" className="text-school-primary font-bold hover:underline">
-                Create an Account
-              </Link>
-            </p>
-          </div>
-        </div>
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white dark:bg-slate-900 text-slate-500">New to the school?</span>
+              </div>
+            </div>
 
-        <div className="mt-8 text-center">
-          <Link to="/" className="text-slate-400 hover:text-school-primary text-sm font-medium transition-colors">
-            ← Back to Homepage
-          </Link>
+            <div className="mt-6 text-center">
+              <Link
+                to="/signup"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
+                Apply for Admission / Register
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
