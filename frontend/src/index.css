@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --primary: #2563eb;
-  --secondary: #0f172a;
+  --primary: #0064a5;
+  --secondary: #bf6a82;
+  --accent: #4db3e3;
   --app-radius: 1rem;
   --app-spacing: 1.5rem;
   --app-font-size: 1rem;
@@ -42,7 +43,7 @@
   --app-font-size: 1rem;
   --app-shadow: none;
   --app-font-weight: 400;
-  --primary: #1e3a8a;
+  --primary: #004d80;
 }
 
 @layer base {
@@ -50,8 +51,8 @@
     @apply bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500;
     font-size: var(--app-font-size);
     font-weight: var(--app-font-weight);
-    background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.03) 0px, transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.03) 0px, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, rgba(0, 100, 165, 0.03) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(0, 100, 165, 0.03) 0px, transparent 50%);
   }
 
   .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
@@ -86,7 +87,7 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-bold transition-all active:scale-95;
+    @apply bg-school-primary hover:bg-school-primary/90 text-white font-bold transition-all active:scale-95;
     border-radius: var(--app-radius);
     box-shadow: var(--app-shadow);
   }

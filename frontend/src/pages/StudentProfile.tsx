@@ -13,11 +13,11 @@ import {
   FileText,
   Mail,
   Heart,
-  ShieldAlert,
   Printer,
   FileUp,
   AlertTriangle,
-  X
+  X,
+  Fingerprint
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -30,7 +30,7 @@ export const StudentProfile = () => {
     return (
       <div className="text-center py-20">
         <h2 className="text-2xl font-bold text-slate-800">Student not found</h2>
-        <Link to="/students" className="text-blue-600 hover:underline mt-4 inline-block">Back to Students List</Link>
+        <Link to="/students" className="text-school-primary hover:underline mt-4 inline-block">Back to Students List</Link>
       </div>
     );
   }
@@ -38,11 +38,11 @@ export const StudentProfile = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center gap-4">
-        <Link to="/students" className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-          <ArrowLeft size={20} className="text-slate-600" />
+        <Link to="/students" className="p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <ArrowLeft size={20} className="text-slate-600 dark:text-slate-400" />
         </Link>
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Student Profile</h2>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Student Profile</h2>
           <p className="text-sm text-slate-500">Detailed overview of academic performance and records.</p>
         </div>
       </div>
@@ -50,11 +50,11 @@ export const StudentProfile = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Profile Card */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center">
-            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-4xl mx-auto mb-6">
+          <div className="card p-8 text-center">
+            <div className="w-32 h-32 bg-school-primary/10 rounded-full flex items-center justify-center text-school-primary font-bold text-4xl mx-auto mb-6">
               {student.name.charAt(0)}
             </div>
-            <h3 className="text-2xl font-bold text-slate-800">{student.name}</h3>
+            <h3 className="text-2xl font-bold text-slate-800 dark:text-white">{student.name}</h3>
             <p className="text-slate-500 font-medium mb-6">Grade {student.grade} Student</p>
 
             <div className="flex justify-center gap-2">
@@ -63,93 +63,89 @@ export const StudentProfile = () => {
               }`}>
                 {student.status}
               </span>
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 bg-school-primary/10 text-school-primary rounded-full text-xs font-bold uppercase tracking-wider">
                 #{student.id.padStart(4, '0')}
               </span>
             </div>
+
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-1">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Digital National ID</p>
+              <div className="flex items-center gap-2 text-school-primary">
+                <Fingerprint size={16} />
+                <p className="font-mono text-sm font-bold tracking-wider">{student.digitalId || `ETH-${Math.random().toString(10).slice(2, 11)}`}</p>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-            <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2">Personal Information</h4>
+          <div className="card p-6 space-y-4">
+            <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wider mb-2">Personal Information</h4>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
                 <Calendar size={18} className="text-slate-400" />
                 <div className="text-sm">
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Date of Birth</p>
-                  <p className="font-medium">{student.dob || 'May 15, 2010'}</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{student.dob || 'May 15, 2010'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
                 <User size={18} className="text-slate-400" />
                 <div className="text-sm">
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Gender</p>
-                  <p className="font-medium">{student.gender || 'Male'}</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{student.gender || 'Male'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
                 <MapPin size={18} className="text-slate-400" />
                 <div className="text-sm">
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Address</p>
-                  <p className="font-medium">{student.address || 'Addis Ababa, Ethiopia'}</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{student.address || 'Addis Ababa, Ethiopia'}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-            <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2">Parent/Guardian</h4>
+          <div className="card p-6 space-y-4">
+            <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wider mb-2">Parent/Guardian</h4>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
                 <User size={18} className="text-slate-400" />
                 <div className="text-sm">
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Name</p>
-                  <p className="font-medium">{student.parentName}</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{student.parentName}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
                 <Phone size={18} className="text-slate-400" />
                 <div className="text-sm">
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Phone Number</p>
-                  <p className="font-medium">{student.parentPhone}</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{student.parentPhone}</p>
                 </div>
               </div>
             </div>
-            <button className="w-full mt-2 flex items-center justify-center gap-2 py-2 border border-blue-200 text-blue-600 rounded-xl hover:bg-blue-50 transition-colors text-sm font-bold">
+            <button className="w-full mt-2 flex items-center justify-center gap-2 py-2 border border-school-primary/30 text-school-primary rounded-xl hover:bg-school-primary/10 transition-colors text-sm font-bold">
               <Mail size={16} />
               Contact Parent
             </button>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-            <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
-              <Heart size={16} className="text-rose-500" />
+          <div className="card p-6 space-y-4">
+            <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+              <Heart size={16} className="text-school-secondary" />
               Medical Records
             </h4>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Blood Group</span>
-                <span className="font-bold text-slate-700">{student.bloodGroup || 'N/A'}</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">{student.bloodGroup || 'N/A'}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Allergies</span>
-                <span className="font-bold text-slate-700">{student.allergies || 'None'}</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">{student.allergies || 'None'}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Medications</span>
-                <span className="font-bold text-slate-700">{student.medications || 'None'}</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">{student.medications || 'None'}</span>
               </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-            <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
-              <ShieldAlert size={16} className="text-orange-500" />
-              Emergency Contact
-            </h4>
-            <div className="p-3 bg-slate-50 rounded-2xl space-y-1">
-              <p className="text-sm font-bold text-slate-800">{student.emergencyContact?.name || student.parentName}</p>
-              <p className="text-xs text-slate-500">{student.emergencyContact?.relation || 'Parent'}</p>
-              <p className="text-sm font-medium text-blue-600 mt-1">{student.emergencyContact?.phone || student.parentPhone}</p>
             </div>
           </div>
         </div>
@@ -159,9 +155,9 @@ export const StudentProfile = () => {
           {/* Action Header */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${
-              student.riskLevel === 'High' ? 'bg-rose-50 border-rose-100 text-rose-700' :
-              student.riskLevel === 'Medium' ? 'bg-amber-50 border-amber-100 text-amber-700' :
-              'bg-emerald-50 border-emerald-100 text-emerald-700'
+              student.riskLevel === 'High' ? 'bg-rose-50 dark:bg-rose-900/20 border-rose-100 dark:border-rose-800 text-rose-700 dark:text-rose-400' :
+              student.riskLevel === 'Medium' ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-100 dark:border-amber-800 text-amber-700 dark:text-amber-400' :
+              'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400'
             }`}>
               <AlertTriangle size={20} />
               <div>
@@ -173,7 +169,7 @@ export const StudentProfile = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowTranscript(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-bold"
+                className="flex items-center gap-2 px-4 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors text-sm font-bold"
               >
                 <Printer size={18} />
                 Generate Transcript
@@ -183,40 +179,40 @@ export const StudentProfile = () => {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-              <div className="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
+            <div className="card p-6">
+              <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
                 <Clock size={20} />
               </div>
               <p className="text-slate-500 text-xs font-bold uppercase">Attendance</p>
-              <h4 className="text-2xl font-bold text-slate-800">96.4%</h4>
+              <h4 className="text-2xl font-bold text-slate-800 dark:text-white">96.4%</h4>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-              <div className="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
+            <div className="card p-6">
+              <div className="bg-school-primary/10 text-school-primary w-10 h-10 rounded-xl flex items-center justify-center mb-4">
                 <TrendingUp size={20} />
               </div>
               <p className="text-slate-500 text-xs font-bold uppercase">Average</p>
-              <h4 className="text-2xl font-bold text-slate-800">92.8%</h4>
+              <h4 className="text-2xl font-bold text-slate-800 dark:text-white">92.8%</h4>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-              <div className="bg-purple-100 text-purple-600 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
+            <div className="card p-6">
+              <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
                 <GraduationCap size={20} />
               </div>
               <p className="text-slate-500 text-xs font-bold uppercase">Rank</p>
-              <h4 className="text-2xl font-bold text-slate-800">4 / 45</h4>
+              <h4 className="text-2xl font-bold text-slate-800 dark:text-white">4 / 45</h4>
             </div>
           </div>
 
           {/* Academic History */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="card p-6">
             <div className="flex items-center justify-between mb-6">
-              <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                <FileText size={20} className="text-blue-600" />
+              <h4 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <FileText size={20} className="text-school-primary" />
                 Academic History
               </h4>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="border-b border-slate-100">
+                <thead className="border-b border-slate-100 dark:border-slate-800">
                   <tr>
                     <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase">Year</th>
                     <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase">Grade</th>
@@ -224,13 +220,13 @@ export const StudentProfile = () => {
                     <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase text-right">Rank</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
                   {(student.academicHistory || []).map((record: any, i: number) => (
                     <tr key={i}>
-                      <td className="py-4 text-sm font-medium text-slate-700">EC {record.year}</td>
-                      <td className="py-4 text-sm text-slate-600">Grade {record.grade}</td>
-                      <td className="py-4 text-sm text-slate-600 font-bold">{record.average}</td>
-                      <td className="py-4 text-sm text-slate-600 text-right">{record.rank}</td>
+                      <td className="py-4 text-sm font-medium text-slate-700 dark:text-slate-300">EC {record.year}</td>
+                      <td className="py-4 text-sm text-slate-600 dark:text-slate-400">Grade {record.grade}</td>
+                      <td className="py-4 text-sm text-slate-600 dark:text-slate-400 font-bold">{record.average}</td>
+                      <td className="py-4 text-sm text-slate-600 dark:text-slate-400 text-right">{record.rank}</td>
                     </tr>
                   ))}
                   {(!student.academicHistory || student.academicHistory.length === 0) && (
@@ -246,8 +242,8 @@ export const StudentProfile = () => {
           </div>
 
           {/* Attendance Trend */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <h4 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <div className="card p-6">
+            <h4 className="font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
               <Clock size={20} className="text-emerald-600" />
               Attendance Trend (Current Year)
             </h4>
@@ -263,7 +259,7 @@ export const StudentProfile = () => {
                 <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                   <div className="w-full relative">
                     <div
-                      className="w-full bg-emerald-100 rounded-t-lg group-hover:bg-emerald-200 transition-colors"
+                      className="w-full bg-emerald-100 dark:bg-emerald-900/20 rounded-t-lg group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/40 transition-colors"
                       style={{ height: `${data.rate}%` }}
                     ></div>
                     <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none">
@@ -277,25 +273,25 @@ export const StudentProfile = () => {
           </div>
 
           {/* Document Vault */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="card p-6">
             <div className="flex items-center justify-between mb-6">
-              <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                <FileUp size={20} className="text-blue-600" />
+              <h4 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <FileUp size={20} className="text-school-primary" />
                 Encrypted Document Vault
               </h4>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">2MB LIMIT</span>
+              <span className="text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">2MB LIMIT</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 border border-dashed border-slate-200 rounded-2xl flex items-center gap-4 hover:bg-slate-50 transition-colors cursor-pointer group">
-                <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-blue-600 transition-colors">
+              <div className="p-4 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white dark:group-hover:bg-slate-700 group-hover:text-school-primary transition-colors">
                   <FileText size={24} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-700">Birth Certificate.pdf</p>
+                  <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Birth Certificate.pdf</p>
                   <p className="text-xs text-slate-400">Verified • 1.2 MB</p>
                 </div>
               </div>
-              <div className="p-4 border border-dashed border-slate-200 rounded-2xl flex items-center justify-center gap-2 text-slate-400 hover:border-blue-400 hover:text-blue-600 transition-all cursor-pointer">
+              <div className="p-4 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-slate-400 hover:border-school-primary hover:text-school-primary transition-all cursor-pointer">
                 <FileUp size={20} />
                 <span className="text-sm font-bold">Upload Document</span>
               </div>
@@ -311,7 +307,7 @@ export const StudentProfile = () => {
             <div className="sticky top-0 bg-white border-b border-slate-100 px-8 py-4 flex items-center justify-between z-10">
               <h3 className="text-xl font-bold text-slate-800">Academic Transcript</h3>
               <div className="flex items-center gap-2">
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-bold">
+                <button className="flex items-center gap-2 px-4 py-2 bg-school-primary text-white rounded-xl hover:bg-school-primary/90 transition-colors text-sm font-bold">
                   <Printer size={18} />
                   Print Now
                 </button>
@@ -328,7 +324,7 @@ export const StudentProfile = () => {
               {/* Transcript Header */}
               <div className="flex justify-between items-start border-b-2 border-slate-800 pb-8">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
+                  <div className="w-16 h-16 bg-school-primary rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
                     AA
                   </div>
                   <div>
@@ -349,8 +345,8 @@ export const StudentProfile = () => {
                   <p className="text-lg font-bold text-slate-800">{student.name}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student ID</p>
-                  <p className="text-lg font-bold text-slate-800">AA-2026-{student.id.padStart(4, '0')}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Digital ID</p>
+                  <p className="text-lg font-bold text-slate-800">{student.digitalId || 'ETH-123456789'}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Grade</p>
@@ -412,8 +408,8 @@ export const StudentProfile = () => {
                 <div className="text-center space-y-4">
                   <div className="w-32 h-1 bg-slate-800 mx-auto"></div>
                   <p className="text-sm font-bold text-slate-800">School Registrar</p>
-                  <div className="w-24 h-24 border-4 border-double border-blue-600/20 rounded-full flex items-center justify-center mx-auto opacity-50">
-                    <div className="text-[10px] font-black text-blue-600 uppercase text-center rotate-12">
+                  <div className="w-24 h-24 border-4 border-double border-school-primary/20 rounded-full flex items-center justify-center mx-auto opacity-50">
+                    <div className="text-[10px] font-black text-school-primary uppercase text-center rotate-12">
                       OFFICIAL<br/>SEAL
                     </div>
                   </div>

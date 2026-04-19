@@ -3,6 +3,13 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 
 export type UserRole = 'super-admin' | 'school-admin' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian';
 
+export interface User {
+  id: string;
+  name: string;
+  role: UserRole;
+  digitalId: string;
+}
+
 interface Branch {
   id: string;
   name: string;
@@ -10,8 +17,10 @@ interface Branch {
 }
 
 interface UserContextType {
+  user: User | null;
   role: UserRole | null;
-  setRole: (role: UserRole | null) => void;
+  login: (digitalId: string, password: string) => Promise<boolean>;
+  logout: () => void;
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
@@ -29,14 +38,62 @@ const mockBranches: Branch[] = [
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [role, setRole] = useState<UserRole | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('abdi_adama_user');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
 
+  const login = async (digitalId: string, _password: string): Promise<boolean> => {
+    // Mock login logic - in a real app, this would be an API call
+    // Using a simple convention for mock login: id starts with 'admin', 'teacher', 'student', etc.
+    let role: UserRole = 'student';
+    let name = 'Student User';
+
+    if (digitalId.startsWith('SA')) {
+      role = 'super-admin';
+      name = 'Super Admin';
+    } else if (digitalId.startsWith('AD')) {
+      role = 'school-admin';
+      name = 'School Admin';
+    } else if (digitalId.startsWith('TR')) {
+      role = 'teacher';
+      name = 'Teacher User';
+    } else if (digitalId.startsWith('PT')) {
+      role = 'parent';
+      name = 'Parent User';
+    } else if (digitalId.startsWith('FN')) {
+      role = 'finance-clerk';
+      name = 'Finance Clerk';
+    } else if (digitalId.startsWith('LB')) {
+      role = 'librarian';
+      name = 'Librarian User';
+    }
+
+    const newUser: User = {
+      id: Math.random().toString(36).substr(2, 9),
+      name,
+      role,
+      digitalId
+    };
+
+    setUser(newUser);
+    localStorage.setItem('abdi_adama_user', JSON.stringify(newUser));
+    return true;
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('abdi_adama_user');
+  };
+
   return (
     <UserContext.Provider value={{
-      role,
-      setRole,
+      user,
+      role: user?.role || null,
+      login,
+      logout,
       selectedBranch,
       setSelectedBranch,
       branches: mockBranches,
