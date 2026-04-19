@@ -1,7 +1,6 @@
 
-import { Bell, Search, User, Moon, Sun, Menu, LogOut, Fingerprint } from 'lucide-react';
+import { Bell, Search, User, LogOut, Moon, Sun, Menu } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,9 +10,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ title, onMenuClick }: HeaderProps) => {
-  const { user, role, logout, selectedBranch } = useUser();
+  const { user, logout, selectedBranch, role } = useUser();
   const { theme, toggleTheme } = useTheme();
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,7 +31,7 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         </button>
         <h1 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px] sm:max-w-none">{title}</h1>
         {selectedBranch && role === 'super-admin' && (
-          <span className="hidden sm:inline-block bg-school-primary/10 text-school-primary px-3 py-1 rounded-full text-xs font-bold">
+          <span className="hidden sm:inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
             Branch: {selectedBranch.name}
           </span>
         )}
@@ -41,11 +39,11 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
 
       <div className="flex items-center gap-2 md:gap-6">
         <div className="relative group hidden lg:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-school-primary transition-colors" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
           <input
             type="text"
             placeholder="Search..."
-            className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-school-primary outline-none w-48 xl:w-64"
+            className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48 xl:w-64"
           />
         </div>
 
@@ -63,46 +61,23 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         </button>
 
         <div className="flex items-center gap-3 md:pl-6 md:border-l dark:border-slate-800 relative">
-          <button
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-2 md:gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 p-1 md:p-2 rounded-lg transition-colors"
-          >
+          <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{user?.name || 'User'}</p>
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{user?.name || 'Guest'}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role?.replace('-', ' ')}</p>
             </div>
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-school-primary/10 rounded-full flex items-center justify-center text-school-primary">
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
               <User size={20} className="md:w-6 md:h-6" />
             </div>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+            title="Sign Out"
+          >
+            <LogOut size={20} />
           </button>
-
-          {showUserMenu && (
-            <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl py-3 z-50">
-              <div className="px-4 py-3 border-b border-slate-50 dark:border-slate-800 mb-2">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">{user?.name}</p>
-                <div className="flex items-center gap-1.5 mt-1 text-slate-500">
-                  <Fingerprint size={12} />
-                  <p className="text-[10px] font-mono tracking-wider">{user?.digitalId}</p>
-                </div>
-              </div>
-
-              <button
-                className="w-full text-left px-4 py-2.5 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3 transition-colors"
-                onClick={() => setShowUserMenu(false)}
-              >
-                <User size={18} />
-                My Profile
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 transition-colors font-medium"
-              >
-                <LogOut size={18} />
-                Sign Out
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </header>

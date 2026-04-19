@@ -1,13 +1,14 @@
 
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
 export type UserRole = 'super-admin' | 'school-admin' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian';
 
 export interface User {
   id: string;
   name: string;
+  email: string;
   role: UserRole;
-  digitalId: string;
+  digitalId?: string;
 }
 
 interface Branch {
@@ -18,14 +19,15 @@ interface Branch {
 
 interface UserContextType {
   user: User | null;
+  setUser: (user: User | null) => void;
   role: UserRole | null;
-  login: (digitalId: string, password: string) => Promise<boolean>;
-  logout: () => void;
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
   gradesLocked: boolean;
   setGradesLocked: (locked: boolean) => void;
+  login: (credentials: { digitalIdOrEmail: string; password: string }) => Promise<boolean>;
+  logout: () => void;
 }
 
 const mockBranches: Branch[] = [
@@ -45,60 +47,73 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
 
-  const login = async (digitalId: string, _password: string): Promise<boolean> => {
-    // Mock login logic - in a real app, this would be an API call
-    // Using a simple convention for mock login: id starts with 'admin', 'teacher', 'student', etc.
-    let role: UserRole = 'student';
-    let name = 'Student User';
-
-    if (digitalId.startsWith('SA')) {
-      role = 'super-admin';
-      name = 'Super Admin';
-    } else if (digitalId.startsWith('AD')) {
-      role = 'school-admin';
-      name = 'School Admin';
-    } else if (digitalId.startsWith('TR')) {
-      role = 'teacher';
-      name = 'Teacher User';
-    } else if (digitalId.startsWith('PT')) {
-      role = 'parent';
-      name = 'Parent User';
-    } else if (digitalId.startsWith('FN')) {
-      role = 'finance-clerk';
-      name = 'Finance Clerk';
-    } else if (digitalId.startsWith('LB')) {
-      role = 'librarian';
-      name = 'Librarian User';
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('abdi_adama_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('abdi_adama_user');
     }
+  }, [user]);
 
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      role,
-      digitalId
+  const role = user?.role || null;
+
+  const login = async (credentials: { digitalIdOrEmail: string; password: string }) => {
+    // Mock login logic
+    const id = credentials.digitalIdOrEmail.toUpperCase();
+
+    let mockUser: User = {
+      id: '1',
+      name: 'User',
+      email: credentials.digitalIdOrEmail.includes('@') ? credentials.digitalIdOrEmail : 'user@abdiadama.edu',
+      role: 'student',
+      digitalId: credentials.digitalIdOrEmail
     };
 
-    setUser(newUser);
-    localStorage.setItem('abdi_adama_user', JSON.stringify(newUser));
+    if (id.startsWith('SA')) {
+      mockUser.role = 'super-admin';
+      mockUser.name = 'Super Admin';
+    } else if (id.startsWith('AD')) {
+      mockUser.role = 'school-admin';
+      mockUser.name = 'Admin';
+    } else if (id.startsWith('TR')) {
+      mockUser.role = 'teacher';
+      mockUser.name = 'Teacher';
+    } else if (id.startsWith('LB')) {
+      mockUser.role = 'librarian';
+      mockUser.name = 'Librarian';
+    } else if (id.startsWith('FC')) {
+      mockUser.role = 'finance-clerk';
+      mockUser.name = 'Finance Clerk';
+    } else if (id.startsWith('PR')) {
+      mockUser.role = 'parent';
+      mockUser.name = 'Parent';
+    } else {
+      mockUser.role = 'student';
+      mockUser.name = 'Student';
+    }
+
+    setUser(mockUser);
     return true;
   };
 
   const logout = () => {
     setUser(null);
+    setSelectedBranch(null);
     localStorage.removeItem('abdi_adama_user');
   };
 
   return (
     <UserContext.Provider value={{
       user,
-      role: user?.role || null,
-      login,
-      logout,
+      setUser,
+      role,
       selectedBranch,
       setSelectedBranch,
       branches: mockBranches,
       gradesLocked,
-      setGradesLocked
+      setGradesLocked,
+      login,
+      logout
     }}>
       {children}
     </UserContext.Provider>

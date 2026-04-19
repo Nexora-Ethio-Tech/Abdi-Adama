@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Layout } from './layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Students } from './pages/Students';
@@ -30,124 +30,135 @@ import { Register } from './pages/Register';
 import { useUser, type UserRole } from './context/UserContext';
 import { type ReactNode } from 'react';
 
-const ProtectedRoute = ({ children, allowedRoles }: { children: ReactNode; allowedRoles?: UserRole[] }) => {
+const ProtectedRoute = ({
+  children,
+  allowedRoles
+}: {
+  children: ReactNode;
+  allowedRoles?: UserRole[]
+}) => {
   const { user, role } = useUser();
+  const location = useLocation();
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles && role && !allowedRoles.includes(role)) {
+  if (allowedRoles && !allowedRoles.includes(role as UserRole)) {
     return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  return children;
 };
 
 function App() {
-  const { role } = useUser();
+  const { user, role } = useUser();
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={!role ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }>
-          <Route index element={
-            role === 'student' ? <StudentPortal /> :
-            role === 'parent' ? <ParentPortal /> :
-            role === 'teacher' ? <TeacherPortal /> :
-            <Dashboard />
-          } />
+        {!user ? (
+          <>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </>
+        ) : (
+          <Route path="/" element={<Layout />}>
+            <Route index element={
+              role === 'student' ? <StudentPortal /> :
+              role === 'parent' ? <ParentPortal /> :
+              role === 'teacher' ? <TeacherPortal /> :
+              role === 'librarian' ? <Dashboard /> :
+              <Dashboard />
+            } />
 
-          {/* Role specific routes */}
-          <Route path="analytics" element={
-            <ProtectedRoute allowedRoles={['super-admin']}>
-              <Analytics />
-            </ProtectedRoute>
-          } />
+            {/* Role specific routes */}
+            <Route path="branches" element={
+              <ProtectedRoute allowedRoles={['super-admin']}>
+                <Branches />
+              </ProtectedRoute>
+            } />
+            <Route path="analytics" element={
+              <ProtectedRoute allowedRoles={['super-admin']}>
+                <Analytics />
+              </ProtectedRoute>
+            } />
 
-          <Route path="branches" element={
-            <ProtectedRoute allowedRoles={['super-admin']}>
-              <Branches />
-            </ProtectedRoute>
-          } />
+            <Route path="students" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin', 'parent']}>
+                <Students />
+              </ProtectedRoute>
+            } />
+            <Route path="students/:id" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin']}>
+                <StudentProfile />
+              </ProtectedRoute>
+            } />
 
-          <Route path="students" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'school-admin', 'parent']}>
-              <Students />
-            </ProtectedRoute>
-          } />
+            <Route path="teachers" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin']}>
+                <Teachers />
+              </ProtectedRoute>
+            } />
 
-          <Route path="students/:id" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'school-admin']}>
-              <StudentProfile />
-            </ProtectedRoute>
-          } />
+            <Route path="attendance" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin', 'teacher', 'student']}>
+                 {role === 'teacher' ? <TeacherAttendance /> :
+                  role === 'student' ? <AcademicHistory /> :
+                  <Attendance />}
+              </ProtectedRoute>
+            } />
 
-          <Route path="teachers" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'school-admin']}>
-              <Teachers />
-            </ProtectedRoute>
-          } />
+            <Route path="schedule-builder" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin']}>
+                <ScheduleBuilder />
+              </ProtectedRoute>
+            } />
 
-          <Route path="attendance" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'school-admin', 'teacher', 'student']}>
-              {role === 'teacher' ? <TeacherAttendance /> : role === 'student' ? <AcademicHistory /> : <Attendance />}
-            </ProtectedRoute>
-          } />
+            <Route path="inventory" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin']}>
+                <Inventory />
+              </ProtectedRoute>
+            } />
 
-          <Route path="schedule-builder" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'school-admin']}>
-              <ScheduleBuilder />
-            </ProtectedRoute>
-          } />
+            <Route path="library" element={
+              <ProtectedRoute allowedRoles={['librarian', 'super-admin']}>
+                <Library />
+              </ProtectedRoute>
+            } />
 
-          <Route path="inventory" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'school-admin']}>
-              <Inventory />
-            </ProtectedRoute>
-          } />
+            <Route path="courses" element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <StudentCourses />
+              </ProtectedRoute>
+            } />
 
-          <Route path="library" element={
-            <ProtectedRoute allowedRoles={['super-admin', 'librarian']}>
-              <Library />
-            </ProtectedRoute>
-          } />
+            <Route path="schedule" element={
+              <ProtectedRoute allowedRoles={['teacher']}>
+                <TeacherSchedule />
+              </ProtectedRoute>
+            } />
 
-          <Route path="courses" element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentCourses />
-            </ProtectedRoute>
-          } />
+            <Route path="grades" element={
+              <ProtectedRoute allowedRoles={['teacher']}>
+                <GradeEntry />
+              </ProtectedRoute>
+            } />
 
-          <Route path="schedule" element={
-            <ProtectedRoute allowedRoles={['teacher']}>
-              <TeacherSchedule />
-            </ProtectedRoute>
-          } />
+            <Route path="finance" element={<Finance />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="exams" element={<Exams />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="exam/:examId" element={<ExamSession />} />
 
-          <Route path="grades" element={
-            <ProtectedRoute allowedRoles={['teacher']}>
-              <GradeEntry />
-            </ProtectedRoute>
-          } />
-
-          <Route path="finance" element={<Finance />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="exams" element={<Exams />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="exam/:examId" element={<ExamSession />} />
-        </Route>
-
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+            {/* Catch-all within layout */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        )}
       </Routes>
     </BrowserRouter>
   );

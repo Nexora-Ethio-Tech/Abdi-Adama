@@ -8,6 +8,7 @@ import {
   Wallet,
   Settings,
   LogOut,
+  GraduationCap,
   Building2,
   BookOpen,
   PieChart,
@@ -19,8 +20,6 @@ import {
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useUser } from '../context/UserContext';
-import logo from '../assets/logo.jpg';
-import { useNavigate } from 'react-router-dom';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -32,73 +31,67 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { role, logout } = useUser();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const { role } = useUser();
 
   const getNavItems = () => {
     switch (role) {
       case 'super-admin':
         return [
-          { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
-          { icon: Building2, label: 'Branches', path: '/dashboard/branches' },
-          { icon: PieChart, label: 'Analytics', path: '/dashboard/analytics' },
-          { icon: Package, label: 'Inventory', path: '/dashboard/inventory' },
-          { icon: Wallet, label: 'Finance', path: '/dashboard/finance' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
-          { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
+          { icon: LayoutDashboard, label: 'Overview', path: '/' },
+          { icon: Building2, label: 'Branches', path: '/branches' },
+          { icon: PieChart, label: 'Analytics', path: '/analytics' },
+          { icon: Package, label: 'Inventory', path: '/inventory' },
+          { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+          { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'school-admin':
         return [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-          { icon: Users, label: 'Students', path: '/dashboard/students' },
-          { icon: UserSquare2, label: 'Teachers', path: '/dashboard/teachers' },
-          { icon: CalendarCheck, label: 'Attendance', path: '/dashboard/attendance' },
-          { icon: BookOpen, label: 'Schedule Builder', path: '/dashboard/schedule-builder' },
-          { icon: Package, label: 'Inventory', path: '/dashboard/inventory' },
-          { icon: Wallet, label: 'Finance', path: '/dashboard/finance' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/dashboard/exams' },
-          { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+          { icon: Users, label: 'Students', path: '/students' },
+          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
+          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
+          { icon: Package, label: 'Inventory', path: '/inventory' },
+          { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
+          { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'teacher':
         return [
-          { icon: LayoutDashboard, label: 'Teacher Portal', path: '/dashboard' },
-          { icon: CalendarCheck, label: 'Attendance', path: '/dashboard/attendance' },
-          { icon: BookOpen, label: 'My Schedule', path: '/dashboard/schedule' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/dashboard/exams' },
+          { icon: LayoutDashboard, label: 'Teacher Portal', path: '/' },
+          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'student':
         return [
-          { icon: LayoutDashboard, label: 'My Dashboard', path: '/dashboard' },
-          { icon: BookOpen, label: 'Grades & Courses', path: '/dashboard/courses' },
-          { icon: CalendarCheck, label: 'Academic History', path: '/dashboard/attendance' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/dashboard/exams' },
+          { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
+          { icon: BookOpen, label: 'Grades & Courses', path: '/courses' },
+          { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'parent':
         return [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-          { icon: Users, label: 'My Children', path: '/dashboard/students' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/dashboard/exams' },
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+          { icon: Users, label: 'My Children', path: '/students' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'finance-clerk':
         return [
-          { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
-          { icon: Wallet, label: 'Finance', path: '/dashboard/finance' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
+          { icon: LayoutDashboard, label: 'Overview', path: '/' },
+          { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       case 'librarian':
         return [
-          { icon: LayoutDashboard, label: 'Librarian Portal', path: '/dashboard' },
-          { icon: BookOpen, label: 'Library', path: '/dashboard/library' },
-          { icon: Calendar, label: 'Calendar', path: '/dashboard/calendar' },
+          { icon: LayoutDashboard, label: 'Librarian Portal', path: '/' },
+          { icon: BookOpen, label: 'Library', path: '/library' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       default:
         return [];
@@ -114,7 +107,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     )}>
       <div className="p-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="School Logo" className="w-10 h-10 rounded-lg shadow-lg" />
+          <div className="bg-blue-600 p-2 rounded-lg">
+            <GraduationCap size={24} />
+          </div>
           <span className="font-bold text-xl tracking-tight">Abdi Adama</span>
         </div>
         <button
@@ -130,14 +125,13 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <NavLink
             key={item.path}
             to={item.path}
-            end={item.path === '/dashboard'}
             onClick={() => {
               if (window.innerWidth < 1024) onClose();
             }}
             className={({ isActive }) => cn(
               "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
               isActive
-                ? "bg-school-primary text-white"
+                ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
             )}
           >
@@ -148,10 +142,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </nav>
 
       <div className="p-4 border-t border-slate-800">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-400 transition-colors"
-        >
+        <button className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-white transition-colors">
           <LogOut size={20} />
           <span className="font-medium">Logout</span>
         </button>

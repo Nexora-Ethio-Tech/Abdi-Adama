@@ -20,7 +20,9 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      const success = await login(digitalId, password);
+      // In a real system we would send {digitalIdOrEmail: digitalId, password}
+      // For the mock, we align with the current implementation if it expects specific args
+      const success = await login({ digitalIdOrEmail: digitalId, password });
       if (success) {
         navigate('/dashboard');
       } else {

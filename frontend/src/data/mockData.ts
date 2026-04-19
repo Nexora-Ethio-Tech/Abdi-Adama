@@ -4,7 +4,6 @@ export const mockStudents = [
     name: 'Abebe Bikila',
     grade: '10A',
     status: 'Active',
-    digitalId: 'ETH-123456789',
     parentName: 'Bikila Demissie',
     parentPhone: '+251911111111',
     dob: '2010-05-15',
@@ -38,7 +37,6 @@ export const mockStudents = [
     name: 'Sara Kebede',
     grade: '9B',
     status: 'Active',
-    digitalId: 'ETH-987654321',
     parentName: 'Kebede Tessema',
     parentPhone: '+251922222222',
     bloodGroup: 'O+',
@@ -57,7 +55,6 @@ export const mockStudents = [
     name: 'Dawit Lema',
     grade: '11C',
     status: 'Active',
-    digitalId: 'ETH-112233445',
     parentName: 'Lema Hailu',
     parentPhone: '+251933333333',
     bloodGroup: 'B-',
@@ -71,10 +68,10 @@ export const mockStudents = [
     riskLevel: 'High',
     riskFactor: 'Frequent absenteeism in the last month.'
   },
-  { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', digitalId: 'ETH-556677889', parentName: 'Yohannes Ayele', parentPhone: '+251944444444', riskLevel: 'Low' },
-  { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', digitalId: 'ETH-990011223', parentName: 'Tesfaye Belay', parentPhone: '+251955555555', riskLevel: 'Low' },
-  { id: '6', name: 'Biniyam Yosef', grade: '10A', status: 'Active', digitalId: 'ETH-445566778', parentName: 'Yosef Kassa', parentPhone: '+251911223344', riskLevel: 'Medium', riskFactor: 'Sudden drop in Physics attendance.' },
-  { id: '7', name: 'Tigist Walelign', grade: '9B', status: 'Active', digitalId: 'ETH-223344556', parentName: 'Walelign Tadesse', parentPhone: '+251911556677', riskLevel: 'Low' },
+  { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444', riskLevel: 'Low' },
+  { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', parentName: 'Tesfaye Belay', parentPhone: '+251955555555', riskLevel: 'Low' },
+  { id: '6', name: 'Biniyam Yosef', grade: '10A', status: 'Active', parentName: 'Yosef Kassa', parentPhone: '+251911223344', riskLevel: 'Medium', riskFactor: 'Sudden drop in Physics attendance.' },
+  { id: '7', name: 'Tigist Walelign', grade: '9B', status: 'Active', parentName: 'Walelign Tadesse', parentPhone: '+251911556677', riskLevel: 'Low' },
 ];
 
 export const mockTeachers = [
