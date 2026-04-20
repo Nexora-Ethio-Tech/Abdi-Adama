@@ -29,9 +29,9 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         >
           <Menu size={24} />
         </button>
-        <h1 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px] sm:max-w-none">{title}</h1>
+        <h1 className="text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight truncate max-w-[150px] sm:max-w-none">{title}</h1>
         {selectedBranch && role === 'super-admin' && (
-          <span className="hidden sm:inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+          <span className="hidden sm:inline-block bg-school-primary/10 text-school-primary px-3 py-1 rounded-full text-xs font-bold border border-school-primary/20">
             Branch: {selectedBranch.name}
           </span>
         )}
@@ -49,25 +49,25 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
 
         <button
           onClick={toggleTheme}
-          className="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+          className="p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
           title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
           {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
         </button>
 
-        <button className="relative p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors hidden sm:block">
+        <button className="relative p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all hidden sm:block">
           <Bell size={20} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-school-secondary rounded-full border-2 border-white dark:border-slate-900"></span>
         </button>
 
-        <div className="flex items-center gap-3 md:pl-6 md:border-l dark:border-slate-800 relative">
-          <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2">
+        <div className="flex items-center gap-3 md:pl-6 md:border-l border-slate-200 dark:border-slate-800 relative">
+          <div className="flex items-center gap-2 md:gap-4 p-1">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{user?.name || 'Guest'}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{role?.replace('-', ' ')}</p>
+              <p className="text-sm font-black text-slate-900 dark:text-white leading-tight">{user?.name || 'Guest'}</p>
+              <p className="text-[10px] font-bold text-school-primary uppercase tracking-widest">{role?.replace('-', ' ')}</p>
             </div>
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-              <User size={20} className="md:w-6 md:h-6" />
+            <div className="w-10 h-10 bg-gradient-to-br from-school-primary to-school-accent rounded-xl flex items-center justify-center text-white shadow-lg shadow-school-primary/20">
+              <User size={20} />
             </div>
           </div>
 

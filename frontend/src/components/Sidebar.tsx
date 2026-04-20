@@ -1,5 +1,5 @@
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -8,7 +8,6 @@ import {
   Wallet,
   Settings,
   LogOut,
-  GraduationCap,
   Building2,
   BookOpen,
   PieChart,
@@ -17,6 +16,7 @@ import {
   ClipboardList,
   X
 } from 'lucide-react';
+import logo from '../assets/logo.jpg';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useUser } from '../context/UserContext';
@@ -31,7 +31,13 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { role } = useUser();
+  const { role, logout } = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const getNavItems = () => {
     switch (role) {
@@ -102,15 +108,18 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   return (
     <aside className={cn(
-      "fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 dark:bg-black text-white flex flex-col h-screen transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto",
+      "fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 dark:bg-black text-white flex flex-col h-screen transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto border-r border-slate-800/50",
       isOpen ? "translate-x-0" : "-translate-x-full"
     )}>
-      <div className="p-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-blue-600 p-2 rounded-lg">
-            <GraduationCap size={24} />
+      <div className="p-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="relative p-1 bg-white rounded-xl shadow-lg">
+            <img src={logo} alt="Abdi Adama Logo" className="w-10 h-10 rounded-lg object-cover" />
           </div>
-          <span className="font-bold text-xl tracking-tight">Abdi Adama</span>
+          <div>
+            <span className="font-black text-xl tracking-tight block">Abdi Adama</span>
+            <span className="text-[10px] text-school-accent font-bold uppercase tracking-widest">Smart-School</span>
+          </div>
         </div>
         <button
           onClick={onClose}
@@ -120,7 +129,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </button>
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto custom-scrollbar">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -129,22 +138,29 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               if (window.innerWidth < 1024) onClose();
             }}
             className={({ isActive }) => cn(
-              "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+              "flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group",
               isActive
-                ? "bg-blue-600 text-white"
-                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                ? "bg-school-primary text-white shadow-lg shadow-school-primary/20 scale-[1.02]"
+                : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
             )}
           >
-            <item.icon size={20} />
-            <span className="font-medium">{item.label}</span>
+            {({ isActive }) => (
+              <>
+                <item.icon size={20} className={cn("transition-transform group-hover:scale-110", isActive ? "text-white" : "text-slate-500 group-hover:text-school-accent")} />
+                <span className="font-bold text-sm tracking-wide">{item.label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-white transition-colors">
-          <LogOut size={20} />
-          <span className="font-medium">Logout</span>
+      <div className="p-6 border-t border-slate-800/50">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-4 px-5 py-4 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl transition-all duration-300 group"
+        >
+          <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="font-bold text-sm tracking-wide">Logout Session</span>
         </button>
       </div>
     </aside>

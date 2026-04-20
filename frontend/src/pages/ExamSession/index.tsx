@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Send, AlertTriangle, ShieldCheck } from 'lucide-react';
@@ -33,7 +32,6 @@ export const ExamSession: React.FC = () => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const { savedAnswers, savedIndex, savedStartTime, savedEndTime, savedViolations } = JSON.parse(saved);
-      console.log('Restoring saved session:', { savedAnswers, savedIndex });
       setAnswers(savedAnswers || {});
       setCurrentQuestionIndex(savedIndex || 0);
       setExamStartedAt(savedStartTime || new Date().toISOString());
@@ -56,7 +54,6 @@ export const ExamSession: React.FC = () => {
         savedEndTime: examEndTime,
         savedViolations: violations
       });
-      console.log('Saving session to localStorage:', dataToSave);
       localStorage.setItem(STORAGE_KEY, dataToSave);
     }
   }, [STORAGE_KEY, answers, currentQuestionIndex, examStartedAt, examEndTime, violations]);
@@ -96,7 +93,7 @@ export const ExamSession: React.FC = () => {
       autoSubmitted: auto
     };
 
-    console.log('Submitting Exam Payload:', payload);
+    console.log('Submitting Payload:', payload);
 
     try {
       // Simulate API call

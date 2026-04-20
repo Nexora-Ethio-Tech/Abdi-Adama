@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --primary: #0076BA;
-  --secondary: #0f172a;
-  --accent: #C16266;
+  --primary: #0064a5;
+  --secondary: #bf6a82;
+  --accent: #4db3e3;
   --app-radius: 1rem;
   --app-spacing: 1.5rem;
   --app-font-size: 1rem;
@@ -43,7 +43,7 @@
   --app-font-size: 1rem;
   --app-shadow: none;
   --app-font-weight: 400;
-  --primary: #0076BA;
+  --primary: #0064a5;
 }
 
 @layer base {
@@ -118,5 +118,15 @@
     0% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-200/20 rounded-full hover:bg-slate-200/30 transition-colors;
   }
 }
