@@ -8,7 +8,7 @@ import { useUser } from '../context/UserContext';
 
 export const Register = () => {
   const { schoolName } = useUser();
-  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
+  const displaySchoolName = schoolName.english;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

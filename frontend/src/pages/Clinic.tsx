@@ -11,6 +11,7 @@ import {
   FileText,
   Clock,
   Send,
+  Mail,
   Stethoscope,
   MessageSquare,
   MoreVertical,
@@ -46,7 +47,7 @@ const initialVisitLogs: VisitLog[] = [
 
 export const Clinic = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'students' | 'visits' | 'chat'>('students');
+  const [activeTab, setActiveTab] = useState<'directory' | 'visits' | 'chat'>('directory');
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [visitLogs, setVisitLogs] = useState<VisitLog[]>(initialVisitLogs);
   const [showLogModal, setShowLogModal] = useState(false);
@@ -100,8 +101,8 @@ export const Clinic = () => {
         </div>
         <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
           <button
-            onClick={() => setActiveTab('students')}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'students' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
+            onClick={() => setActiveTab('directory')}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'directory' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
           >
             Directory
           </button>
@@ -125,7 +126,7 @@ export const Clinic = () => {
         </div>
       </div>
 
-      {activeTab === 'students' ? (
+      {activeTab === 'directory' ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4 space-y-6">
             <div className="card p-4">
@@ -247,10 +248,9 @@ export const Clinic = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                           <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
-                             v.status === 'sent' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                           }`}>
-                             {v.status === 'sent' ? 'Parent Notified' : 'Awaiting Approval'}
+                           <span className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                             <CheckCircle size={10} />
+                             Parent Emailed
                            </span>
                         </div>
                       </div>
@@ -301,11 +301,8 @@ export const Clinic = () => {
                   <td className="px-6 py-4 text-sm font-bold dark:text-slate-300">{log.reason}</td>
                   <td className="px-6 py-4 text-sm text-slate-500">{log.treatment}</td>
                   <td className="px-6 py-4 text-right">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                      log.status === 'sent' ? 'bg-emerald-100 text-emerald-700' :
-                      log.status === 'pending-approval' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
-                    }`}>
-                      {log.status.replace('-', ' ')}
+                    <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-700">
+                      Email Sent
                     </span>
                   </td>
                 </tr>
@@ -468,10 +465,10 @@ export const Clinic = () => {
                   className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-rose-500 h-24 resize-none"
                 />
               </div>
-              <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-2xl flex gap-3 border border-amber-100 dark:border-amber-900/20">
-                <Send size={20} className="text-amber-600 flex-shrink-0" />
-                <p className="text-[10px] text-amber-800 dark:text-amber-200 leading-relaxed">
-                  <strong>Approval Required:</strong> This message will be sent to the school admin for approval before being forwarded to the parent.
+              <div className="bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl flex gap-3 border border-emerald-100 dark:border-emerald-900/20">
+                <Mail size={20} className="text-emerald-600 flex-shrink-0" />
+                <p className="text-[10px] text-emerald-800 dark:text-emerald-200 leading-relaxed">
+                  <strong>Direct Notification:</strong> An official email will be sent directly to the parent immediately after logging this visit.
                 </p>
               </div>
               <div className="flex gap-3 pt-2">
@@ -486,7 +483,7 @@ export const Clinic = () => {
                   type="submit"
                   className="flex-1 bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-rose-200 dark:shadow-none"
                 >
-                  Submit for Approval
+                  Log & Send Email
                 </button>
               </div>
             </form>

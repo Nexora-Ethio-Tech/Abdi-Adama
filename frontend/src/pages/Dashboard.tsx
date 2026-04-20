@@ -1,5 +1,5 @@
 
-import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight, HeartPulse, Check, Send } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 import { mockStudents } from '../data/mockData';
@@ -25,10 +25,6 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 export const Dashboard = () => {
   const { role, gradesLocked, setGradesLocked } = useUser();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
-  const [pendingMessages, setPendingMessages] = useState([
-    { id: 1, student: 'Liyu Solomon', reason: 'Scraped Knee', treatment: 'Cleaned wound and applied bandage', time: '10 mins ago' },
-    { id: 2, student: 'Zekarias Teshome', reason: 'Headache', treatment: 'Rest and water provided', time: '45 mins ago' }
-  ]);
   const [notices] = useState([
     { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago', expiresAt: '2024-06-30' },
     { id: 2, title: 'School Bus Maintenance', content: 'Route B buses will be undergoing maintenance this Friday. Please expect minor delays.', priority: 'Medium', time: 'Yesterday', expiresAt: '2024-05-15' }
@@ -181,63 +177,6 @@ export const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {role === 'school-admin' && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden lg:col-span-2">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-rose-50/30 dark:bg-rose-900/10">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-rose-100 dark:bg-rose-900/30 text-rose-600 rounded-lg">
-                  <HeartPulse size={20} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 dark:text-slate-100">Clinic Message Approvals</h3>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Pending local server review</p>
-                </div>
-              </div>
-              <span className="bg-rose-600 text-white text-[10px] font-black px-2 py-1 rounded-full">
-                {pendingMessages.length} Messages
-              </span>
-            </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-              {pendingMessages.length > 0 ? pendingMessages.map((msg) => (
-                <div key={msg.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-black text-slate-900 dark:text-white">{msg.student}</span>
-                      <span className="text-[10px] text-slate-400 font-bold">• {msg.time}</span>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs text-slate-600 dark:text-slate-400"><span className="font-bold text-slate-400 uppercase text-[9px] tracking-widest mr-2">Reason:</span> {msg.reason}</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400"><span className="font-bold text-slate-400 uppercase text-[9px] tracking-widest mr-2">Treatment:</span> {msg.treatment}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setPendingMessages(prev => prev.filter(m => m.id !== msg.id))}
-                      className="flex-1 md:flex-none px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-colors flex items-center justify-center gap-2 text-xs font-bold"
-                    >
-                      <X size={16} />
-                      Reject
-                    </button>
-                    <button
-                      onClick={() => setPendingMessages(prev => prev.filter(m => m.id !== msg.id))}
-                      className="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl transition-all flex items-center justify-center gap-2 text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none"
-                    >
-                      <Check size={16} />
-                      Approve & Send
-                    </button>
-                  </div>
-                </div>
-              )) : (
-                <div className="p-12 text-center">
-                  <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                    <Send size={24} />
-                  </div>
-                  <p className="text-sm font-medium text-slate-500">No messages awaiting approval.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {isAdmin && (
           <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
