@@ -17,14 +17,22 @@ import {
   Printer,
   FileUp,
   AlertTriangle,
-  X
+  X,
+  Edit2,
+  Save
 } from 'lucide-react';
 import { useState } from 'react';
+import { useUser } from '../context/UserContext';
 
 export const StudentProfile = () => {
   const { id } = useParams();
+  const { role } = useUser();
   const [showTranscript, setShowTranscript] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedBio, setEditedBio] = useState('');
   const student = mockStudents.find(s => s.id === id) as any;
+
+  const isParent = role === 'parent';
 
   if (!student) {
     return (
@@ -135,8 +143,16 @@ export const StudentProfile = () => {
                 <span className="font-bold text-slate-700">{student.allergies || 'None'}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Medications</span>
-                <span className="font-bold text-slate-700">{student.medications || 'None'}</span>
+                <span className="text-slate-500">Chronic Conditions</span>
+                <span className="font-bold text-slate-700 text-right">{student.chronicConditions || 'None'}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Vaccination</span>
+                <span className="font-bold text-emerald-600">{student.vaccinationStatus || 'Verified'}</span>
+              </div>
+              <div className="pt-2 border-t border-slate-50">
+                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Home Medications</p>
+                <p className="text-xs font-bold text-slate-700">{student.homeMedications || 'None'}</p>
               </div>
             </div>
           </div>
@@ -156,6 +172,51 @@ export const StudentProfile = () => {
 
         {/* Content Tabs/Details */}
         <div className="lg:col-span-2 space-y-8">
+          {/* Bio Section */}
+          <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+              <User size={120} />
+            </div>
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
+                <FileText size={16} className="text-blue-600" />
+                Student Biography
+              </h4>
+              {isParent && (
+                <button
+                  onClick={() => {
+                    if (isEditing) {
+                      // Save logic here
+                      student.bio = editedBio;
+                      setIsEditing(false);
+                    } else {
+                      setEditedBio(student.bio || '');
+                      setIsEditing(true);
+                    }
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    isEditing ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white'
+                  }`}
+                >
+                  {isEditing ? <Save size={14} /> : <Edit2 size={14} />}
+                  {isEditing ? 'Save Bio' : 'Edit Bio'}
+                </button>
+              )}
+            </div>
+
+            {isEditing ? (
+              <textarea
+                value={editedBio}
+                onChange={(e) => setEditedBio(e.target.value)}
+                className="w-full p-6 bg-slate-50 dark:bg-slate-800 border-2 border-blue-100 dark:border-slate-700 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 outline-none h-32"
+                placeholder="Write something about the student..."
+              />
+            ) : (
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                "{student.bio || 'No biography provided for this student.'}"
+              </p>
+            )}
+          </div>
           {/* Action Header */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${

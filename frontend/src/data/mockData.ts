@@ -35,7 +35,11 @@ export const mockStudents = [
     isBusUser: true,
     penaltyFee: 0,
     monthlyFee: 5000,
-    busFee: 1200
+    busFee: 1200,
+    chronicConditions: 'None',
+    vaccinationStatus: 'Up to Date',
+    homeMedications: 'Multivitamins (Daily)',
+    bio: 'An enthusiastic student with a strong interest in Mathematics and Physics.'
   },
   {
     id: '2',
@@ -58,7 +62,11 @@ export const mockStudents = [
     isBusUser: false,
     penaltyFee: 0,
     monthlyFee: 5000,
-    busFee: 0
+    busFee: 0,
+    chronicConditions: 'None',
+    vaccinationStatus: 'Up to Date',
+    homeMedications: 'None',
+    bio: 'Excels in artistic projects and linguistic studies.'
   },
   {
     id: '3',
@@ -81,7 +89,11 @@ export const mockStudents = [
     isBusUser: true,
     penaltyFee: 150,
     monthlyFee: 6500,
-    busFee: 1200
+    busFee: 1200,
+    chronicConditions: 'Asthma',
+    vaccinationStatus: 'Up to Date',
+    homeMedications: 'Inhaler as needed',
+    bio: 'Passionate about sports and active community member.'
   },
   { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444', riskLevel: 'Low', isScholarship: false, isBusUser: false, penaltyFee: 0, monthlyFee: 7000, busFee: 0 },
   { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', parentName: 'Tesfaye Belay', parentPhone: '+251955555555', riskLevel: 'Low', isScholarship: true, isBusUser: true, penaltyFee: 0, monthlyFee: 4500, busFee: 1200 },

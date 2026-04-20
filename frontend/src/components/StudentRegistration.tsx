@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
-import { UserPlus, RefreshCw, Upload, Search, CheckCircle, AlertCircle, FileText, Info, Check, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UserPlus, RefreshCw, Upload, Search, CheckCircle, AlertCircle, FileText, Info, Check, X, HeartPulse } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 
 type RegistrationTab = 'new' | 'existing';
@@ -16,6 +17,7 @@ const initialPendingApplications = [
 ];
 
 export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationProps) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<RegistrationTab>('new');
   const [registrationStep, setRegistrationStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +51,14 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMessage(isAdminView ? 'Student registered successfully!' : 'Your application has been submitted successfully! We will contact you soon.');
-    setTimeout(() => setSuccessMessage(null), 3000);
+    if (!isAdminView) {
+      setTimeout(() => {
+        setSuccessMessage(null);
+        navigate('/');
+      }, 3000);
+    } else {
+      setTimeout(() => setSuccessMessage(null), 3000);
+    }
   };
 
   const handlePromote = () => {
@@ -210,6 +219,41 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                         <option>Other</option>
                       </select>
                     </div>
+                  </div>
+
+                  {/* Clinic Required Fields */}
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                     <h4 className="text-xs font-black text-rose-500 uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <HeartPulse size={16} />
+                        Confidential Medical Details (Clinic Required)
+                     </h4>
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Blood Group</label>
+                          <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Known Allergies</label>
+                          <input type="text" placeholder="e.g. Peanuts, Dust, None" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Chronic Conditions</label>
+                          <input type="text" placeholder="e.g. Asthma, Diabetes, None" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                        <div className="space-y-1 md:col-span-3">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Current Home Medications</label>
+                          <input type="text" placeholder="List any medications taken at home..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+                     </div>
                   </div>
                 </div>
               )}
