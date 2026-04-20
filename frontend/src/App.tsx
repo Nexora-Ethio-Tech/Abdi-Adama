@@ -24,6 +24,7 @@ import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';
 import Exams from './pages/Exams';
+import { Clinic } from './pages/Clinic';
 import { LandingPage } from './pages/LandingPage';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -128,6 +129,12 @@ function App() {
             <Route path="library" element={
               <ProtectedRoute allowedRoles={['librarian', 'super-admin']}>
                 <Library />
+              </ProtectedRoute>
+            } />
+
+            <Route path="clinic" element={
+              <ProtectedRoute allowedRoles={['clinic-admin', 'super-admin']}>
+                <Clinic />
               </ProtectedRoute>
             } />
 
