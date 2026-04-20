@@ -1,11 +1,12 @@
 
 export const ShootingStars = () => {
   const colors = ['#5f91ff', '#ff5f91', '#91ff5f', '#ffda5f', '#ffffff'];
+  const starCount = 3 + Math.floor(Math.random() * 4); // Random between 3 and 6
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       <div className="shooting-stars">
-        {[...Array(20)].map((_, i) => {
+        {[...Array(starCount)].map((_, i) => {
           const color = colors[Math.floor(Math.random() * colors.length)];
           // True chaos: randomize every physical property
           const startX = Math.random() * 100;

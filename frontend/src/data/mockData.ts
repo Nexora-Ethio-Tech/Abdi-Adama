@@ -253,3 +253,31 @@ export const mockEvents = [
   { id: 'E3', title: 'Mid-term Exams Start', date: '2026-05-20', type: 'Academic' },
   { id: 'E4', title: 'Final Graduation Ceremony', date: '2026-06-15', type: 'Ceremony' },
 ];
+
+export interface GradingMethod {
+  id: string;
+  label: string;
+  maxWeight: number;
+}
+
+export const mockGradingConfigs: Record<string, GradingMethod[]> = {
+  'default': [
+    { id: 'mid', label: 'Mid-Exam', maxWeight: 30 },
+    { id: 'final', label: 'Final-Exam', maxWeight: 50 },
+    { id: 'quiz', label: 'Quiz', maxWeight: 10 },
+    { id: 'assignment', label: 'Assignment', maxWeight: 10 },
+  ],
+  '10': [
+    { id: 'mid', label: 'Mid-Exam', maxWeight: 30 },
+    { id: 'final', label: 'Final-Exam', maxWeight: 40 },
+    { id: 'quiz', label: 'Quiz', maxWeight: 10 },
+    { id: 'classwork', label: 'Class-Work', maxWeight: 10 },
+    { id: 'activity', label: 'Class Activity', maxWeight: 10 },
+  ],
+  '9': [
+    { id: 'mid', label: 'Mid-Exam', maxWeight: 25 },
+    { id: 'final', label: 'Final-Exam', maxWeight: 50 },
+    { id: 'homework', label: 'Home-Work', maxWeight: 15 },
+    { id: 'test', label: 'Test', maxWeight: 10 },
+  ]
+};

@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
-import { mockStudents, mockClasses } from '../data/mockData';
+import { mockStudents, mockClasses, mockGradingConfigs } from '../data/mockData';
 import { Save, Lock, ArrowLeft, ChevronRight, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +14,9 @@ export const GradeEntry = () => {
   // Mocking teacher subjects - in real app this would come from user data
   const teacherSubjects = ['Mathematics', 'Physics'];
 
-  const studentsInClass = mockStudents.filter(s => s.grade === selectedClass?.replace('Grade ', ''));
+  const gradeLevel = selectedClass?.replace('Grade ', '');
+  const studentsInClass = mockStudents.filter(s => s.grade === gradeLevel);
+  const gradingMethods = mockGradingConfigs[gradeLevel || ''] || mockGradingConfigs['default'];
 
   const handleSave = () => {
     if (gradesLocked) return;
@@ -133,10 +135,11 @@ export const GradeEntry = () => {
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Student</th>
-                <th className="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-24">Mid (30)</th>
-                <th className="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-24">Quiz (10)</th>
-                <th className="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-24">Assig. (10)</th>
-                <th className="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-24">Final (50)</th>
+                {gradingMethods.map(method => (
+                  <th key={method.id} className="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-32">
+                    {method.label} ({method.maxWeight})
+                  </th>
+                ))}
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-24">Total</th>
               </tr>
             </thead>
@@ -154,44 +157,19 @@ export const GradeEntry = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <input
-                      disabled={gradesLocked}
-                      type="number"
-                      max={30}
-                      placeholder="0"
-                      className="w-full text-center p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                    />
-                  </td>
-                  <td className="px-4 py-4">
-                    <input
-                      disabled={gradesLocked}
-                      type="number"
-                      max={10}
-                      placeholder="0"
-                      className="w-full text-center p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                    />
-                  </td>
-                  <td className="px-4 py-4">
-                    <input
-                      disabled={gradesLocked}
-                      type="number"
-                      max={10}
-                      placeholder="0"
-                      className="w-full text-center p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                    />
-                  </td>
-                  <td className="px-4 py-4">
-                    <input
-                      disabled={gradesLocked}
-                      type="number"
-                      max={50}
-                      placeholder="0"
-                      className="w-full text-center p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                    />
-                  </td>
+                  {gradingMethods.map(method => (
+                    <td key={method.id} className="px-4 py-4">
+                      <input
+                        disabled={gradesLocked}
+                        type="number"
+                        max={method.maxWeight}
+                        placeholder="0"
+                        className="w-full text-center p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 font-bold text-blue-600"
+                      />
+                    </td>
+                  ))}
                   <td className="px-6 py-4 text-right">
-                    <span className="font-bold text-blue-600">--</span>
+                    <span className="font-black text-slate-400">/100</span>
                   </td>
                 </tr>
               ))}

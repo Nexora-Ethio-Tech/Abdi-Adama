@@ -9,7 +9,9 @@ import { useState } from 'react';
 
 export const Layout = () => {
   const location = useLocation();
-  const { role, user } = useUser();
+  const { role, user, schoolName } = useUser();
+
+  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const shouldShowStars = role === 'student' || role === 'parent' || !user;
@@ -61,7 +63,7 @@ export const Layout = () => {
       case '/attendance': return 'Attendance Tracking';
       case '/finance': return 'Financial Auditing';
       case '/settings': return 'System Settings';
-      default: return 'Abdi Adama School IMS';
+      default: return `${displaySchoolName} IMS`;
     }
   };
 

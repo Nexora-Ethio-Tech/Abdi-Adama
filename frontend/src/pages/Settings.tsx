@@ -1,11 +1,14 @@
 
-import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio } from 'lucide-react';
+import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio, GraduationCap, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useAppearance, type UIStyle } from '../context/AppearanceContext';
+import { mockGradingConfigs } from '../data/mockData';
+import { useUser } from '../context/UserContext';
 
 export const Settings = () => {
   const [activeTab, setActiveTab] = useState('General');
   const { style, setStyle, autoDarkMode, setAutoDarkMode } = useAppearance();
+  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role } = useUser();
 
   const tabs = [
     { id: 'General', icon: Building },
@@ -13,9 +16,15 @@ export const Settings = () => {
     { id: 'Notifications', icon: Bell },
     { id: 'Security', icon: Shield },
     { id: 'Financial Policy', icon: CreditCard },
+    { id: 'Grading System', icon: GraduationCap },
     { id: 'Appearance', icon: Palette },
     { id: 'Regional', icon: Globe },
   ];
+
+  const [selectedGrade, setSelectedGrade] = useState('10');
+  const [gradeConfigs, setGradeConfigs] = useState(mockGradingConfigs);
+  const [newMethodLabel, setNewMethodLabel] = useState('');
+  const [newMethodWeight, setNewMethodWeight] = useState(10);
 
   return (
     <div className="space-y-6">
@@ -55,9 +64,25 @@ export const Settings = () => {
             {activeTab === 'General' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Name</label>
-                    <input type="text" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue="Abdi Adama Integrated School" />
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Name (Official)</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                      value={schoolName}
+                      onChange={(e) => role === 'super-admin' && setSchoolName(e.target.value)}
+                      disabled={role !== 'super-admin'}
+                    />
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Motto</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 font-medium italic"
+                      value={schoolMotto}
+                      onChange={(e) => role === 'super-admin' && setSchoolMotto(e.target.value)}
+                      disabled={role !== 'super-admin'}
+                    />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-slate-500 uppercase">System Email</label>
@@ -163,6 +188,144 @@ export const Settings = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'Grading System' && (
+              <div className="space-y-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
+                  <div>
+                    <h4 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-1">Select Grade Level</h4>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Configurations are batch-specific</p>
+                  </div>
+                  <select
+                    value={selectedGrade}
+                    onChange={(e) => setSelectedGrade(e.target.value)}
+                    className="px-6 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]"
+                  >
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                  </select>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-2">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Active Assessment Methods</h4>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                        (gradeConfigs[selectedGrade] || gradeConfigs['default']).reduce((acc, m) => acc + m.maxWeight, 0) === 100
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-rose-100 text-rose-700 animate-pulse'
+                      }`}>
+                        Total Weight: {(gradeConfigs[selectedGrade] || gradeConfigs['default']).reduce((acc, m) => acc + m.maxWeight, 0)}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {(gradeConfigs[selectedGrade] || gradeConfigs['default']).map((method, idx) => (
+                      <div key={method.id} className="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl group transition-all hover:border-blue-200">
+                        <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 font-bold text-xs">
+                          {idx + 1}
+                        </div>
+                        <div className="flex-1">
+                          <input
+                            type="text"
+                            value={method.label}
+                            onChange={(e) => {
+                              const newConfigs = { ...gradeConfigs };
+                              const methods = [...(newConfigs[selectedGrade] || gradeConfigs['default'])];
+                              methods[idx].label = e.target.value;
+                              newConfigs[selectedGrade] = methods;
+                              setGradeConfigs(newConfigs);
+                            }}
+                            className="bg-transparent font-bold text-slate-800 dark:text-white outline-none w-full"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <input
+                              type="number"
+                              value={method.maxWeight}
+                              onChange={(e) => {
+                                const newConfigs = { ...gradeConfigs };
+                                const methods = [...(newConfigs[selectedGrade] || gradeConfigs['default'])];
+                                methods[idx].maxWeight = parseInt(e.target.value) || 0;
+                                newConfigs[selectedGrade] = methods;
+                                setGradeConfigs(newConfigs);
+                              }}
+                              className="bg-transparent font-black text-blue-600 w-12 text-center outline-none"
+                            />
+                            <span className="text-[10px] font-black text-slate-400">PTS</span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const newConfigs = { ...gradeConfigs };
+                              const methods = (newConfigs[selectedGrade] || gradeConfigs['default']).filter((_, i) => i !== idx);
+                              newConfigs[selectedGrade] = methods;
+                              setGradeConfigs(newConfigs);
+                            }}
+                            className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/30 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
+                   <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Add New Assessment Method</h5>
+                   <div className="flex flex-col md:flex-row gap-4">
+                      <input
+                        type="text"
+                        placeholder="e.g. Class Activity, Project"
+                        value={newMethodLabel}
+                        onChange={(e) => setNewMethodLabel(e.target.value)}
+                        className="flex-1 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                           <span className="text-[10px] font-bold text-slate-400 uppercase">Weight</span>
+                           <input
+                             type="number"
+                             value={newMethodWeight}
+                             onChange={(e) => setNewMethodWeight(parseInt(e.target.value) || 0)}
+                             className="w-12 bg-transparent font-bold text-center outline-none"
+                           />
+                           <span className="text-xs font-bold text-slate-400">%</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (!newMethodLabel) return;
+                            const newConfigs = { ...gradeConfigs };
+                            const methods = [...(newConfigs[selectedGrade] || gradeConfigs['default'])];
+                            methods.push({
+                              id: newMethodLabel.toLowerCase().replace(/\s+/g, '-'),
+                              label: newMethodLabel,
+                              maxWeight: newMethodWeight
+                            });
+                            newConfigs[selectedGrade] = methods;
+                            setGradeConfigs(newConfigs);
+                            setNewMethodLabel('');
+                          }}
+                          className="bg-slate-800 text-white p-2.5 rounded-xl hover:bg-slate-700 transition-all shadow-md"
+                        >
+                          <Plus size={20} />
+                        </button>
+                      </div>
+                   </div>
+                </div>
+
+                {(gradeConfigs[selectedGrade] || gradeConfigs['default']).reduce((acc, m) => acc + m.maxWeight, 0) !== 100 && (
+                  <div className="flex gap-3 p-4 bg-rose-50 dark:bg-rose-900/20 rounded-2xl border border-rose-100 dark:border-rose-800/50 text-rose-600">
+                    <AlertCircle size={20} className="flex-shrink-0" />
+                    <p className="text-xs font-medium">Warning: The total weight for Grade {selectedGrade} is currently <strong>{(gradeConfigs[selectedGrade] || gradeConfigs['default']).reduce((acc, m) => acc + m.maxWeight, 0)}%</strong>. It should equal 100% for proper calculations.</p>
+                  </div>
+                )}
               </div>
             )}
 

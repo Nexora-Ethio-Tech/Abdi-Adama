@@ -5,6 +5,7 @@ import { StudentRegistration } from '../components/StudentRegistration';
 import { Chatbot } from '../components/Chatbot';
 import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
+import { useUser } from '../context/UserContext';
 import {
   ArrowRight,
   ChevronDown,
@@ -15,7 +16,10 @@ import {
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const { schoolName, schoolMotto } = useUser();
   const [showAdmission, setShowAdmission] = useState(false);
+
+  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
 
   if (showAdmission) {
     return (
@@ -26,7 +30,7 @@ export const LandingPage = () => {
               <img src={logo} alt="School Logo" className="w-16 h-16 rounded-2xl shadow-lg object-cover" />
               <div>
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admission Portal</h1>
-                <p className="text-sm text-slate-500">Abdi Adama Integrated School</p>
+                <p className="text-sm text-slate-500">{displaySchoolName}</p>
               </div>
             </div>
             <button
@@ -60,10 +64,14 @@ export const LandingPage = () => {
           </div>
 
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-primary/10 text-school-primary rounded-full text-sm font-bold mb-4">
-            Integrated School Management System
+             {schoolMotto}
           </div>
-          <h1 className="text-6xl md:text-8xl font-black text-slate-900 dark:text-white tracking-tight">
-            Abdi <span className="text-school-primary">Adama</span>
+          <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            {schoolName.split('||').map((part, i) => (
+              <span key={i} className={i === 2 ? "text-school-primary block mt-2" : "block"}>
+                {part.trim()}
+              </span>
+            ))}
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             Empowering the next generation with modern education and seamless administration.
@@ -108,7 +116,7 @@ export const LandingPage = () => {
       <footer className="py-12 border-t border-slate-100 dark:border-slate-800 text-center">
         <div className="flex items-center justify-center gap-3 mb-4 font-bold text-slate-600 dark:text-slate-300">
            <img src={logo} alt="Logo" className="w-8 h-8 rounded-lg grayscale group-hover:grayscale-0 transition-all" />
-           Abdi Adama Integrated School © 2026
+           {displaySchoolName} © 2026
         </div>
         <p className="text-slate-400 text-sm mb-6">Providing excellence in education since 2005.</p>
 

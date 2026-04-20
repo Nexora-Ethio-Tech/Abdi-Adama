@@ -1,6 +1,6 @@
 
 import { useParams, Link } from 'react-router-dom';
-import { mockStudents } from '../data/mockData';
+import { mockStudents, mockGradingConfigs } from '../data/mockData';
 import {
   ArrowLeft,
   User,
@@ -31,6 +31,8 @@ export const StudentProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedBio, setEditedBio] = useState('');
   const student = mockStudents.find(s => s.id === id) as any;
+  const gradeLevel = student?.grade?.replace(/[A-Z]/g, '');
+  const gradingMethods = mockGradingConfigs[gradeLevel] || mockGradingConfigs['default'];
 
   const isParent = role === 'parent';
 
@@ -425,23 +427,34 @@ export const StudentProfile = () => {
 
               {/* Results Table */}
               <div className="space-y-4">
-                <h4 className="font-bold text-slate-800 text-sm uppercase tracking-widest border-l-4 border-slate-800 pl-3">Summary of Results</h4>
+                <h4 className="font-bold text-slate-800 text-sm uppercase tracking-widest border-l-4 border-slate-800 pl-3 flex items-center justify-between">
+                  Summary of Results
+                  <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Configured for Grade {student.grade}</span>
+                </h4>
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50">
                       <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase">Subject</th>
-                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-center">Score</th>
-                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-center">Grade</th>
-                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-right">Credit</th>
+                      {gradingMethods.map(m => (
+                        <th key={m.id} className="py-3 px-2 text-[9px] font-black text-slate-400 uppercase text-center">
+                          {m.label}<br/>({m.maxWeight})
+                        </th>
+                      ))}
+                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-center">Total</th>
+                      <th className="py-3 px-4 text-xs font-bold text-slate-500 uppercase text-right">Grade</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {['Mathematics', 'Physics', 'Biology', 'Chemistry', 'English', 'Amharic', 'History'].map((subject) => (
                       <tr key={subject}>
-                        <td className="py-3 px-4 font-bold text-slate-700">{subject}</td>
-                        <td className="py-3 px-4 text-center text-slate-600 font-medium">92%</td>
-                        <td className="py-3 px-4 text-center font-bold text-emerald-600">A+</td>
-                        <td className="py-3 px-4 text-right text-slate-500">4.0</td>
+                        <td className="py-3 px-4 font-bold text-slate-700 text-xs">{subject}</td>
+                        {gradingMethods.map(m => (
+                          <td key={m.id} className="py-3 px-2 text-center text-xs font-medium text-slate-600">
+                            {Math.floor(m.maxWeight * 0.9)}
+                          </td>
+                        ))}
+                        <td className="py-3 px-4 text-center text-xs font-black text-blue-600">90%</td>
+                        <td className="py-3 px-4 text-right font-black text-emerald-600 text-xs">A+</td>
                       </tr>
                     ))}
                   </tbody>

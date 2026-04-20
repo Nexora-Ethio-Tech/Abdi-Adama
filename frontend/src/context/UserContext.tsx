@@ -27,6 +27,10 @@ interface UserContextType {
   branches: Branch[];
   gradesLocked: boolean;
   setGradesLocked: (locked: boolean) => void;
+  schoolName: string;
+  setSchoolName: (name: string) => void;
+  schoolMotto: string;
+  setSchoolMotto: (motto: string) => void;
   login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<boolean>;
   logout: () => void;
 }
@@ -47,6 +51,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   });
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
+  const [schoolName, setSchoolName] = useState(() => localStorage.getItem('school_name') || 'Mana Barumsaa Abdii Adaamaa||አብዲ አዳማ ትምህርት ቤት || Abdi Adama School');
+  const [schoolMotto, setSchoolMotto] = useState(() => localStorage.getItem('school_motto') || 'ijooleen kessaan ijolee kenyaa || ልጆቻቹ ልጆቻችን ናቸዉ');
 
   useEffect(() => {
     if (user) {
@@ -55,6 +61,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem('abdi_adama_user');
     }
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('school_name', schoolName);
+  }, [schoolName]);
+
+  useEffect(() => {
+    localStorage.setItem('school_motto', schoolMotto);
+  }, [schoolMotto]);
 
   const role = user?.role || null;
 
@@ -129,6 +143,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       branches: mockBranches,
       gradesLocked,
       setGradesLocked,
+      schoolName,
+      setSchoolName,
+      schoolMotto,
+      setSchoolMotto,
       login,
       logout
     }}>

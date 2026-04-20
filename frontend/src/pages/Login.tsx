@@ -7,8 +7,10 @@ import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
 
 export const Login = () => {
-  const { login } = useUser();
+  const { login, schoolName } = useUser();
   const navigate = useNavigate();
+
+  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
   const [digitalIdOrEmail, setDigitalIdOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
@@ -75,7 +77,7 @@ export const Login = () => {
             </div>
           </div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white">Sign In</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">Access the Abdi Adama Smart-School Ecosystem</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">Access the {displaySchoolName} Ecosystem</p>
         </div>
 
         <div className="card p-8">
@@ -206,7 +208,7 @@ export const Login = () => {
 
           <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
             <p className="text-slate-500 dark:text-slate-400">
-              New to Abdi Adama?{' '}
+              New to {displaySchoolName}?{' '}
               <Link to="/register" className="text-school-primary font-bold hover:underline">
                 Create an Account
               </Link>

@@ -12,7 +12,6 @@ import {
   BookOpen,
   PieChart,
   Package,
-  Calendar,
   ClipboardList,
   X,
   UserCog,
@@ -33,8 +32,10 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { role, logout, switchRole } = useUser();
+  const { role, logout, switchRole, schoolName } = useUser();
   const navigate = useNavigate();
+
+  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
 
   const handleLogout = () => {
     logout();
@@ -50,7 +51,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: PieChart, label: 'Analytics', path: '/analytics' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'school-admin':
@@ -62,7 +62,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
@@ -71,7 +70,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: 'Teacher Portal', path: '/' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'student':
@@ -79,7 +77,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
           { icon: BookOpen, label: 'Grades & Courses', path: '/courses' },
           { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'parent':
@@ -87,26 +84,22 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
           { icon: HeartPulse, label: 'Clinic Support', path: '/clinic-chat' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'finance-clerk':
         return [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       case 'librarian':
         return [
           { icon: LayoutDashboard, label: 'Librarian Portal', path: '/' },
           { icon: BookOpen, label: 'Library', path: '/library' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       case 'clinic-admin':
         return [
           { icon: LayoutDashboard, label: 'Clinic Dashboard', path: '/' },
           { icon: HeartPulse, label: 'Clinic Management', path: '/clinic' },
-          { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
       default:
         return [];
@@ -136,9 +129,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <div className="relative p-1 bg-white rounded-xl shadow-lg">
             <img src={logo} alt="Abdi Adama Logo" className="w-10 h-10 rounded-lg object-cover" />
           </div>
-          <div>
-            <span className="font-black text-xl tracking-tight block">Abdi Adama</span>
-            <span className="text-[10px] text-school-accent font-bold uppercase tracking-widest">Smart-School</span>
+          <div className="flex-1 min-w-0">
+            <span className="font-black text-lg tracking-tight block truncate text-white">{displaySchoolName}</span>
+            <span className="text-[10px] text-school-accent font-bold uppercase tracking-widest block truncate">Smart-School</span>
           </div>
         </div>
         <button

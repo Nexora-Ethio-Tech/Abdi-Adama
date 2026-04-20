@@ -4,8 +4,12 @@ import { ChevronLeft } from 'lucide-react';
 import { StudentRegistration } from '../components/StudentRegistration';
 import logo from '../assets/logo.jpg';
 import { ShootingStars } from '../components/Effects';
+import { useUser } from '../context/UserContext';
 
 export const Register = () => {
+  const { schoolName } = useUser();
+  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <ShootingStars />
@@ -26,7 +30,7 @@ export const Register = () => {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-white">Admission Portal</h1>
-              <p className="text-sm text-slate-500">Abdi Adama Integrated School</p>
+              <p className="text-sm text-slate-500">{displaySchoolName}</p>
             </div>
           </div>
         </div>
