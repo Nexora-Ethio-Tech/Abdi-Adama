@@ -102,11 +102,17 @@ export const mockStudents = [
 ];
 
 export const mockTeachers = [
-  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true },
-  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false },
-  { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true },
-  { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false },
-  { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false },
+  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true, rewardPoints: 150, department: 'Natural Science', isDean: true, performanceHistory: [140, 160, 150, 145] },
+  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false, rewardPoints: 210, department: 'Natural Science', isDean: false, performanceHistory: [180, 190, 210, 200] },
+  { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true, rewardPoints: 185, department: 'Social Science', isDean: true, performanceHistory: [170, 175, 185, 180] },
+  { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false, rewardPoints: 95, department: 'Languages', isDean: true, performanceHistory: [80, 90, 95, 85] },
+  { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false, rewardPoints: 120, department: 'Sports', isDean: false, performanceHistory: [110, 115, 120, 118] },
+];
+
+export const mockWeeklyPlans = [
+  { id: 'P1', teacherId: 'T1', teacherName: 'Ato Solomon', week: 'Week 12', title: 'Calculus Introduction', status: 'Approved', rating: 5, feedback: 'Excellent depth.', description: 'Detailed study of limits and derivatives.' },
+  { id: 'P2', teacherId: 'T2', teacherName: 'W/ro Selam', week: 'Week 12', title: 'Cell Biology', status: 'Pending', rating: null, feedback: '', description: 'Exploration of eukaryotic and prokaryotic cell structures.' },
+  { id: 'P3', teacherId: 'T5', teacherName: 'Ato Tadesse', week: 'Week 12', title: 'Football Drills', status: 'Approved', rating: 4, feedback: 'Good engagement.', description: 'Practical session on defensive formations.' },
 ];
 
 export const mockClasses = [
