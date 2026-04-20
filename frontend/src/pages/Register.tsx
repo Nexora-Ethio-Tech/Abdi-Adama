@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Sparkles } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { StudentRegistration } from '../components/StudentRegistration';
 import logo from '../assets/logo.jpg';
 import { ShootingStars } from '../components/Effects';
@@ -23,9 +23,6 @@ export const Register = () => {
           <div className="flex items-center gap-4">
             <div className="relative p-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg">
               <img src={logo} alt="School Logo" className="w-12 h-12 rounded-xl object-cover" />
-              <div className="absolute -top-1 -right-1 bg-school-primary text-white p-1 rounded-full shadow-md">
-                 <Sparkles size={12} />
-              </div>
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-white">Admission Portal</h1>

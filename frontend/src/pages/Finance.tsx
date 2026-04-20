@@ -101,6 +101,13 @@ export const Finance = () => {
               <tbody className="divide-y divide-slate-100">
                 {mockStudents.map((student) => {
                   const isPaid = paymentStatus[student.id];
+                  const scholarship = (student as any).isScholarship;
+                  const busUser = (student as any).isBusUser;
+                  const penalty = (student as any).penaltyFee || 0;
+                  const monthly = (student as any).monthlyFee || 0;
+                  const bus = (student as any).busFee || 0;
+                  const totalExpected = (scholarship ? 0 : monthly) + (busUser ? bus : 0) + penalty;
+
                   return (
                     <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4">
@@ -110,30 +117,66 @@ export const Finance = () => {
                           </div>
                           <div>
                             <p className="font-medium text-slate-800">{student.name}</p>
-                            <p className="text-[10px] text-slate-500">Grade {student.grade}</p>
+                            <p className="text-[10px] text-slate-500 flex items-center gap-2">
+                              Grade {student.grade}
+                              {scholarship && (
+                                <span className="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-[8px] font-black uppercase">Scholarship</span>
+                              )}
+                              {busUser && (
+                                <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter">Bus User</span>
+                              )}
+                            </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex justify-center">
+                        <div className="flex flex-col items-center gap-1">
                           <button
-                            onClick={() => togglePayment(student.id)}
+                            onClick={() => !scholarship && togglePayment(student.id)}
+                            disabled={scholarship}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                              isPaid
-                                ? 'bg-emerald-100 text-emerald-700 shadow-sm'
-                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                              scholarship
+                                ? 'bg-purple-600 text-white shadow-lg shadow-purple-200'
+                                : isPaid
+                                  ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                             }`}
                           >
-                            {isPaid ? <Check size={14} /> : <div className="w-3.5" />}
-                            <span>{isPaid ? 'PAID' : 'PENDING'}</span>
+                            {scholarship ? (
+                              <Check size={14} />
+                            ) : isPaid ? (
+                              <Check size={14} />
+                            ) : (
+                              <div className="w-3.5" />
+                            )}
+                            <span>{scholarship ? 'COVERED' : isPaid ? 'PAID' : 'PENDING'}</span>
                           </button>
+                          {!scholarship && !isPaid && totalExpected > 0 && (
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                              Total: {totalExpected.toLocaleString()} ETB
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        {!isPaid && (
-                          <div className="flex items-center justify-center gap-1.5 text-rose-500 font-bold text-[10px] animate-pulse">
-                            <AlertCircle size={14} />
-                            <span>OVERDUE + 150 ETB Penalty</span>
+                        {!scholarship && !isPaid && (
+                          <div className="flex flex-col items-center gap-1">
+                            {penalty > 0 && (
+                              <div className="flex items-center gap-1 text-rose-500 font-bold text-[10px] animate-pulse">
+                                <AlertCircle size={12} />
+                                <span>+{penalty} ETB Penalty</span>
+                              </div>
+                            )}
+                            {busUser && (
+                              <div className="text-[9px] text-blue-600 font-bold uppercase tracking-tighter">
+                                Incl. {bus} ETB Bus Fee
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        {scholarship && (
+                          <div className="text-center text-[10px] font-bold text-purple-400 uppercase tracking-widest">
+                            Full Coverage
                           </div>
                         )}
                       </td>

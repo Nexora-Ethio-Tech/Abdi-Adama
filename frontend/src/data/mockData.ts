@@ -30,7 +30,12 @@ export const mockStudents = [
     academicHistory: [
       { year: '2014', grade: '8', average: '88%', rank: '5/42' },
       { year: '2015', grade: '9', average: '91%', rank: '2/45' },
-    ]
+    ],
+    isScholarship: false,
+    isBusUser: true,
+    penaltyFee: 0,
+    monthlyFee: 5000,
+    busFee: 1200
   },
   {
     id: '2',
@@ -48,7 +53,12 @@ export const mockStudents = [
       phone: '+251922222222'
     },
     riskLevel: 'Medium',
-    riskFactor: 'Slight decline in Mathematics scores recently.'
+    riskFactor: 'Slight decline in Mathematics scores recently.',
+    isScholarship: true,
+    isBusUser: false,
+    penaltyFee: 0,
+    monthlyFee: 5000,
+    busFee: 0
   },
   {
     id: '3',
@@ -66,12 +76,17 @@ export const mockStudents = [
       phone: '+251933333333'
     },
     riskLevel: 'High',
-    riskFactor: 'Frequent absenteeism in the last month.'
+    riskFactor: 'Frequent absenteeism in the last month.',
+    isScholarship: false,
+    isBusUser: true,
+    penaltyFee: 150,
+    monthlyFee: 6500,
+    busFee: 1200
   },
-  { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444', riskLevel: 'Low' },
-  { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', parentName: 'Tesfaye Belay', parentPhone: '+251955555555', riskLevel: 'Low' },
-  { id: '6', name: 'Biniyam Yosef', grade: '10A', status: 'Active', parentName: 'Yosef Kassa', parentPhone: '+251911223344', riskLevel: 'Medium', riskFactor: 'Sudden drop in Physics attendance.' },
-  { id: '7', name: 'Tigist Walelign', grade: '9B', status: 'Active', parentName: 'Walelign Tadesse', parentPhone: '+251911556677', riskLevel: 'Low' },
+  { id: '4', name: 'Hanna Yohannes', grade: '12A', status: 'Inactive', parentName: 'Yohannes Ayele', parentPhone: '+251944444444', riskLevel: 'Low', isScholarship: false, isBusUser: false, penaltyFee: 0, monthlyFee: 7000, busFee: 0 },
+  { id: '5', name: 'Mulugeta Tesfaye', grade: '8D', status: 'Active', parentName: 'Tesfaye Belay', parentPhone: '+251955555555', riskLevel: 'Low', isScholarship: true, isBusUser: true, penaltyFee: 0, monthlyFee: 4500, busFee: 1200 },
+  { id: '6', name: 'Biniyam Yosef', grade: '10A', status: 'Active', parentName: 'Yosef Kassa', parentPhone: '+251911223344', riskLevel: 'Medium', riskFactor: 'Sudden drop in Physics attendance.', isScholarship: false, isBusUser: false, penaltyFee: 300, monthlyFee: 5000, busFee: 0 },
+  { id: '7', name: 'Tigist Walelign', grade: '9B', status: 'Active', parentName: 'Walelign Tadesse', parentPhone: '+251911556677', riskLevel: 'Low', isScholarship: false, isBusUser: true, penaltyFee: 0, monthlyFee: 5000, busFee: 1200 },
 ];
 
 export const mockTeachers = [

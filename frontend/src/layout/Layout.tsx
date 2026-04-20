@@ -9,8 +9,10 @@ import { useState } from 'react';
 
 export const Layout = () => {
   const location = useLocation();
-  const { role } = useUser();
+  const { role, user } = useUser();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const shouldShowStars = role === 'student' || role === 'parent' || !user;
 
   const getTitle = (path: string) => {
     if (role === 'student') {
@@ -28,6 +30,7 @@ export const Layout = () => {
         case '/': return 'Parental Dashboard';
         case '/students': return 'My Children';
         case '/finance': return 'Tuition & Fees';
+        case '/clinic-chat': return 'Clinic Support';
         default: return 'Parent Portal';
       }
     }
@@ -66,7 +69,7 @@ export const Layout = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
-      <ShootingStars />
+      {shouldShowStars && <ShootingStars />}
       {/* Sidebar Backdrop for Mobile */}
       {isSidebarOpen && (
         <div

@@ -118,19 +118,23 @@ export const Dashboard = () => {
               value="76"
               color="bg-purple-600"
             />
-            <StatCard
-              icon={Clock}
-              label="Daily Attendance"
-              value="94.2%"
-              trend="+1.2%"
-              color="bg-orange-500"
-            />
-            <StatCard
-              icon={TrendingUp}
-              label="Monthly Revenue"
-              value="450,000 ETB"
-              color="bg-emerald-500"
-            />
+            {(role === 'super-admin' || role === 'school-admin' || role === 'teacher') && (
+              <StatCard
+                icon={Clock}
+                label="Daily Attendance"
+                value="94.2%"
+                trend="+1.2%"
+                color="bg-orange-500"
+              />
+            )}
+            {(role === 'super-admin' || role === 'school-admin' || role === 'finance-clerk') && (
+              <StatCard
+                icon={TrendingUp}
+                label="Monthly Revenue"
+                value="450,000 ETB"
+                color="bg-emerald-500"
+              />
+            )}
           </>
         )}
       </div>
