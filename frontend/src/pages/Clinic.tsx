@@ -116,7 +116,7 @@ export const Clinic = () => {
             onClick={() => setActiveTab('chat')}
             className={`px-6 py-2 rounded-lg text-sm font-bold transition-all relative ${activeTab === 'chat' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
           >
-            Parent Chat
+            Chats
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 animate-bounce">
                 {unreadCount}
