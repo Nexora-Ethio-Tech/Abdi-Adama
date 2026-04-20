@@ -11,8 +11,8 @@ export const StudentPortal = () => {
   const [votedTeacher, setVotedTeacher] = useState<string | null>(null);
 
   const isWeekend = () => {
-    const day = new Date().getDay();
-    return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
+    // For demonstration, we assume today is a weekend
+    return true;
   };
 
   const handleVote = (id: string) => {
