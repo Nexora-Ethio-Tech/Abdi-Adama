@@ -7,25 +7,31 @@ export const ShootingStars = () => {
       <div className="shooting-stars">
         {[...Array(20)].map((_, i) => {
           const color = colors[Math.floor(Math.random() * colors.length)];
-          const angle = -30 - Math.random() * 30; // Random angle between -30 and -60
-          const duration = 2 + Math.random() * 4;
-          const delay = Math.random() * 10;
-          const travel = 200 + Math.random() * 400;
+          // True chaos: randomize every physical property
+          const startX = Math.random() * 100;
+          const startY = Math.random() * 100;
+          const angle = Math.random() * 360;
+          const duration = 1.5 + Math.random() * 6;
+          const delay = Math.random() * 20; // Longer delay spread
+          const travel = 300 + Math.random() * 800;
+          const size = 1 + Math.random() * 3;
 
           return (
             <div
               key={i}
               className="shooting-star"
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
+                top: `${startY}%`,
+                left: `${startX}%`,
+                height: `${size}px`,
                 background: `linear-gradient(-45deg, ${color}, rgba(0, 0, 255, 0))`,
-                filter: `drop-shadow(0 0 6px ${color})`,
+                filter: `drop-shadow(0 0 8px ${color})`,
                 transform: `rotate(${angle}deg)`,
                 animationDelay: `${delay}s`,
                 animationDuration: `${duration}s`,
                 ['--travel-dist' as any]: `${travel}px`,
-                ['--star-color' as any]: color
+                ['--star-color' as any]: color,
+                opacity: 0.3 + Math.random() * 0.7
               }}
             />
           );
