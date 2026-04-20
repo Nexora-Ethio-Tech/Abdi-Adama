@@ -16,6 +16,7 @@ export const ExamSession: React.FC = () => {
   // --- State ---
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<'submitting' | 'success' | 'error' | null>(null);
   const [examStartedAt, setExamStartedAt] = useState<string>('');
@@ -31,8 +32,9 @@ export const ExamSession: React.FC = () => {
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      const { savedAnswers, savedIndex, savedStartTime, savedEndTime, savedViolations } = JSON.parse(saved);
+      const { savedAnswers, savedIndex, savedStartTime, savedEndTime, savedViolations, savedFlagged } = JSON.parse(saved);
       setAnswers(savedAnswers || {});
+      setFlaggedQuestions(new Set(savedFlagged || []));
       setCurrentQuestionIndex(savedIndex || 0);
       setExamStartedAt(savedStartTime || new Date().toISOString());
       setExamEndTime(savedEndTime || (Date.now() + mockExam.durationMinutes * 60 * 1000));
@@ -52,11 +54,12 @@ export const ExamSession: React.FC = () => {
         savedIndex: currentQuestionIndex,
         savedStartTime: examStartedAt,
         savedEndTime: examEndTime,
-        savedViolations: violations
+        savedViolations: violations,
+        savedFlagged: Array.from(flaggedQuestions)
       });
       localStorage.setItem(STORAGE_KEY, dataToSave);
     }
-  }, [STORAGE_KEY, answers, currentQuestionIndex, examStartedAt, examEndTime, violations]);
+  }, [STORAGE_KEY, answers, currentQuestionIndex, examStartedAt, examEndTime, violations, flaggedQuestions]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -122,6 +125,18 @@ export const ExamSession: React.FC = () => {
   const handleSelectOption = (optionId: string) => {
     const questionId = mockExam.questions[currentQuestionIndex].id;
     setAnswers(prev => ({ ...prev, [questionId]: optionId }));
+  };
+
+  const handleToggleFlag = (questionId: string) => {
+    setFlaggedQuestions(prev => {
+      const next = new Set(prev);
+      if (next.has(questionId)) {
+        next.delete(questionId);
+      } else {
+        next.add(questionId);
+      }
+      return next;
+    });
   };
 
   const handlePrev = () => setCurrentQuestionIndex(prev => Math.max(0, prev - 1));
@@ -234,6 +249,8 @@ export const ExamSession: React.FC = () => {
               selectedOptionId={answers[mockExam.questions[currentQuestionIndex].id]}
               onSelectOption={handleSelectOption}
               index={currentQuestionIndex}
+              isFlagged={flaggedQuestions.has(mockExam.questions[currentQuestionIndex].id)}
+              onToggleFlag={() => handleToggleFlag(mockExam.questions[currentQuestionIndex].id)}
             />
           </div>
 
@@ -244,6 +261,7 @@ export const ExamSession: React.FC = () => {
                 totalQuestions={mockExam.questions.length}
                 currentIndex={currentQuestionIndex}
                 answers={answers}
+                flaggedQuestions={flaggedQuestions}
                 questionIds={questionIds}
                 onSelectIndex={setCurrentQuestionIndex}
               />

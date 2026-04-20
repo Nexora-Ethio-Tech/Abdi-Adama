@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-export type UserRole = 'super-admin' | 'school-admin' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian';
+export type UserRole = 'super-admin' | 'school-admin' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian' | 'clinic-admin';
 
 export interface User {
   id: string;
@@ -21,12 +21,13 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   role: UserRole | null;
+  switchRole: (newRole: UserRole) => void;
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
   gradesLocked: boolean;
   setGradesLocked: (locked: boolean) => void;
-  login: (credentials: { digitalIdOrEmail: string; password: string }) => Promise<boolean>;
+  login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -57,16 +58,28 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const role = user?.role || null;
 
-  const login = async (credentials: { digitalIdOrEmail: string; password: string }) => {
+  const switchRole = (newRole: UserRole) => {
+    if (user) {
+      const updatedUser = { ...user, role: newRole };
+      setUser(updatedUser);
+    }
+  };
+
+  const login = async (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => {
     // Mock login logic
     const id = credentials.digitalIdOrEmail.toUpperCase();
+
+    // If OTP is provided, check if it's 6 digits
+    if (credentials.otp && !/^\d{6}$/.test(credentials.otp)) {
+      return false;
+    }
 
     let mockUser: User = {
       id: '1',
       name: 'User',
       email: credentials.digitalIdOrEmail.includes('@') ? credentials.digitalIdOrEmail : 'user@abdiadama.edu',
       role: 'student',
-      digitalId: credentials.digitalIdOrEmail
+      digitalId: credentials.digitalIdOrEmail.includes('@') ? undefined : credentials.digitalIdOrEmail
     };
 
     if (id.startsWith('SA')) {
@@ -87,6 +100,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } else if (id.startsWith('PR')) {
       mockUser.role = 'parent';
       mockUser.name = 'Parent';
+    } else if (id.startsWith('CL')) {
+      mockUser.role = 'clinic-admin';
+      mockUser.name = 'Clinic Administrator';
     } else {
       mockUser.role = 'student';
       mockUser.name = 'Student';
@@ -107,6 +123,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       user,
       setUser,
       role,
+      switchRole,
       selectedBranch,
       setSelectedBranch,
       branches: mockBranches,

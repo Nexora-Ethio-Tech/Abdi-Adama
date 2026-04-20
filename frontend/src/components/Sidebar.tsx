@@ -14,7 +14,9 @@ import {
   Package,
   Calendar,
   ClipboardList,
-  X
+  X,
+  UserCog,
+  HeartPulse
 } from 'lucide-react';
 import logo from '../assets/logo.jpg';
 import { clsx, type ClassValue } from 'clsx';
@@ -31,7 +33,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { role, logout } = useUser();
+  const { role, logout, switchRole } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -99,12 +101,29 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'Library', path: '/library' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
         ];
+      case 'clinic-admin':
+        return [
+          { icon: LayoutDashboard, label: 'Clinic Dashboard', path: '/' },
+          { icon: HeartPulse, label: 'Clinic Management', path: '/clinic' },
+          { icon: Calendar, label: 'Calendar', path: '/calendar' },
+        ];
       default:
         return [];
     }
   };
 
   const navItems = getNavItems();
+
+  const roles: { id: typeof role; label: string }[] = [
+    { id: 'super-admin', label: 'Super Admin' },
+    { id: 'school-admin', label: 'School Admin' },
+    { id: 'teacher', label: 'Teacher' },
+    { id: 'student', label: 'Student' },
+    { id: 'parent', label: 'Parent' },
+    { id: 'finance-clerk', label: 'Finance Clerk' },
+    { id: 'librarian', label: 'Librarian' },
+    { id: 'clinic-admin', label: 'Clinic Admin' },
+  ];
 
   return (
     <aside className={cn(
@@ -154,7 +173,25 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         ))}
       </nav>
 
-      <div className="p-6 border-t border-slate-800/50">
+      <div className="p-6 border-t border-slate-800/50 space-y-4">
+        <div className="relative group/role">
+          <div className="flex items-center gap-4 px-5 py-3 rounded-2xl bg-slate-800/30 text-slate-400 border border-slate-700/50">
+            <UserCog size={20} className="text-school-accent" />
+            <select
+              value={role || ''}
+              onChange={(e) => switchRole(e.target.value as any)}
+              className="bg-transparent text-xs font-bold outline-none cursor-pointer w-full appearance-none"
+            >
+              {roles.map(r => (
+                <option key={r.id} value={r.id || ''} className="bg-slate-900 text-white">
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider ml-5 mt-2">Active Role</p>
+        </div>
+
         <button
           onClick={handleLogout}
           className="flex items-center gap-4 px-5 py-4 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl transition-all duration-300 group"

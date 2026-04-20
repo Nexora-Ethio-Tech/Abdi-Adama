@@ -17,12 +17,16 @@ const initialPendingApplications = [
 
 export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationProps) => {
   const [activeTab, setActiveTab] = useState<RegistrationTab>('new');
+  const [registrationStep, setRegistrationStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pendingApps, setPendingApps] = useState(initialPendingApplications);
+
+  const nextStep = () => setRegistrationStep(prev => Math.min(3, prev + 1));
+  const prevStep = () => setRegistrationStep(prev => Math.max(1, prev - 1));
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -162,94 +166,149 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
         ) : (
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-              <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <UserPlus size={20} className="text-blue-600" />
-                Admission Form (New Student)
-              </h3>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <UserPlus size={20} className="text-blue-600" />
+                  Admission Form (New Student)
+                </h3>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3].map((step) => (
+                    <div key={step} className="flex items-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                        registrationStep === step ? 'bg-blue-600 text-white' :
+                        registrationStep > step ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'
+                      }`}>
+                        {registrationStep > step ? <Check size={14} /> : step}
+                      </div>
+                      {step < 3 && <div className={`w-8 h-0.5 ${registrationStep > step ? 'bg-emerald-200' : 'bg-slate-100'}`} />}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             <form onSubmit={handleRegister} className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
-                  <input required type="text" placeholder="Enter student full name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+              {registrationStep === 1 && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
+                      <input required type="text" placeholder="Enter student full name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Digital National ID</label>
+                      <input required type="text" placeholder="Enter 12-digit National ID" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Date of Birth</label>
+                      <input required type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Gender</label>
+                      <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Date of Birth</label>
-                  <input required type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Gender</label>
-                  <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Parent/Guardian Name</label>
-                  <input required type="text" placeholder="Enter parent name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Parent Phone</label>
-                  <input required type="tel" placeholder="+251..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Address</label>
-                  <input required type="text" placeholder="City, Sub-city, Woreda" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Previous School</label>
-                  <input type="text" placeholder="Name of previous school" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Last Grade Completed</label>
-                  <input type="text" placeholder="e.g. Grade 9" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Registration Fee Status</label>
-                  <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Paid</option>
-                    <option>Pending</option>
-                  </select>
-                </div>
-              </div>
+              )}
 
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold text-slate-500 uppercase block">Last Transcript (Max 2MB)</label>
-                <div className={`relative border-2 border-dashed rounded-2xl p-8 transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer ${
-                  fileError ? 'border-rose-300 bg-rose-50 dark:bg-rose-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600'
-                }`}>
-                  <input
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileUpload}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                  />
-                  <div className={`p-4 rounded-full ${fileError ? 'bg-rose-100 text-rose-600' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600'}`}>
-                    {fileName ? <FileText size={32} /> : <Upload size={32} />}
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                      {fileName || 'Click to upload transcript'}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-1">PDF, PNG, JPG (Max 2MB)</p>
+              {registrationStep === 2 && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Parent/Guardian Name</label>
+                      <input required type="text" placeholder="Enter parent name" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Parent Phone</label>
+                      <input required type="tel" placeholder="+251..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Address</label>
+                      <input required type="text" placeholder="City, Sub-city, Woreda" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
                   </div>
                 </div>
-                {fileError && (
-                  <div className="flex items-center gap-2 text-rose-600 text-xs font-bold">
-                    <AlertCircle size={14} />
-                    <span>{fileError}</span>
-                  </div>
-                )}
-              </div>
+              )}
 
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              {registrationStep === 3 && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Previous School</label>
+                      <input type="text" placeholder="Name of previous school" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Last Grade Completed</label>
+                      <input type="text" placeholder="e.g. Grade 9" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Registration Fee Status</label>
+                      <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Paid</option>
+                        <option>Pending</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase block">Last Transcript (Max 2MB)</label>
+                    <div className={`relative border-2 border-dashed rounded-2xl p-8 transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer ${
+                      fileError ? 'border-rose-300 bg-rose-50 dark:bg-rose-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600'
+                    }`}>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={handleFileUpload}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                      <div className={`p-4 rounded-full ${fileError ? 'bg-rose-100 text-rose-600' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600'}`}>
+                        {fileName ? <FileText size={32} /> : <Upload size={32} />}
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                          {fileName || 'Click to upload transcript'}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">PDF, PNG, JPG (Max 2MB)</p>
+                      </div>
+                    </div>
+                    {fileError && (
+                      <div className="flex items-center gap-2 text-rose-600 text-xs font-bold">
+                        <AlertCircle size={14} />
+                        <span>{fileError}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between">
                 <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-200 dark:shadow-none"
+                  type="button"
+                  onClick={prevStep}
+                  disabled={registrationStep === 1}
+                  className="px-6 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-all disabled:opacity-0"
                 >
-                  Submit Admission Application
+                  Previous
                 </button>
+                {registrationStep < 3 ? (
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-2.5 rounded-xl font-bold transition-all shadow-lg"
+                  >
+                    Next Step
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-2.5 rounded-xl font-bold transition-all shadow-lg"
+                  >
+                    Submit Application
+                  </button>
+                )}
               </div>
             </form>
           </div>
