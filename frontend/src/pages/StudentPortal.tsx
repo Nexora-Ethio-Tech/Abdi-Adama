@@ -27,27 +27,27 @@ export const StudentPortal = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-20">
       {isWeekend() && !hideVoting && (
-        <div className="bg-gradient-to-br from-amber-500 via-orange-600 to-rose-700 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl shadow-amber-500/20 relative overflow-hidden mb-12">
-          <div className="absolute top-0 right-0 p-12 opacity-10 rotate-12 pointer-events-none">
-            <Trophy size={200} />
+        <div className="bg-gradient-to-br from-amber-500 via-orange-600 to-rose-700 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-amber-500/10 relative overflow-hidden mb-8 border border-white/10">
+          <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 pointer-events-none">
+            <Trophy size={140} />
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative z-10"
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div className="space-y-4 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest">
-                  <Star size={14} fill="currentColor" /> Weekend Special
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+              <div className="space-y-3 max-w-lg">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+                  <Star size={12} fill="currentColor" /> Weekend Special
                 </div>
-                <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-none">Vote Your Teacher of the Week!</h2>
-                <p className="text-lg md:text-xl font-medium opacity-90">
-                  Recognize excellence and help your favorite teacher earn reward points.
+                <h2 className="text-3xl md:text-4xl font-black tracking-tighter leading-none">Teacher of the Week</h2>
+                <p className="text-sm md:text-base font-medium opacity-80">
+                  Help your favorite teacher earn monthly reward points.
                 </p>
               </div>
 
-              <div className="flex-1">
+              <div className="flex-1 max-w-xl">
                 {!votedTeacher ? (
                   <div className="grid grid-cols-2 gap-4">
                     {mockTeachers.slice(0, 4).map((teacher) => (
