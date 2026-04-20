@@ -41,13 +41,13 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         )}
       </div>
 
-      <div className="flex items-center gap-2 md:gap-6">
-        <div className="relative group hidden lg:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+      <div className="flex items-center gap-1 md:gap-6">
+        <div className="relative group hidden sm:block">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} />
           <input
             type="text"
             placeholder="Search..."
-            className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48 xl:w-64"
+            className="pl-9 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-xs focus:ring-2 focus:ring-blue-500 outline-none w-32 md:w-48 xl:w-64"
           />
         </div>
 
@@ -67,13 +67,13 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
           <CalendarIcon size={20} />
         </button>
 
-        <button className="relative p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all hidden sm:block">
+        <button className="relative p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
           <Bell size={20} />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-school-secondary rounded-full border-2 border-white dark:border-slate-900"></span>
         </button>
 
-        <div className="flex items-center gap-3 md:pl-6 md:border-l border-slate-200 dark:border-slate-800 relative">
-          <div className="flex items-center gap-2 md:gap-4 p-1">
+        <div className="flex items-center gap-1 md:gap-3 md:pl-6 md:border-l border-slate-200 dark:border-slate-800 relative">
+          <div className="flex items-center gap-1 md:gap-4 p-1">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-black text-slate-900 dark:text-white leading-tight">{user?.name || 'Guest'}</p>
               <p className="text-[10px] font-bold text-school-primary uppercase tracking-widest">{role?.replace('-', ' ')}</p>

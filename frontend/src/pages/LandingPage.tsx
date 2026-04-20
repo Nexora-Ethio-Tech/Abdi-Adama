@@ -57,27 +57,27 @@ export const LandingPage = () => {
         <ShootingStars />
 
         <div className="relative z-10 text-center px-4 space-y-6 max-w-4xl">
-          <div className="flex justify-center mb-8">
-            <div className="relative p-2 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl floating">
-              <img src={logo} alt="Abdi Adama School Logo" className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] object-cover" />
+          <div className="flex justify-center mb-6 md:mb-8">
+            <div className="relative p-2 bg-white dark:bg-slate-900 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl floating">
+              <img src={logo} alt="Abdi Adama School Logo" className="w-24 h-24 md:w-40 md:h-40 rounded-[1.5rem] md:rounded-[2rem] object-cover" />
             </div>
           </div>
 
-          <div className="space-y-2 mb-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-primary/10 text-school-primary rounded-full text-xs font-bold">
+          <div className="flex flex-wrap justify-center gap-2 mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-school-primary/10 text-school-primary rounded-full text-[10px] md:text-xs font-bold">
                {schoolMotto.oromic}
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-secondary/10 text-school-secondary rounded-full text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-school-secondary/10 text-school-secondary rounded-full text-[10px] md:text-xs font-bold">
                {schoolMotto.amharic}
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-accent/10 text-school-accent rounded-full text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-school-accent/10 text-school-accent rounded-full text-[10px] md:text-xs font-bold">
                {schoolMotto.english}
             </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-3xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             <span className="block">{schoolName.oromic}</span>
             <span className="block">{schoolName.amharic}</span>
-            <span className="text-school-primary block mt-2">{schoolName.english}</span>
+            <span className="text-school-primary block mt-1 md:mt-2">{schoolName.english}</span>
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             Empowering the next generation with modern education and seamless administration.

@@ -6,10 +6,10 @@ import { mockStudents } from '../data/mockData';
 import { Link } from 'react-router-dom';
 
 const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
-  <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
+  <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
     <div className="flex items-center justify-between mb-4">
-      <div className={`${color} p-3 rounded-lg text-white`}>
-        <Icon size={24} />
+      <div className={`${color} p-2 md:p-3 rounded-lg text-white`}>
+        <Icon size={20} className="md:w-6 md:h-6" />
       </div>
       {trend && (
         <span className="text-emerald-500 text-sm font-medium bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-full">
@@ -17,8 +17,8 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
         </span>
       )}
     </div>
-    <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium">{label}</h3>
-    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">{value}</p>
+    <h3 className="text-slate-500 dark:text-slate-400 text-[10px] md:text-sm font-bold md:font-medium uppercase md:normal-case tracking-wider md:tracking-normal">{label}</h3>
+    <p className="text-xl md:text-2xl font-black md:font-bold text-slate-800 dark:text-slate-100 mt-1">{value}</p>
   </div>
 );
 
@@ -136,7 +136,7 @@ export const Dashboard = () => {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="p-4 md:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
               <Megaphone size={20} />
@@ -146,16 +146,17 @@ export const Dashboard = () => {
           {isAdmin && (
             <button
               onClick={() => setShowNoticeModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold"
+              className="bg-blue-600 hover:bg-blue-700 text-white p-2 md:p-1.5 rounded-lg transition-colors flex items-center gap-1 text-[10px] md:text-xs font-bold"
             >
-              <Plus size={16} />
-              <span>Post Notice</span>
+              <Plus size={14} className="md:w-4 md:h-4" />
+              <span className="hidden xs:inline">Post Notice</span>
+              <span className="xs:hidden">Post</span>
             </button>
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
           {notices.map((notice) => (
-            <div key={notice.id} className="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+            <div key={notice.id} className="p-4 md:p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
               <div className="flex items-center justify-between mb-3">
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                   notice.priority === 'High' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
