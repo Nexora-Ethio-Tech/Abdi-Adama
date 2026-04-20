@@ -86,6 +86,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
+          { icon: HeartPulse, label: 'Clinic Support', path: '/clinic-chat' },
           { icon: Calendar, label: 'Calendar', path: '/calendar' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
