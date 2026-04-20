@@ -514,13 +514,13 @@ const QuestionNode = ({
   onAddOption: (qId: string) => void,
   onUpdateOption: (qId: string, oIdx: number, text: string) => void
 }) => (
-  <div className={`bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4 relative group ${level > 0 ? 'ml-8 mt-4' : ''}`}>
-    <div className="flex items-start gap-4">
-      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 font-bold shrink-0">
+  <div className={`bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4 relative group ${level > 0 ? 'ml-4 md:ml-8 mt-4' : ''}`}>
+    <div className="flex items-start gap-2 md:gap-4">
+      <span className="flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 font-bold shrink-0 text-xs md:text-sm">
         {level === 0 ? (index !== undefined ? index + 1 : '•') : '•'}
       </span>
-      <div className="flex-1 space-y-4">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="flex-1 space-y-4 min-w-0">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4">
           <input
             type="text"
             placeholder="Enter question text..."

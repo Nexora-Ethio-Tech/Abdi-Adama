@@ -89,7 +89,7 @@ export const Clinic = () => {
 
       {activeTab === 'directory' ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 space-y-6">
+          <div className={`${selectedStudent ? 'hidden lg:block' : 'block'} lg:col-span-4 space-y-6`}>
             <div className="card p-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -122,19 +122,25 @@ export const Clinic = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-8">
+          <div className={`${selectedStudent ? 'block' : 'hidden lg:block'} lg:col-span-8`}>
             {selectedStudent ? (
               <div className="space-y-6">
-                <div className="card p-8">
-                  <div className="flex items-start justify-between mb-8">
-                    <div className="flex items-center gap-6">
+                <div className="card p-4 md:p-8">
+                  <button
+                    onClick={() => setSelectedStudent(null)}
+                    className="lg:hidden mb-6 text-rose-600 font-bold flex items-center gap-2"
+                  >
+                    ← Back to Directory
+                  </button>
+                  <div className="flex flex-col md:flex-row items-center md:items-start justify-between mb-8 text-center md:text-left gap-6">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                       <div className="w-20 h-20 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-rose-600">
                         <User size={40} />
                       </div>
                       <div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white">{selectedStudent.name}</h2>
                         <p className="text-slate-500 font-bold">Grade {selectedStudent.grade} • Section A</p>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
                           <span className="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase rounded-md flex items-center gap-1">
                             <AlertCircle size={10} />
                             Nut Allergy

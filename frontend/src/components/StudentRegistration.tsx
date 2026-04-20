@@ -180,16 +180,16 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                   <UserPlus size={20} className="text-blue-600" />
                   Admission Form (New Student)
                 </h3>
-                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 md:gap-2">
                   {[1, 2, 3].map((step) => (
                     <div key={step} className="flex items-center">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                        <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold transition-all ${
                         registrationStep === step ? 'bg-blue-600 text-white' :
                         registrationStep > step ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'
                       }`}>
-                        {registrationStep > step ? <Check size={14} /> : step}
+                          {registrationStep > step ? <Check size={14} className="w-3 h-3 md:w-4 md:h-4" /> : step}
                       </div>
-                      {step < 3 && <div className={`w-8 h-0.5 ${registrationStep > step ? 'bg-emerald-200' : 'bg-slate-100'}`} />}
+                        {step < 3 && <div className={`w-4 md:w-8 h-0.5 ${registrationStep > step ? 'bg-emerald-200' : 'bg-slate-100'}`} />}
                     </div>
                   ))}
                 </div>
@@ -328,12 +328,12 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                 </div>
               )}
 
-              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between">
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row justify-between gap-4">
                 <button
                   type="button"
                   onClick={prevStep}
                   disabled={registrationStep === 1}
-                  className="px-6 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-all disabled:opacity-0"
+                  className="w-full sm:w-auto px-6 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-all disabled:hidden"
                 >
                   Previous
                 </button>
@@ -341,14 +341,14 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                   <button
                     type="button"
                     onClick={nextStep}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-2.5 rounded-xl font-bold transition-all shadow-lg"
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-lg"
                   >
                     Next Step
                   </button>
                 ) : (
                   <button
                     type="submit"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-2.5 rounded-xl font-bold transition-all shadow-lg"
+                    className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-lg"
                   >
                     Submit Application
                   </button>

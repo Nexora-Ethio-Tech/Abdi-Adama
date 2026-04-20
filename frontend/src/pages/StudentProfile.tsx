@@ -57,9 +57,9 @@ export const StudentProfile = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Profile Card */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
           <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center">
             <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-4xl mx-auto mb-6">
               {student.name.charAt(0)}
@@ -173,7 +173,7 @@ export const StudentProfile = () => {
         </div>
 
         {/* Content Tabs/Details */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-8 space-y-8">
           {/* Bio Section */}
           <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
