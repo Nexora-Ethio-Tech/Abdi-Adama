@@ -63,26 +63,77 @@ export const Settings = () => {
           <div className="p-6 space-y-6">
             {activeTab === 'General' && (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Name (Official)</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold"
-                      value={schoolName}
-                      onChange={(e) => role === 'super-admin' && setSchoolName(e.target.value)}
-                      disabled={role !== 'super-admin'}
-                    />
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">School Name (Official)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">Oromic</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                          value={schoolName.oromic}
+                          onChange={(e) => role === 'super-admin' && setSchoolName({ ...schoolName, oromic: e.target.value })}
+                          disabled={role !== 'super-admin'}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">Amharic</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                          value={schoolName.amharic}
+                          onChange={(e) => role === 'super-admin' && setSchoolName({ ...schoolName, amharic: e.target.value })}
+                          disabled={role !== 'super-admin'}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">English</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                          value={schoolName.english}
+                          onChange={(e) => role === 'super-admin' && setSchoolName({ ...schoolName, english: e.target.value })}
+                          disabled={role !== 'super-admin'}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Motto</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 font-medium italic"
-                      value={schoolMotto}
-                      onChange={(e) => role === 'super-admin' && setSchoolMotto(e.target.value)}
-                      disabled={role !== 'super-admin'}
-                    />
+
+                  <div className="space-y-4 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">School Motto</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">Oromic</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 italic"
+                          value={schoolMotto.oromic}
+                          onChange={(e) => role === 'super-admin' && setSchoolMotto({ ...schoolMotto, oromic: e.target.value })}
+                          disabled={role !== 'super-admin'}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">Amharic</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 italic"
+                          value={schoolMotto.amharic}
+                          onChange={(e) => role === 'super-admin' && setSchoolMotto({ ...schoolMotto, amharic: e.target.value })}
+                          disabled={role !== 'super-admin'}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase">English</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 italic"
+                          value={schoolMotto.english}
+                          onChange={(e) => role === 'super-admin' && setSchoolMotto({ ...schoolMotto, english: e.target.value })}
+                          disabled={role !== 'super-admin'}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-slate-500 uppercase">System Email</label>

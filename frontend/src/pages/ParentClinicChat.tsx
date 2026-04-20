@@ -4,11 +4,14 @@ import { Send, HeartPulse, User, Clock, ShieldAlert } from 'lucide-react';
 import { ShootingStars } from '../components/Effects';
 
 export const ParentClinicChat = () => {
+  const [selectedChild, setSelectedChild] = useState('Abebe Bikila');
   const [messages, setMessages] = useState([
-    { id: '1', role: 'clinic', text: 'Hello! How can we help you today regarding your child\'s health?', timestamp: '09:00 AM' },
+    { id: '1', role: 'clinic', child: 'Abebe Bikila', text: 'Hello! How can we help you today regarding Abebe\'s health?', timestamp: '09:00 AM' },
   ]);
   const [newMessage, setNewMessage] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const children = ['Abebe Bikila', 'Sara Kebede'];
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,6 +24,7 @@ export const ParentClinicChat = () => {
     const msg = {
       id: Date.now().toString(),
       role: 'parent',
+      child: selectedChild,
       text: newMessage,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
@@ -33,7 +37,8 @@ export const ParentClinicChat = () => {
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'clinic',
-        text: 'Thank you for the information. The clinic administrator has been notified and will review your message shortly.',
+        child: selectedChild,
+        text: `Thank you for the information about ${selectedChild.split(' ')[0]}. The clinic administrator has been notified and will review your message shortly.`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
     }, 1500);
@@ -44,7 +49,7 @@ export const ParentClinicChat = () => {
       <ShootingStars />
 
       {/* Header */}
-      <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-10 flex items-center justify-between">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-rose-600 shadow-inner">
             <HeartPulse size={24} />
@@ -57,15 +62,33 @@ export const ParentClinicChat = () => {
             </p>
           </div>
         </div>
-        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-           <ShieldAlert size={14} text-amber-500 />
+
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Select Child</span>
+            <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              {children.map(child => (
+                <button
+                  key={child}
+                  onClick={() => setSelectedChild(child)}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedChild === child ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                >
+                  {child.split(' ')[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden xl:flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+           <ShieldAlert size={14} className="text-amber-500" />
            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Private & Encrypted</span>
         </div>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar z-10">
-        {messages.map((m) => (
+        {messages.filter(m => m.child === selectedChild).map((m) => (
           <div key={m.id} className={`flex items-start gap-3 ${m.role === 'parent' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center shadow-sm ${
               m.role === 'parent' ? 'bg-blue-600 text-white' : 'bg-rose-600 text-white'

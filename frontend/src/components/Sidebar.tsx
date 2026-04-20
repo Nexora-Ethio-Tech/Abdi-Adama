@@ -35,7 +35,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { role, logout, switchRole, schoolName } = useUser();
   const navigate = useNavigate();
 
-  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
+  const displaySchoolName = schoolName.english;
 
   const handleLogout = () => {
     logout();

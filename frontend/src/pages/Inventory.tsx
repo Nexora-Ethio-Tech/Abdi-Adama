@@ -2,8 +2,10 @@
 import { Package, Search, Filter, Plus, X, MoreVertical, AlertCircle } from 'lucide-react';
 import { mockInventory } from '../data/mockData';
 import { useState } from 'react';
+import { useUser } from '../context/UserContext';
 
 export const Inventory = () => {
+  const { role } = useUser();
   const [items] = useState(mockInventory);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,13 +22,15 @@ export const Inventory = () => {
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Inventory & Assets</h2>
           <p className="text-slate-500 dark:text-slate-400 text-sm">Track and manage school equipment, supplies, and furniture.</p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors w-full md:w-fit font-bold"
-        >
-          <Plus size={20} />
-          <span>Add New Asset</span>
-        </button>
+        {role === 'super-admin' && (
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors w-full md:w-fit font-bold"
+          >
+            <Plus size={20} />
+            <span>Add New Asset</span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -82,7 +86,9 @@ export const Inventory = () => {
                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Quantity</th>
                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Condition</th>
                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                {role === 'super-admin' && (
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -116,11 +122,13 @@ export const Inventory = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{item.location}</td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-slate-400 hover:text-slate-600 transition-colors">
-                      <MoreVertical size={18} />
-                    </button>
-                  </td>
+                  {role === 'super-admin' && (
+                    <td className="px-6 py-4 text-right">
+                      <button className="text-slate-400 hover:text-slate-600 transition-colors">
+                        <MoreVertical size={18} />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -17,6 +17,12 @@ interface Branch {
   location: string;
 }
 
+export interface MultilingualText {
+  oromic: string;
+  amharic: string;
+  english: string;
+}
+
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -27,10 +33,10 @@ interface UserContextType {
   branches: Branch[];
   gradesLocked: boolean;
   setGradesLocked: (locked: boolean) => void;
-  schoolName: string;
-  setSchoolName: (name: string) => void;
-  schoolMotto: string;
-  setSchoolMotto: (motto: string) => void;
+  schoolName: MultilingualText;
+  setSchoolName: (name: MultilingualText) => void;
+  schoolMotto: MultilingualText;
+  setSchoolMotto: (motto: MultilingualText) => void;
   login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<boolean>;
   logout: () => void;
 }
@@ -51,8 +57,24 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   });
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
-  const [schoolName, setSchoolName] = useState(() => localStorage.getItem('school_name') || 'Mana Barumsaa Abdii Adaamaa||አብዲ አዳማ ትምህርት ቤት || Abdi Adama School');
-  const [schoolMotto, setSchoolMotto] = useState(() => localStorage.getItem('school_motto') || 'ijooleen kessaan ijolee kenyaa || ልጆቻቹ ልጆቻችን ናቸዉ');
+
+  const [schoolName, setSchoolName] = useState<MultilingualText>(() => {
+    const saved = localStorage.getItem('school_name');
+    return saved ? JSON.parse(saved) : {
+      oromic: 'Mana Barumsaa Abdii Adaamaa',
+      amharic: 'አብዲ አዳማ ትምህርት ቤት',
+      english: 'Abdi Adama School'
+    };
+  });
+
+  const [schoolMotto, setSchoolMotto] = useState<MultilingualText>(() => {
+    const saved = localStorage.getItem('school_motto');
+    return saved ? JSON.parse(saved) : {
+      oromic: 'ijooleen kessaan ijolee kenyaa',
+      amharic: 'ልጆቻቹ ልጆቻችን ናቸዉ',
+      english: 'Your children are our children'
+    };
+  });
 
   useEffect(() => {
     if (user) {
@@ -63,11 +85,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('school_name', schoolName);
+    localStorage.setItem('school_name', JSON.stringify(schoolName));
   }, [schoolName]);
 
   useEffect(() => {
-    localStorage.setItem('school_motto', schoolMotto);
+    localStorage.setItem('school_motto', JSON.stringify(schoolMotto));
   }, [schoolMotto]);
 
   const role = user?.role || null;

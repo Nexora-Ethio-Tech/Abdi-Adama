@@ -373,14 +373,14 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
           <div className="space-y-1">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Category</label>
             <select
-              className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white"
+              className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold"
               value={examData.category}
               onChange={e => setExamData({...examData, category: e.target.value as ExamCategory})}
             >
-              <option value="Mid-term">Mid-term</option>
-              <option value="Final">Final</option>
-              <option value="Quiz">Quiz</option>
-              <option value="Assignment">Assignment</option>
+              <option value="Mid-term" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Mid-term</option>
+              <option value="Final" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Final</option>
+              <option value="Quiz" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Quiz</option>
+              <option value="Assignment" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Assignment</option>
             </select>
           </div>
           <div className="space-y-1">

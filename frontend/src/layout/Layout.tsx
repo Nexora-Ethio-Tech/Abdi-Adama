@@ -11,7 +11,7 @@ export const Layout = () => {
   const location = useLocation();
   const { role, user, schoolName } = useUser();
 
-  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
+  const displaySchoolName = schoolName.english;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const shouldShowStars = role === 'student' || role === 'parent' || !user;

@@ -10,7 +10,7 @@ export const Login = () => {
   const { login, schoolName } = useUser();
   const navigate = useNavigate();
 
-  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
+  const displaySchoolName = schoolName.english;
   const [digitalIdOrEmail, setDigitalIdOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');

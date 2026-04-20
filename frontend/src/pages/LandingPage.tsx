@@ -19,7 +19,7 @@ export const LandingPage = () => {
   const { schoolName, schoolMotto } = useUser();
   const [showAdmission, setShowAdmission] = useState(false);
 
-  const displaySchoolName = schoolName.split('||')[2]?.trim() || schoolName;
+  const displaySchoolName = schoolName.english;
 
   if (showAdmission) {
     return (
@@ -63,15 +63,21 @@ export const LandingPage = () => {
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-primary/10 text-school-primary rounded-full text-sm font-bold mb-4">
-             {schoolMotto}
+          <div className="space-y-2 mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-primary/10 text-school-primary rounded-full text-xs font-bold">
+               {schoolMotto.oromic}
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-secondary/10 text-school-secondary rounded-full text-xs font-bold">
+               {schoolMotto.amharic}
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-school-accent/10 text-school-accent rounded-full text-xs font-bold">
+               {schoolMotto.english}
+            </div>
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-            {schoolName.split('||').map((part, i) => (
-              <span key={i} className={i === 2 ? "text-school-primary block mt-2" : "block"}>
-                {part.trim()}
-              </span>
-            ))}
+            <span className="block">{schoolName.oromic}</span>
+            <span className="block">{schoolName.amharic}</span>
+            <span className="text-school-primary block mt-2">{schoolName.english}</span>
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             Empowering the next generation with modern education and seamless administration.
