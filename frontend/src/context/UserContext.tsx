@@ -60,7 +60,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const [schoolName, setSchoolName] = useState<MultilingualText>(() => {
     const saved = localStorage.getItem('school_name');
-    return saved ? JSON.parse(saved) : {
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return {
+          oromic: 'Mana Barumsaa Abdii Adaamaa',
+          amharic: 'አብዲ አዳማ ትምህርት ቤት',
+          english: 'Abdi Adama School'
+        };
+      }
+    }
+    return {
       oromic: 'Mana Barumsaa Abdii Adaamaa',
       amharic: 'አብዲ አዳማ ትምህርት ቤት',
       english: 'Abdi Adama School'
@@ -69,7 +80,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const [schoolMotto, setSchoolMotto] = useState<MultilingualText>(() => {
     const saved = localStorage.getItem('school_motto');
-    return saved ? JSON.parse(saved) : {
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return {
+          oromic: 'ijooleen kessaan ijolee kenyaa',
+          amharic: 'ልጆቻቹ ልጆቻችን ናቸዉ',
+          english: 'Your children are our children'
+        };
+      }
+    }
+    return {
       oromic: 'ijooleen kessaan ijolee kenyaa',
       amharic: 'ልጆቻቹ ልጆቻችን ናቸዉ',
       english: 'Your children are our children'
