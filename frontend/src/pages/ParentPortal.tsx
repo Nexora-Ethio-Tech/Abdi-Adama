@@ -1,8 +1,10 @@
 
-import { Calendar, BookOpen, Award, User, History, Megaphone } from 'lucide-react';
+import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const ParentPortal = () => {
+  const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
@@ -305,12 +307,21 @@ export const ParentPortal = () => {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setSelectedChild(child)}
-                  className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-lg shadow-slate-200 dark:shadow-blue-900/20"
-                >
-                  View Academic Profile
-                </button>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setSelectedChild(child)}
+                    className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-lg shadow-slate-200 dark:shadow-blue-900/20"
+                  >
+                    View Academic Profile
+                  </button>
+                  <button
+                    onClick={() => navigate('/clinic-chat')}
+                    className="w-full py-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all border border-rose-100 dark:border-rose-800/50"
+                  >
+                    <HeartPulse size={14} />
+                    Contact Clinic
+                  </button>
+                </div>
               </div>
             </div>
           ))}
