@@ -1,8 +1,10 @@
 
-import { Bell, Search, User, LogOut, Moon, Sun, Menu } from 'lucide-react';
+import { Bell, Search, User, LogOut, Moon, Sun, Menu, Calendar as CalendarIcon, X } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Calendar } from '../pages/Calendar';
 
 interface HeaderProps {
   title: string;
@@ -13,6 +15,7 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
   const { user, logout, selectedBranch, role } = useUser();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -20,6 +23,7 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
   };
 
   return (
+    <>
     <header className="h-16 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md flex items-center justify-between px-4 md:px-8 sticky top-0 z-20 transition-colors duration-300">
       <div className="flex items-center gap-4">
         <button
@@ -55,6 +59,14 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
           {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
         </button>
 
+        <button
+          onClick={() => setShowCalendar(true)}
+          className="p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+          title="Open Calendar"
+        >
+          <CalendarIcon size={20} />
+        </button>
+
         <button className="relative p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all hidden sm:block">
           <Bell size={20} />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-school-secondary rounded-full border-2 border-white dark:border-slate-900"></span>
@@ -81,5 +93,22 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         </div>
       </div>
     </header>
+
+    {showCalendar && (
+      <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="bg-slate-50 dark:bg-slate-950 w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative animate-in zoom-in-95 duration-300 border border-white/20">
+          <button
+            onClick={() => setShowCalendar(false)}
+            className="absolute top-6 right-6 z-[110] p-3 bg-white dark:bg-slate-800 text-slate-500 hover:text-rose-500 rounded-2xl shadow-lg transition-all hover:scale-110 active:scale-95"
+          >
+            <X size={24} />
+          </button>
+          <div className="p-8 md:p-12">
+            <Calendar />
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
