@@ -3,10 +3,12 @@ import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save,
 import { useState } from 'react';
 import { useAppearance, type UIStyle } from '../context/AppearanceContext';
 import { mockGradingConfigs } from '../data/mockData';
+import { useUser } from '../context/UserContext';
 
 export const Settings = () => {
   const [activeTab, setActiveTab] = useState('General');
   const { style, setStyle, autoDarkMode, setAutoDarkMode } = useAppearance();
+  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role } = useUser();
 
   const tabs = [
     { id: 'General', icon: Building },
@@ -62,9 +64,25 @@ export const Settings = () => {
             {activeTab === 'General' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Name</label>
-                    <input type="text" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue="Abdi Adama Integrated School" />
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Name (Official)</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                      value={schoolName}
+                      onChange={(e) => role === 'super-admin' && setSchoolName(e.target.value)}
+                      disabled={role !== 'super-admin'}
+                    />
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">School Motto</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 font-medium italic"
+                      value={schoolMotto}
+                      onChange={(e) => role === 'super-admin' && setSchoolMotto(e.target.value)}
+                      disabled={role !== 'super-admin'}
+                    />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-slate-500 uppercase">System Email</label>
