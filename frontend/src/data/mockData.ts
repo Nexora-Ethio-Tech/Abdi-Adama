@@ -110,9 +110,9 @@ export const mockTeachers = [
 ];
 
 export const mockWeeklyPlans = [
-  { id: 'P1', teacherId: 'T1', teacherName: 'Ato Solomon', week: 'Week 12', title: 'Calculus Introduction', status: 'Approved', rating: 5, feedback: 'Excellent depth.' },
-  { id: 'P2', teacherId: 'T2', teacherName: 'W/ro Selam', week: 'Week 12', title: 'Cell Biology', status: 'Pending', rating: null, feedback: '' },
-  { id: 'P3', teacherId: 'T5', teacherName: 'Ato Tadesse', week: 'Week 12', title: 'Football Drills', status: 'Approved', rating: 4, feedback: 'Good engagement.' },
+  { id: 'P1', teacherId: 'T1', teacherName: 'Ato Solomon', week: 'Week 12', title: 'Calculus Introduction', status: 'Approved', rating: 5, feedback: 'Excellent depth.', description: 'Detailed study of limits and derivatives.' },
+  { id: 'P2', teacherId: 'T2', teacherName: 'W/ro Selam', week: 'Week 12', title: 'Cell Biology', status: 'Pending', rating: null, feedback: '', description: 'Exploration of eukaryotic and prokaryotic cell structures.' },
+  { id: 'P3', teacherId: 'T5', teacherName: 'Ato Tadesse', week: 'Week 12', title: 'Football Drills', status: 'Approved', rating: 4, feedback: 'Good engagement.', description: 'Practical session on defensive formations.' },
 ];
 
 export const mockClasses = [

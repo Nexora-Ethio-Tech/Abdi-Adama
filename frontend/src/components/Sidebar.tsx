@@ -48,9 +48,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Building2, label: 'Branches', path: '/branches' },
+          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
           { icon: PieChart, label: 'Analytics', path: '/analytics' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: HeartPulse, label: 'Parent Chats', path: '/clinic/chats' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'school-admin':
@@ -62,6 +64,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: HeartPulse, label: 'Parent Chats', path: '/clinic/chats' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
@@ -100,6 +103,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: 'Clinic Dashboard', path: '/' },
           { icon: HeartPulse, label: 'Clinic Management', path: '/clinic' },
+          { icon: HeartPulse, label: 'Parent Chats', path: '/clinic/chats' },
         ];
       default:
         return [];

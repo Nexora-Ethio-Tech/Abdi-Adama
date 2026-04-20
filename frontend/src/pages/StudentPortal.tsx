@@ -10,6 +10,7 @@ export const StudentPortal = () => {
   const assignmentCount = mockExams.filter(e => e.category === 'Assignment').length;
   const examCount = mockExams.filter(e => e.category !== 'Assignment').length;
   const [votedTeacher, setVotedTeacher] = useState<string | null>(null);
+  const [hideVoting, setHideVoting] = useState(false);
 
   const isWeekend = () => {
     // For demonstration, we assume today is a weekend
@@ -18,71 +19,70 @@ export const StudentPortal = () => {
 
   const handleVote = (id: string) => {
     setVotedTeacher(id);
+    setTimeout(() => {
+      setHideVoting(true);
+    }, 3000);
   };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-20">
-      {isWeekend() && (
-        <div className="bg-gradient-to-br from-amber-500 via-orange-600 to-rose-700 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl shadow-amber-500/20 relative overflow-hidden mb-12">
-          <div className="absolute top-0 right-0 p-12 opacity-10 rotate-12 pointer-events-none">
-            <Trophy size={200} />
+      {isWeekend() && !hideVoting && (
+        <div className="bg-gradient-to-br from-amber-500 via-orange-600 to-rose-700 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-amber-500/10 relative overflow-hidden mb-8 border border-white/10">
+          <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 pointer-events-none">
+            <Trophy size={140} />
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative z-10"
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div className="space-y-4 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest">
-                  <Star size={14} fill="currentColor" /> Weekend Special
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+              <div className="space-y-3 max-w-lg">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+                  <Star size={12} fill="currentColor" /> Weekend Special
                 </div>
-                <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-none">Vote Your Teacher of the Week!</h2>
-                <p className="text-lg md:text-xl font-medium opacity-90">
-                  Recognize excellence and help your favorite teacher earn reward points.
+                <h2 className="text-3xl md:text-4xl font-black tracking-tighter leading-none">Teacher of the Week</h2>
+                <p className="text-sm md:text-base font-medium opacity-80">
+                  Help your favorite teacher earn monthly reward points.
                 </p>
               </div>
 
-              <div className="flex-1">
-                <div className="grid grid-cols-2 gap-4">
-                  {mockTeachers.slice(0, 4).map((teacher) => (
-                    <motion.button
-                      key={teacher.id}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      disabled={!!votedTeacher}
-                      onClick={() => handleVote(teacher.id)}
-                      className={`p-4 rounded-3xl backdrop-blur-xl transition-all text-left relative group border-2 ${
-                        votedTeacher === teacher.id
-                          ? 'bg-white text-orange-600 border-white shadow-xl'
-                          : 'bg-white/10 border-white/20 hover:bg-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm ${votedTeacher === teacher.id ? 'bg-orange-100 text-orange-600' : 'bg-white/20'}`}>
-                          {teacher.name[0]}
+              <div className="flex-1 max-w-xl">
+                {!votedTeacher ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    {mockTeachers.slice(0, 4).map((teacher) => (
+                      <motion.button
+                        key={teacher.id}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleVote(teacher.id)}
+                        className="p-4 rounded-3xl backdrop-blur-xl transition-all text-left relative group border-2 bg-white/10 border-white/20 hover:bg-white/20"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm bg-white/20">
+                            {teacher.name[0]}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-black truncate">{teacher.name}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 text-white">{teacher.subjects[0]}</p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-black truncate">{teacher.name}</p>
-                          <p className={`text-[10px] font-bold uppercase tracking-widest opacity-70 ${votedTeacher === teacher.id ? 'text-orange-500' : 'text-white'}`}>{teacher.subjects[0]}</p>
-                        </div>
-                      </div>
-                      {votedTeacher === teacher.id && (
-                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-white rounded-full p-1 shadow-lg">
-                          <CheckCircle2 size={16} />
-                        </div>
-                      )}
-                    </motion.button>
-                  ))}
-                </div>
-                {votedTeacher && (
+                      </motion.button>
+                    ))}
+                  </div>
+                ) : (
                   <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="mt-6 flex items-center justify-center gap-3 bg-emerald-500 text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="h-full flex flex-col items-center justify-center text-center space-y-4 py-8"
                   >
-                    <CheckCircle2 size={18} />
-                    Vote Cast Successfully!
+                    <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+                       <CheckCircle2 size={40} className="animate-bounce" />
+                    </div>
+                    <div>
+                       <h3 className="text-2xl font-black">Thank You!</h3>
+                       <p className="font-bold opacity-80 uppercase tracking-widest text-[10px]">Your vote has been recorded</p>
+                    </div>
                   </motion.div>
                 )}
               </div>
