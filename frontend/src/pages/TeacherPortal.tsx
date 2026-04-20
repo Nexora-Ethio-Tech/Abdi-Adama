@@ -16,6 +16,7 @@ export const TeacherPortal = () => {
 
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [plans, setPlans] = useState(mockWeeklyPlans);
+  const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
 
   const handleApprovePlan = (id: string, rating: number) => {
     setPlans(prev => prev.map(p => p.id === id ? { ...p, status: 'Approved', rating } : p));
@@ -233,10 +234,11 @@ export const TeacherPortal = () => {
                 </div>
              </div>
 
-             <div className="p-8 space-y-4">
+             <div className="p-8 space-y-6">
               {plans.filter(p => p.teacherId !== currentTeacher.id).map((plan) => (
-                <div key={plan.id} className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-purple-300 dark:hover:border-purple-700 transition-all">
-                  <div className="space-y-1">
+                <div key={plan.id} className="flex flex-col gap-4">
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-purple-300 dark:hover:border-purple-700 transition-all">
+                  <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-black text-purple-600 dark:text-purple-400 uppercase tracking-widest bg-purple-100 dark:bg-purple-900/40 px-3 py-1 rounded-full">{plan.week}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${
@@ -245,7 +247,15 @@ export const TeacherPortal = () => {
                         {plan.status}
                       </span>
                     </div>
-                    <h4 className="text-lg font-black text-slate-800 dark:text-white mt-2">{plan.title}</h4>
+                    <div className="flex items-center gap-3 mt-2">
+                       <h4 className="text-lg font-black text-slate-800 dark:text-white">{plan.title}</h4>
+                       <button
+                         onClick={() => setExpandedPlan(expandedPlan === plan.id ? null : plan.id)}
+                         className="text-xs font-bold text-purple-600 hover:underline"
+                       >
+                         {expandedPlan === plan.id ? 'Hide Details' : 'Read Description'}
+                       </button>
+                    </div>
                     <p className="text-sm text-slate-500 font-bold flex items-center gap-2">
                       <Users size={14} />
                       {plan.teacherName}
@@ -272,6 +282,16 @@ export const TeacherPortal = () => {
                       </div>
                     )}
                   </div>
+                </div>
+
+                {expandedPlan === plan.id && (
+                  <div className="p-8 bg-slate-50 dark:bg-slate-800/30 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700 animate-in slide-in-from-top-2">
+                    <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Lesson Plan Description</h5>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
+                      {plan.description || "This week covers core biological concepts including cell structure, organelles, and basic metabolic processes. Students will participate in lab observations of plant cells under microscopes."}
+                    </p>
+                  </div>
+                )}
                 </div>
               ))}
              </div>
