@@ -7,7 +7,6 @@ import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
 import {
   ArrowRight,
-  Sparkles,
   ChevronDown,
   LogIn,
   UserPlus,
@@ -57,9 +56,6 @@ export const LandingPage = () => {
           <div className="flex justify-center mb-8">
             <div className="relative p-2 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl floating">
               <img src={logo} alt="Abdi Adama School Logo" className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] object-cover" />
-              <div className="absolute -bottom-2 -right-2 bg-school-primary text-white p-3 rounded-2xl shadow-xl">
-                 <Sparkles size={24} />
-              </div>
             </div>
           </div>
 
