@@ -8,9 +8,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'school-primary': '#0064a5',   // Deep Blue
-        'school-secondary': '#bf6a82', // Rose/Red
-        'school-accent': '#4db3e3',    // Light Blue
+        'school-primary': 'var(--primary)',
+        'school-secondary': 'var(--secondary)',
+        'school-accent': 'var(--accent)',
       },
       borderRadius: {
         '3xl': '1.5rem',

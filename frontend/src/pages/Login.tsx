@@ -24,7 +24,7 @@ export const Login = () => {
       // For the mock, we align with the current implementation if it expects specific args
       const success = await login({ digitalIdOrEmail: digitalId, password });
       if (success) {
-        navigate('/dashboard');
+        navigate('/');
       } else {
         setError('Invalid Digital ID or Password');
       }
