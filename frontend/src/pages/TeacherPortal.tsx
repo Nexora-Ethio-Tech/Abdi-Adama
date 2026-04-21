@@ -1,12 +1,12 @@
 
-import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList, Star, Save, CheckCircle, ChevronRight, History } from 'lucide-react';
+import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList, Star, Save, CheckCircle, ChevronRight, History, FileText, CheckSquare, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockClasses, mockStudents, commFields, ratingLabels } from '../data/mockData';
+import { mockClasses, mockStudents, commFields, ratingLabels, mockWeeklyPlans, mockTeachers } from '../data/mockData';
 import { mockExams } from '../data/examData';
 import { useState } from 'react';
 
 export const TeacherPortal = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'communication'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'communication' | 'review'>('overview');
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [ratings, setRatings] = useState<Record<string, number>>({});
@@ -35,111 +35,239 @@ export const TeacherPortal = () => {
     }
   };
 
+  const isDean = mockTeachers.find(t => t.id === 'T1')?.isDean;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'overview' ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500'}`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setActiveTab('communication')}
-          className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'communication' ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500'}`}
-        >
-          Communication Book
-        </button>
+      <div className="flex flex-wrap gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
+        {[
+          { id: 'overview', label: 'Overview' },
+          { id: 'plans', label: 'Weekly Plans' },
+          { id: 'communication', label: 'Comm. Book' },
+          ...(isDean ? [{ id: 'review', label: 'Dept. Plans Review' }] : [])
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`px-4 md:px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {activeTab === 'overview' ? (
         <>
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="relative z-10">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, Ato Solomon!</h2>
-          <p className="text-blue-100 max-w-md">Your first class today is Grade 10A Mathematics starting in 15 minutes.</p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link
-              to="/attendance"
-              className="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-colors"
-            >
-              Take Attendance
-              <ArrowRight size={18} />
-            </Link>
-            <Link
-              to="/schedule"
-              className="bg-blue-500/30 text-white border border-blue-400/30 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500/50 transition-colors"
-            >
-              View Schedule
-            </Link>
-            <Link
-              to="/grades"
-              className="bg-white/10 text-white border border-white/20 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-white/20 transition-colors"
-            >
-              <Award size={18} />
-              Grade Entry
-            </Link>
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+            <div className="relative z-10">
+              <h2 className="text-3xl font-bold mb-2">Welcome back, Ato Solomon!</h2>
+              <p className="text-blue-100 max-w-md">Your first class today is Grade 10A Mathematics starting in 15 minutes.</p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  to="/attendance"
+                  className="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-colors"
+                >
+                  Take Attendance
+                  <ArrowRight size={18} />
+                </Link>
+                <Link
+                  to="/schedule"
+                  className="bg-blue-500/30 text-white border border-blue-400/30 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-500/50 transition-colors"
+                >
+                  View Schedule
+                </Link>
+                <Link
+                  to="/grades"
+                  className="bg-white/10 text-white border border-white/20 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-white/20 transition-colors"
+                >
+                  <Award size={18} />
+                  Grade Entry
+                </Link>
+              </div>
+            </div>
+            <div className="absolute top-0 right-0 p-12 opacity-10">
+              <BookOpen size={200} />
+            </div>
           </div>
-        </div>
-        <div className="absolute top-0 right-0 p-12 opacity-10">
-          <BookOpen size={200} />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="bg-amber-50 text-amber-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-            <Users size={24} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-amber-50 text-amber-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <Users size={24} />
+              </div>
+              <p className="text-slate-500 text-sm font-medium">Total Students</p>
+              <h3 className="text-2xl font-bold text-slate-800">87</h3>
+              <p className="text-xs text-slate-400 mt-1">Across 2 active classes</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-purple-50 text-purple-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <Calendar size={24} />
+              </div>
+              <p className="text-slate-500 text-sm font-medium">Classes Today</p>
+              <h3 className="text-2xl font-bold text-slate-800">4</h3>
+              <p className="text-xs text-slate-400 mt-1">Next: 10:00 AM</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <ClipboardList size={24} />
+              </div>
+              <p className="text-slate-500 text-sm font-medium">Active Assignments</p>
+              <h3 className="text-2xl font-bold text-slate-800">{pendingAssignments}</h3>
+              <p className="text-xs text-slate-400 mt-1">Pending student submissions</p>
+            </div>
           </div>
-          <p className="text-slate-500 text-sm font-medium">Total Students</p>
-          <h3 className="text-2xl font-bold text-slate-800">87</h3>
-          <p className="text-xs text-slate-400 mt-1">Across 2 active classes</p>
-        </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="bg-purple-50 text-purple-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-            <Calendar size={24} />
-          </div>
-          <p className="text-slate-500 text-sm font-medium">Classes Today</p>
-          <h3 className="text-2xl font-bold text-slate-800">4</h3>
-          <p className="text-xs text-slate-400 mt-1">Next: 10:00 AM</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-            <ClipboardList size={24} />
-          </div>
-          <p className="text-slate-500 text-sm font-medium">Active Assignments</p>
-          <h3 className="text-2xl font-bold text-slate-800">{pendingAssignments}</h3>
-          <p className="text-xs text-slate-400 mt-1">Pending student submissions</p>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-bold text-slate-800 mb-4">My Assigned Classes</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {mockClasses.map((cls) => (
-            <div key={cls.id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="bg-slate-100 p-4 rounded-2xl text-slate-600">
-                  <Users size={24} />
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 mb-4">My Assigned Classes</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {mockClasses.map((cls) => (
+                <div key={cls.id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-slate-100 p-4 rounded-2xl text-slate-600">
+                      <Users size={24} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800">{cls.name}</h4>
+                      <p className="text-sm text-slate-500">{cls.students} Students</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/attendance"
+                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                  >
+                    <ArrowRight size={24} />
+                  </Link>
                 </div>
-                <div>
-                  <h4 className="font-bold text-slate-800">{cls.name}</h4>
-                  <p className="text-sm text-slate-500">{cls.students} Students</p>
+              ))}
+            </div>
+          </div>
+        </>
+      ) : activeTab === 'plans' ? (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white">Smart Lesson Planning</h2>
+                <p className="text-slate-500 font-medium italic text-sm">Automated curriculum alignment and activity tracking.</p>
+              </div>
+              <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 dark:shadow-none">
+                <FileText size={18} />
+                Create New Plan
+              </button>
+            </div>
+
+            <div className="overflow-x-auto -mx-8">
+              <table className="w-full text-left border-collapse min-w-[1500px]">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-800">
+                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Date</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Content</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Specific Objectives</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Teacher Activity</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Time</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Student Activity</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Teaching Method</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Teaching Aids</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Evaluation</th>
+                    <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Remark</th>
+                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {mockWeeklyPlans.filter(p => p.teacherId === 'T1').map(plan => (
+                    <tr key={plan.id} className="group hover:bg-blue-50/30 dark:hover:bg-blue-900/5 transition-colors">
+                      <td className="px-6 py-5">
+                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{plan.date}</p>
+                      </td>
+                      <td className="px-4 py-5">
+                        <p className="text-xs text-blue-600 font-medium">{plan.content}</p>
+                      </td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.objectives}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.teacherActivity}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 font-bold">{plan.time}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.studentActivity}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.teachingMethod}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.teachingAids}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.evaluation}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2 italic">{plan.remark}</p></td>
+                      <td className="px-6 py-5 text-right">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${
+                          plan.status === 'Approved' ? 'bg-emerald-100 text-emerald-600' :
+                          plan.status === 'Pending' ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-600'
+                        }`}>
+                          {plan.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ) : activeTab === 'review' ? (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white">Departmental Plan Review</h3>
+              <p className="text-slate-500 text-sm font-medium">Review and approve lesson plans from your department staff.</p>
+            </div>
+            <div className="bg-blue-600 px-4 py-2 rounded-xl text-white text-xs font-bold shadow-lg shadow-blue-200">
+              Science Department Dean
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {mockWeeklyPlans.filter(p => p.teacherId !== 'T1').map(plan => (
+              <div key={plan.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm group hover:border-blue-200 transition-all">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-600 font-bold">
+                      {plan.teacherId === 'T2' ? 'WS' : 'TK'}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-white">{plan.teacherId === 'T2' ? 'W/ro Selam' : 'Ato Kebede'}</h4>
+                      <p className="text-xs text-slate-500">Submitted: Monday, 8:00 AM</p>
+                    </div>
+                  </div>
+                  <span className={`px-3 py-1 rounded-lg text-[10px] font-black ${plan.status === 'Pending' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                    {plan.status.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Date & Content</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{plan.date}: {plan.content}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Specific Objectives</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">{plan.objectives}</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Evaluation</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">{plan.evaluation}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex gap-4">
+                  <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2">
+                    <CheckSquare size={14} />
+                    Approve Plan
+                  </button>
+                  <button className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 border border-slate-100 dark:border-slate-700">
+                    <MessageSquare size={14} />
+                    Add Feedback
+                  </button>
                 </div>
               </div>
-              <Link
-                to="/attendance"
-                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-              >
-                <ArrowRight size={24} />
-              </Link>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-        </>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4 space-y-6">
@@ -197,7 +325,7 @@ export const TeacherPortal = () => {
                     </div>
                     <div>
                       <h2 className="text-2xl font-black text-slate-900 dark:text-white">{selectedStudent.name}</h2>
-                      <p className="text-slate-500 font-bold">Weekly Performance Rating (May 18-24)</p>
+                      <p className="text-slate-500 font-bold">Weekly Performance Rating (May 24-30)</p>
                     </div>
                   </div>
                   <button

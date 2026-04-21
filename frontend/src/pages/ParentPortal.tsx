@@ -1,5 +1,5 @@
 
-import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronLeft, ChevronRight, ClipboardList } from 'lucide-react';
+import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronLeft, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockCommunicationLogs, commFields, ratingLabels } from '../data/mockData';
@@ -85,12 +85,15 @@ export const ParentPortal = () => {
 
     return (
       <div className="space-y-8 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Star className="text-amber-500" size={24} />
-            Weekly Communication Book
-          </h3>
-          <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-800 p-2 rounded-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Star className="text-amber-500" size={24} />
+              Weekly Communication Book
+            </h3>
+            <p className="text-xs text-slate-500 font-medium mt-1">Reviewing your child's weekly behavioral and readiness markers.</p>
+          </div>
+          <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-800 p-2 rounded-xl self-start md:self-auto shadow-inner">
             <button
               disabled={currentLogIndex === studentLogs.length - 1}
               onClick={() => setCurrentLogIndex(prev => prev + 1)}
@@ -98,9 +101,10 @@ export const ParentPortal = () => {
             >
               <ChevronLeft size={20} />
             </button>
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 min-w-[120px] text-center">
-              Week Ending: {currentLog.weekEnding}
-            </span>
+            <div className="flex flex-col items-center min-w-[120px]">
+               <span className="text-[10px] uppercase font-black text-slate-400">Week Ending</span>
+               <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{currentLog.weekEnding}</span>
+            </div>
             <button
               disabled={currentLogIndex === 0}
               onClick={() => setCurrentLogIndex(prev => prev - 1)}
@@ -111,18 +115,18 @@ export const ParentPortal = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {commFields.map(field => {
             const rating = (currentLog.ratings as any)[field.id];
             return (
-              <div key={field.id} className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all">
+              <div key={field.id} className="group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="flex flex-col items-center text-center">
-                  <div className={`w-12 h-12 rounded-2xl ${getRatingColor(rating)} flex items-center justify-center text-white font-black text-xl mb-4 shadow-lg`}>
+                  <div className={`w-14 h-14 rounded-2xl ${getRatingColor(rating)} flex items-center justify-center text-white font-black text-2xl mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
                     {rating + 1}
                   </div>
                   <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-1">{field.label}</h4>
-                  <p className="text-[10px] text-slate-500 font-medium leading-tight mb-3">{field.description}</p>
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getRatingColor(rating)} text-white`}>
+                  <p className="text-[10px] text-slate-500 font-medium leading-tight mb-4 min-h-[20px]">{field.description}</p>
+                  <span className={`w-full py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider ${getRatingColor(rating)} text-white shadow-sm`}>
                     {ratingLabels[rating]}
                   </span>
                 </div>
@@ -131,11 +135,30 @@ export const ParentPortal = () => {
           })}
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/20">
-          <h4 className="text-sm font-bold text-blue-900 dark:text-blue-400 mb-2">Teacher's Note</h4>
-          <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed italic">
-            "{currentLog.teacherNote || "Student has shown consistent engagement this week. Maintain current focus on home assignments for continued progress."}"
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-blue-50 dark:bg-blue-900/10 p-8 rounded-[2rem] border border-blue-100 dark:border-blue-900/20 relative overflow-hidden group">
+            <h4 className="text-sm font-bold text-blue-900 dark:text-blue-400 mb-3 flex items-center gap-2">
+              <ClipboardList size={18} />
+              Teacher's Observation
+            </h4>
+            <p className="text-base text-blue-800 dark:text-blue-300 leading-relaxed italic font-medium relative z-10">
+              "{currentLog.teacherNote || "Student has shown consistent engagement this week. Maintain current focus on home assignments for continued progress."}"
+            </p>
+            <Star size={100} className="absolute -bottom-10 -right-10 text-blue-600/5 rotate-12 group-hover:scale-110 transition-transform duration-700" />
+          </div>
+
+          <div className="bg-slate-900 rounded-[2rem] p-8 text-white flex flex-col justify-between shadow-2xl shadow-slate-200 dark:shadow-none">
+            <div>
+              <TrendingUp className="text-blue-400 mb-4" size={32} />
+              <h4 className="text-xl font-bold mb-2">Progress Insight</h4>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Consistent "Excellent" ratings in Participation often correlate with higher academic performance in final exams.
+              </p>
+            </div>
+            <button className="mt-8 w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl font-bold text-xs transition-all">
+              Download Performance Report
+            </button>
+          </div>
         </div>
       </div>
     );
