@@ -1,13 +1,15 @@
 
-import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse } from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronLeft, ChevronRight, ClipboardList } from 'lucide-react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { mockCommunicationLogs, commFields, ratingLabels } from '../data/mockData';
 
 export const ParentPortal = () => {
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const [activePortalTab, setActivePortalTab] = useState<'academic' | 'communication'>('academic');
 
   const academicYears = ['2015', '2016', '2017'];
   const historyData: Record<string, any[]> = {
@@ -52,6 +54,93 @@ export const ParentPortal = () => {
     },
   ];
 
+  const CommunicationBook = ({ studentId }: { studentId: string }) => {
+    const studentLogs = useMemo(() => {
+      return mockCommunicationLogs.filter(log => log.studentId === studentId);
+    }, [studentId]);
+
+    const [currentLogIndex, setCurrentLogIndex] = useState(0);
+    const currentLog = studentLogs[currentLogIndex];
+
+    const getRatingColor = (rating: number) => {
+      switch (rating) {
+        case 3: return 'bg-emerald-500';
+        case 2: return 'bg-blue-500';
+        case 1: return 'bg-amber-500';
+        case 0: return 'bg-rose-500';
+        default: return 'bg-slate-200';
+      }
+    };
+
+    if (studentLogs.length === 0) {
+      return (
+        <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
+          <div className="bg-slate-50 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ClipboardList className="text-slate-400" size={32} />
+          </div>
+          <p className="text-slate-500">No communication logs found for this student.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <Star className="text-amber-500" size={24} />
+            Weekly Communication Book
+          </h3>
+          <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-800 p-2 rounded-xl">
+            <button
+              disabled={currentLogIndex === studentLogs.length - 1}
+              onClick={() => setCurrentLogIndex(prev => prev + 1)}
+              className="p-1 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all disabled:opacity-30"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 min-w-[120px] text-center">
+              Week Ending: {currentLog.weekEnding}
+            </span>
+            <button
+              disabled={currentLogIndex === 0}
+              onClick={() => setCurrentLogIndex(prev => prev - 1)}
+              className="p-1 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all disabled:opacity-30"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {commFields.map(field => {
+            const rating = (currentLog.ratings as any)[field.id];
+            return (
+              <div key={field.id} className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all">
+                <div className="flex flex-col items-center text-center">
+                  <div className={`w-12 h-12 rounded-2xl ${getRatingColor(rating)} flex items-center justify-center text-white font-black text-xl mb-4 shadow-lg`}>
+                    {rating + 1}
+                  </div>
+                  <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-1">{field.label}</h4>
+                  <p className="text-[10px] text-slate-500 font-medium leading-tight mb-3">{field.description}</p>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getRatingColor(rating)} text-white`}>
+                    {ratingLabels[rating]}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/20">
+          <h4 className="text-sm font-bold text-blue-900 dark:text-blue-400 mb-2">Teacher's Note</h4>
+          <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed italic">
+            "{currentLog.teacherNote || "Student has shown consistent engagement this week. Maintain current focus on home assignments for continued progress."}"
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   if (selectedChild) {
     return (
       <div className="space-y-8 animate-in fade-in duration-500">
@@ -67,16 +156,37 @@ export const ParentPortal = () => {
             ← Back to Children List
           </button>
 
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium text-sm"
-          >
-            <History size={18} />
-            {showHistory ? 'View Active Courses' : 'Academic History'}
-          </button>
+          <div className="flex gap-2">
+            {activePortalTab === 'academic' && (
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium text-sm"
+              >
+                <History size={18} />
+                {showHistory ? 'View Active Courses' : 'Academic History'}
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-4 md:p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
+          <div className="flex gap-4 border-b border-slate-100 dark:border-slate-800 mb-8">
+            <button
+              onClick={() => setActivePortalTab('academic')}
+              className={`pb-4 px-2 text-sm font-bold transition-all relative ${activePortalTab === 'academic' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Academic Profile
+              {activePortalTab === 'academic' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full" />}
+            </button>
+            <button
+              onClick={() => setActivePortalTab('communication')}
+              className={`pb-4 px-2 text-sm font-bold transition-all relative ${activePortalTab === 'communication' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Communication Book
+              {activePortalTab === 'communication' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full" />}
+            </button>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 mb-8 text-center sm:text-left">
             <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-2xl md:text-3xl">
               {selectedChild.name.charAt(0)}
@@ -87,8 +197,9 @@ export const ParentPortal = () => {
             </div>
           </div>
 
-          {!showHistory ? (
-            <>
+          {activePortalTab === 'academic' ? (
+            !showHistory ? (
+              <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-2 md:gap-3 text-slate-500 dark:text-slate-400 mb-2">
@@ -113,107 +224,110 @@ export const ParentPortal = () => {
                 </div>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Course Progress & Grades</h3>
-                </div>
-                <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
-                  <table className="w-full text-left text-sm min-w-[600px]">
-                    <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
-                      <tr>
-                        <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Course</th>
-                        <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Mid (30)</th>
-                        <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Quiz (10)</th>
-                        <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Assig. (10)</th>
-                        <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Final (50)</th>
-                        <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-right">Teacher</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {selectedChild.courses.map((course: any, i: number) => (
-                        <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                          <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{course.name}</td>
-                          <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.mid}</td>
-                          <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.quiz}</td>
-                          <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.assignment}</td>
-                          <td className="px-4 py-4">
-                            <span className={`text-xs font-bold px-2 py-1 rounded ${
-                              course.grades.final === 'Not Yet'
-                                ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
-                                : 'text-slate-600 dark:text-slate-400'
-                            }`}>
-                              {course.grades.final}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right text-slate-500 dark:text-slate-400">{course.teacher}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">Academic History</h3>
-              <div className="flex gap-4">
-                {academicYears.map(year => (
-                  <button
-                    key={year}
-                    onClick={() => setSelectedYear(year)}
-                    className={`px-6 py-3 rounded-xl border transition-all ${
-                      selectedYear === year
-                        ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400'
-                    }`}
-                  >
-                    EC {year}
-                  </button>
-                ))}
-              </div>
-
-              {selectedYear && historyData[selectedYear] ? (
-                <div className="animate-in slide-in-from-bottom-4 duration-500">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Course Progress & Grades</h3>
+                  </div>
                   <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
-                    <table className="w-full text-left text-sm min-w-[500px]">
+                    <table className="w-full text-left text-sm min-w-[600px]">
                       <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
                         <tr>
                           <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Course</th>
-                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Mid</th>
-                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Quiz</th>
-                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Assig.</th>
-                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Final</th>
-                          <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-right">Total</th>
+                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Mid (30)</th>
+                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Quiz (10)</th>
+                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Assig. (10)</th>
+                          <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Final (50)</th>
+                          <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-right">Teacher</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                        {historyData[selectedYear].map((course: any, i: number) => (
+                        {selectedChild.courses.map((course: any, i: number) => (
                           <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                             <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{course.name}</td>
                             <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.mid}</td>
                             <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.quiz}</td>
                             <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.assignment}</td>
-                            <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.final}</td>
-                            <td className="px-6 py-4 text-right font-bold text-blue-600 dark:text-blue-400">{course.grades.total}</td>
+                            <td className="px-4 py-4">
+                              <span className={`text-xs font-bold px-2 py-1 rounded ${
+                                course.grades.final === 'Not Yet'
+                                  ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                                  : 'text-slate-600 dark:text-slate-400'
+                              }`}>
+                                {course.grades.final}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-right text-slate-500 dark:text-slate-400">{course.teacher}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-              ) : selectedYear ? (
-                <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
-                  <p className="text-slate-500">No records found for EC {selectedYear}</p>
+              </>
+            ) : (
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">Academic History</h3>
+                <div className="flex gap-4">
+                  {academicYears.map(year => (
+                    <button
+                      key={year}
+                      onClick={() => setSelectedYear(year)}
+                      className={`px-6 py-3 rounded-xl border transition-all ${
+                        selectedYear === year
+                          ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400'
+                      }`}
+                    >
+                      EC {year}
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
-                  <div className="bg-slate-50 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <History className="text-slate-400" size={32} />
+
+                {selectedYear && historyData[selectedYear] ? (
+                  <div className="animate-in slide-in-from-bottom-4 duration-500">
+                    <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+                      <table className="w-full text-left text-sm min-w-[500px]">
+                        <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+                          <tr>
+                            <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Course</th>
+                            <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Mid</th>
+                            <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Quiz</th>
+                            <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Assig.</th>
+                            <th className="px-4 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase">Final</th>
+                            <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-right">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                          {historyData[selectedYear].map((course: any, i: number) => (
+                            <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                              <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{course.name}</td>
+                              <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.mid}</td>
+                              <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.quiz}</td>
+                              <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.assignment}</td>
+                              <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{course.grades.final}</td>
+                              <td className="px-6 py-4 text-right font-bold text-blue-600 dark:text-blue-400">{course.grades.total}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <p className="text-slate-500">Select an academic year to view historical performance.</p>
-                </div>
-              )}
-            </div>
+                ) : selectedYear ? (
+                  <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
+                    <p className="text-slate-500">No records found for EC {selectedYear}</p>
+                  </div>
+                ) : (
+                  <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
+                    <div className="bg-slate-50 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <History className="text-slate-400" size={32} />
+                    </div>
+                    <p className="text-slate-500">Select an academic year to view historical performance.</p>
+                  </div>
+                )}
+              </div>
+            )
+          ) : (
+            <CommunicationBook studentId={selectedChild.id} />
           )}
         </div>
       </div>
@@ -329,10 +443,13 @@ export const ParentPortal = () => {
 
                 <div className="flex flex-col gap-3">
                   <button
-                    onClick={() => setSelectedChild(child)}
+                    onClick={() => {
+                      setSelectedChild(child);
+                      setActivePortalTab('academic');
+                    }}
                     className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-lg shadow-slate-200 dark:shadow-blue-900/20"
                   >
-                    View Academic Profile
+                    View Student Profile
                   </button>
                   <button
                     onClick={() => navigate('/clinic-chat')}

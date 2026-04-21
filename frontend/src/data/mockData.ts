@@ -281,3 +281,81 @@ export const mockGradingConfigs: Record<string, GradingMethod[]> = {
     { id: 'test', label: 'Test', maxWeight: 10 },
   ]
 };
+
+export interface CommunicationLog {
+  id: string;
+  studentId: string;
+  weekEnding: string;
+  ratings: {
+    uniform: number; // 0-3 scale: 0: Needs Improvement, 1: Good, 2: Very Good, 3: Excellent
+    materials: number;
+    homework: number;
+    participation: number;
+    conduct: number;
+    social: number;
+    punctuality: number;
+    noteTaking: number;
+  };
+  teacherNote?: string;
+}
+
+export const commFields = [
+  { id: 'uniform', label: 'Uniform', description: 'Compliance with school dress code' },
+  { id: 'materials', label: 'Materials', description: 'Readiness of school tools and books' },
+  { id: 'homework', label: 'Homework', description: 'Completion and accuracy of home assignments' },
+  { id: 'participation', label: 'Participation', description: 'Active engagement in classroom lessons' },
+  { id: 'conduct', label: 'Conduct', description: 'General behavior and ethical standing' },
+  { id: 'social', label: 'Social', description: 'Interaction and cooperation with other students' },
+  { id: 'punctuality', label: 'Punctuality', description: 'Arriving at and leaving school on time' },
+  { id: 'noteTaking', label: 'Note-taking', description: 'Quality of notebook handling and writing' },
+];
+
+export const ratingLabels = ['Needs Improvement', 'Good', 'Very Good', 'Excellent'];
+
+export const mockCommunicationLogs: CommunicationLog[] = [
+  {
+    id: 'L1',
+    studentId: '1',
+    weekEnding: '2026-05-17',
+    ratings: {
+      uniform: 3,
+      materials: 3,
+      homework: 2,
+      participation: 3,
+      conduct: 3,
+      social: 2,
+      punctuality: 3,
+      noteTaking: 3
+    }
+  },
+  {
+    id: 'L2',
+    studentId: '1',
+    weekEnding: '2026-05-10',
+    ratings: {
+      uniform: 2,
+      materials: 3,
+      homework: 3,
+      participation: 2,
+      conduct: 3,
+      social: 3,
+      punctuality: 2,
+      noteTaking: 3
+    }
+  },
+  {
+    id: 'L3',
+    studentId: '2',
+    weekEnding: '2026-05-17',
+    ratings: {
+      uniform: 3,
+      materials: 2,
+      homework: 2,
+      participation: 3,
+      conduct: 3,
+      social: 3,
+      punctuality: 3,
+      noteTaking: 2
+    }
+  }
+];
