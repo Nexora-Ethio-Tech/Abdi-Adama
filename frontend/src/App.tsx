@@ -24,7 +24,6 @@ import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';
 import Exams from './pages/Exams';
 import { Clinic } from './pages/Clinic';
-import { ClinicAdminChat } from './pages/ClinicAdminChat';
 import { ParentClinicChat } from './pages/ParentClinicChat';
 import { LandingPage } from './pages/LandingPage';
 import { Login } from './pages/Login';
@@ -136,12 +135,6 @@ function App() {
             <Route path="clinic" element={
               <ProtectedRoute allowedRoles={['clinic-admin', 'super-admin']}>
                 <Clinic />
-              </ProtectedRoute>
-            } />
-
-            <Route path="clinic/chats" element={
-              <ProtectedRoute allowedRoles={['clinic-admin', 'super-admin']}>
-                <ClinicAdminChat />
               </ProtectedRoute>
             } />
 

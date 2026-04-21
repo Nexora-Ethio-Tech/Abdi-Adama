@@ -1,11 +1,9 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Send, HeartPulse, User, Clock, ShieldAlert, ArrowLeft } from 'lucide-react';
+import { Send, HeartPulse, User, Clock, ShieldAlert } from 'lucide-react';
 import { ShootingStars } from '../components/Effects';
 
 export const ParentClinicChat = () => {
-  const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState('Abebe Bikila');
   const [messages, setMessages] = useState([
     { id: '1', role: 'clinic', child: 'Abebe Bikila', text: 'Hello! How can we help you today regarding Abebe\'s health?', timestamp: '09:00 AM' },
@@ -52,24 +50,16 @@ export const ParentClinicChat = () => {
 
       {/* Header */}
       <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-6">
-          <button
-            onClick={() => navigate('/')}
-            className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all group"
-          >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          </button>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-rose-600 shadow-inner">
-              <HeartPulse size={24} />
-            </div>
-            <div>
-              <h2 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">Clinic Support</h2>
-              <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                Direct Channel
-              </p>
-            </div>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-rose-600 shadow-inner">
+            <HeartPulse size={24} />
+          </div>
+          <div>
+            <h2 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">Clinic Support</h2>
+            <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+              Direct Channel
+            </p>
           </div>
         </div>
 

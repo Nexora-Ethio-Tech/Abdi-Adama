@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   HeartPulse,
   Search,
@@ -10,10 +11,24 @@ import {
   CheckCircle,
   FileText,
   Clock,
+  Send,
   Mail,
-  Stethoscope
+  Stethoscope,
+  MessageSquare,
+  MoreVertical,
+  Phone
 } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
+
+interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderRole: 'parent' | 'clinic';
+  studentName: string;
+  text: string;
+  timestamp: string;
+  read: boolean;
+}
 
 interface VisitLog {
   id: string;
@@ -32,17 +47,43 @@ const initialVisitLogs: VisitLog[] = [
 ];
 
 export const Clinic = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'directory' | 'visits'>('directory');
+  const [activeTab, setActiveTab] = useState<'directory' | 'visits' | 'chat'>(() => {
+    const params = new URLSearchParams(location.search);
+    return (params.get('tab') as any) || 'directory';
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab && (tab === 'directory' || tab === 'visits' || tab === 'chat')) {
+      setActiveTab(tab as any);
+    }
+  }, [location]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [visitLogs, setVisitLogs] = useState<VisitLog[]>(initialVisitLogs);
   const [showLogModal, setShowLogModal] = useState(false);
   const [newVisit, setNewVisit] = useState({ reason: '', treatment: '' });
 
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { id: '1', senderId: 'P1', senderRole: 'parent', studentName: 'Abebe Bikila', text: 'Hi, Abebe has a minor allergy to dust. Please keep an eye on him.', timestamp: '10:00 AM', read: false },
+    { id: '2', senderId: 'P2', senderRole: 'parent', studentName: 'Sara Kebede', text: 'Sara needs her medication at 2 PM.', timestamp: '11:30 AM', read: true }
+  ]);
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [newMessage, setNewMessage] = useState('');
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [selectedChat, messages]);
+
   const filteredStudents = mockStudents.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     s.id.includes(searchQuery)
   );
+
+  const unreadCount = messages.filter(m => m.senderRole === 'parent' && !m.read).length;
 
   const handleLogVisit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +124,17 @@ export const Clinic = () => {
             className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'visits' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
           >
             Visits
+          </button>
+          <button
+            onClick={() => setActiveTab('chat')}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all relative ${activeTab === 'chat' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
+          >
+            Chats
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 animate-bounce">
+                {unreadCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -238,7 +290,7 @@ export const Clinic = () => {
             )}
           </div>
         </div>
-      ) : (
+      ) : activeTab === 'visits' ? (
         <div className="card overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50 dark:bg-slate-800/50">
@@ -276,6 +328,134 @@ export const Clinic = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[600px]">
+          <div className={`${selectedChat ? 'hidden lg:flex' : 'flex'} lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden flex-col`}>
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-black text-slate-800 dark:text-white uppercase tracking-wider text-xs">Conversations</h3>
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {['Abebe Bikila', 'Sara Kebede', 'Dawit Lema'].map((name, i) => {
+                const lastMsg = messages.find(m => m.studentName === name);
+                const isSelected = selectedChat === name;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setSelectedChat(name);
+                      setMessages(prev => prev.map(m => m.studentName === name ? { ...m, read: true } : m));
+                    }}
+                    className={`w-full p-4 flex items-center gap-4 transition-all border-b border-slate-50 dark:border-slate-800/50 ${isSelected ? 'bg-rose-50 dark:bg-rose-900/10' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
+                  >
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-500 font-black">
+                        {name[0]}
+                      </div>
+                      {lastMsg && !lastMsg.read && lastMsg.senderRole === 'parent' && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900" />
+                      )}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-bold text-sm text-slate-800 dark:text-white truncate">{name}</span>
+                        <span className="text-[10px] text-slate-400 font-bold">{lastMsg?.timestamp || '12:00 PM'}</span>
+                      </div>
+                      <p className="text-xs text-slate-500 truncate font-medium">
+                        {lastMsg ? lastMsg.text : 'Start a new conversation...'}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className={`${selectedChat ? 'block' : 'hidden lg:block'} lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col shadow-xl`}>
+            {selectedChat ? (
+              <>
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                  <button
+                    onClick={() => setSelectedChat(null)}
+                    className="lg:hidden mr-2 p-2 text-slate-500"
+                  >
+                    ←
+                  </button>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-rose-600 font-black shadow-sm">
+                      {selectedChat[0]}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-slate-800 dark:text-white text-sm">{selectedChat}</h4>
+                      <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest">Parent Online</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 text-slate-400 hover:text-rose-600 transition-colors"><Phone size={18} /></button>
+                    <button className="p-2 text-slate-400 hover:text-rose-600 transition-colors"><MoreVertical size={18} /></button>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] dark:opacity-90">
+                  {messages.filter(m => m.studentName === selectedChat).map((m) => (
+                    <div key={m.id} className={`flex ${m.senderRole === 'clinic' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${
+                        m.senderRole === 'clinic'
+                          ? 'bg-rose-600 text-white rounded-tr-none'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none'
+                      }`}>
+                        <p className="text-sm font-medium leading-relaxed">{m.text}</p>
+                        <p className={`text-[9px] mt-1 font-bold uppercase opacity-60 ${m.senderRole === 'clinic' ? 'text-white' : 'text-slate-500'}`}>
+                          {m.timestamp}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!newMessage.trim()) return;
+                      const msg: ChatMessage = {
+                        id: Date.now().toString(),
+                        senderId: 'CL1',
+                        senderRole: 'clinic',
+                        studentName: selectedChat,
+                        text: newMessage,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        read: true
+                      };
+                      setMessages([...messages, msg]);
+                      setNewMessage('');
+                    }}
+                    className="flex gap-2"
+                  >
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Type your message here..."
+                      className="flex-1 px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all shadow-sm"
+                    />
+                    <button className="bg-rose-600 hover:bg-rose-700 text-white p-3 rounded-2xl transition-all shadow-lg shadow-rose-200 dark:shadow-none">
+                      <Send size={20} />
+                    </button>
+                  </form>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-slate-50/30 dark:bg-slate-900/30">
+                <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 rounded-full flex items-center justify-center text-rose-300 mb-6 animate-pulse">
+                  <MessageSquare size={48} />
+                </div>
+                <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-wider">Select a Parent</h3>
+                <p className="text-slate-500 max-w-xs mx-auto mt-2 text-sm font-medium">Choose a conversation from the list to start chatting with a parent about their child's health.</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

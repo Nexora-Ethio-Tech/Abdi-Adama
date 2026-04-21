@@ -48,11 +48,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Building2, label: 'Branches', path: '/branches' },
-          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
           { icon: PieChart, label: 'Analytics', path: '/analytics' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: HeartPulse, label: 'Parent Chats', path: '/clinic/chats' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'school-admin':
@@ -64,7 +62,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: HeartPulse, label: 'Parent Chats', path: '/clinic/chats' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
@@ -103,7 +100,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: 'Clinic Dashboard', path: '/' },
           { icon: HeartPulse, label: 'Clinic Management', path: '/clinic' },
-          { icon: HeartPulse, label: 'Parent Chats', path: '/clinic/chats' },
+          { icon: ClipboardList, label: 'Chats', path: '/clinic?tab=chat' },
         ];
       default:
         return [];
@@ -128,7 +125,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       "fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 dark:bg-black text-white flex flex-col h-screen transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto border-r border-slate-800/50",
       isOpen ? "translate-x-0" : "-translate-x-full"
     )}>
-      <div className="p-8 mt-6 flex items-center justify-between">
+      <div className="p-8 mt-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="relative p-1 bg-white rounded-xl shadow-lg">
             <img src={logo} alt="Abdi Adama Logo" className="w-10 h-10 rounded-lg object-cover" />
