@@ -188,7 +188,7 @@ export const TeacherPortal = () => {
                       <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.teacherActivity}</p></td>
                       <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 font-bold">{plan.time}</p></td>
                       <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.studentActivity}</p></td>
-                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.methodology}</p></td>
+                      <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.teachingMethod}</p></td>
                       <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.teachingAids}</p></td>
                       <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2">{plan.evaluation}</p></td>
                       <td className="px-4 py-5"><p className="text-xs text-slate-600 dark:text-slate-400 max-w-[150px] line-clamp-2 italic">{plan.remark}</p></td>

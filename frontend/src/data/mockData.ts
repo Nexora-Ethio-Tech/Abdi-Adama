@@ -308,7 +308,7 @@ export interface WeeklyPlan {
   teacherActivity: string;
   time: string;
   studentActivity: string;
-  methodology: string;
+  teachingMethod: string;
   teachingAids: string;
   evaluation: string;
   remark: string;
@@ -390,7 +390,7 @@ export const mockWeeklyPlans: WeeklyPlan[] = [
     teacherActivity: 'Explaining the quadratic formula and its derivation.',
     time: '45 mins',
     studentActivity: 'Solving practice problems on the board.',
-    methodology: 'Interactive lectures and group problem-solving.',
+    teachingMethod: 'Interactive lectures and group problem-solving.',
     teachingAids: 'Textbook, GeoGebra, Digital Whiteboard',
     evaluation: 'Short quiz and classroom activity performance.',
     remark: 'Students need more practice with factoring.',
@@ -407,7 +407,7 @@ export const mockWeeklyPlans: WeeklyPlan[] = [
     teacherActivity: 'Demonstrating microscope use and slide preparation.',
     time: '60 mins',
     studentActivity: 'Observing slides and drawing cell stages.',
-    methodology: 'Lab experiments and microscopy.',
+    teachingMethod: 'Lab experiments and microscopy.',
     teachingAids: 'Microscopes, prepared slides, wall charts',
     evaluation: 'Lab report and diagram accuracy check.',
     remark: 'Practical sessions were very engaging.',

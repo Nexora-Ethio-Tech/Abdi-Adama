@@ -13,8 +13,8 @@ import {
   UserPlus,
   ShieldAlert,
   Send,
-  Youtube,
-  Instagram,
+  Video,
+  Camera,
   Music2
 } from 'lucide-react';
 
@@ -135,10 +135,10 @@ export const LandingPage = () => {
             <Send size={20} />
           </a>
           <a href="#" className="hover:text-rose-600 transition-colors" title="YouTube">
-            <Youtube size={20} />
+            <Video size={20} />
           </a>
           <a href="#" className="hover:text-pink-500 transition-colors" title="Instagram">
-            <Instagram size={20} />
+            <Camera size={20} />
           </a>
           <a href="#" className="hover:text-slate-900 dark:hover:text-white transition-colors" title="TikTok">
             <Music2 size={20} />
