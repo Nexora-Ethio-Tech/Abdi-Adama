@@ -102,11 +102,11 @@ export const mockStudents = [
 ];
 
 export const mockTeachers = [
-  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true },
-  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false },
-  { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true },
-  { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false },
-  { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false },
+  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true, isDean: true, isRoomTeacher: true, department: 'Science' },
+  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false, isRoomTeacher: true, department: 'Science' },
+  { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true, department: 'Social Science' },
+  { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false, department: 'Languages' },
+  { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false, department: 'Vocational' },
 ];
 
 export const mockClasses = [
@@ -299,6 +299,24 @@ export interface CommunicationLog {
   teacherNote?: string;
 }
 
+export interface WeeklyPlan {
+  id: string;
+  teacherId: string;
+  date: string;
+  content: string;
+  objectives: string;
+  teacherActivity: string;
+  time: string;
+  studentActivity: string;
+  methodology: string;
+  teachingAids: string;
+  evaluation: string;
+  remark: string;
+  status: 'Draft' | 'Pending' | 'Approved' | 'Revision Required';
+  deanFeedback?: string;
+  deanRating?: number; // 1-5 stars
+}
+
 export const commFields = [
   { id: 'uniform', label: 'Uniform', description: 'Compliance with school dress code' },
   { id: 'materials', label: 'Materials', description: 'Readiness of school tools and books' },
@@ -316,7 +334,7 @@ export const mockCommunicationLogs: CommunicationLog[] = [
   {
     id: 'L1',
     studentId: '1',
-    weekEnding: '2026-05-17',
+    weekEnding: '2026-05-24',
     ratings: {
       uniform: 3,
       materials: 3,
@@ -332,7 +350,7 @@ export const mockCommunicationLogs: CommunicationLog[] = [
   {
     id: 'L2',
     studentId: '1',
-    weekEnding: '2026-05-10',
+    weekEnding: '2026-05-17',
     ratings: {
       uniform: 2,
       materials: 3,
@@ -348,7 +366,7 @@ export const mockCommunicationLogs: CommunicationLog[] = [
   {
     id: 'L3',
     studentId: '2',
-    weekEnding: '2026-05-17',
+    weekEnding: '2026-05-24',
     ratings: {
       uniform: 3,
       materials: 2,
@@ -359,5 +377,40 @@ export const mockCommunicationLogs: CommunicationLog[] = [
       punctuality: 3,
       noteTaking: 2
     }
+  }
+];
+
+export const mockWeeklyPlans: WeeklyPlan[] = [
+  {
+    id: 'P1',
+    teacherId: 'T1',
+    date: '2026-05-24',
+    content: 'Mathematics: Quadratic Equations',
+    objectives: 'Solve complex quadratic equations using various methods.',
+    teacherActivity: 'Explaining the quadratic formula and its derivation.',
+    time: '45 mins',
+    studentActivity: 'Solving practice problems on the board.',
+    methodology: 'Interactive lectures and group problem-solving.',
+    teachingAids: 'Textbook, GeoGebra, Digital Whiteboard',
+    evaluation: 'Short quiz and classroom activity performance.',
+    remark: 'Students need more practice with factoring.',
+    status: 'Approved',
+    deanRating: 5,
+    deanFeedback: 'Excellent integration with Physics.'
+  },
+  {
+    id: 'P2',
+    teacherId: 'T2',
+    date: '2026-05-24',
+    content: 'Biology: Cell Division',
+    objectives: 'Understand Mitosis and Meiosis.',
+    teacherActivity: 'Demonstrating microscope use and slide preparation.',
+    time: '60 mins',
+    studentActivity: 'Observing slides and drawing cell stages.',
+    methodology: 'Lab experiments and microscopy.',
+    teachingAids: 'Microscopes, prepared slides, wall charts',
+    evaluation: 'Lab report and diagram accuracy check.',
+    remark: 'Practical sessions were very engaging.',
+    status: 'Pending'
   }
 ];

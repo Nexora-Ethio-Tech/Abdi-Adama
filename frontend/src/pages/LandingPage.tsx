@@ -11,7 +11,11 @@ import {
   ChevronDown,
   LogIn,
   UserPlus,
-  ShieldAlert
+  ShieldAlert,
+  Send,
+  Youtube,
+  Instagram,
+  Music2
 } from 'lucide-react';
 
 export const LandingPage = () => {
@@ -125,6 +129,21 @@ export const LandingPage = () => {
            {displaySchoolName} © 2026
         </div>
         <p className="text-slate-400 text-sm mb-6">Providing excellence in education since 2005.</p>
+
+        <div className="flex justify-center gap-6 mb-8 text-slate-400 dark:text-slate-500">
+          <a href="#" className="hover:text-blue-500 transition-colors" title="Telegram">
+            <Send size={20} />
+          </a>
+          <a href="#" className="hover:text-rose-600 transition-colors" title="YouTube">
+            <Youtube size={20} />
+          </a>
+          <a href="#" className="hover:text-pink-500 transition-colors" title="Instagram">
+            <Instagram size={20} />
+          </a>
+          <a href="#" className="hover:text-slate-900 dark:hover:text-white transition-colors" title="TikTok">
+            <Music2 size={20} />
+          </a>
+        </div>
 
         <div className="flex justify-center">
           <button
