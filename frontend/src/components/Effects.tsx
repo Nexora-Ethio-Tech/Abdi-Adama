@@ -11,9 +11,9 @@ export const ShootingStars = () => {
           const startX = Math.random() * 100;
           const startY = Math.random() * 100;
           const angle = Math.random() * 360;
-          const duration = 2 + Math.random() * 8;
-          const delay = Math.random() * 20;
-          const travel = 500 + Math.random() * 1500;
+          const duration = 3 + Math.random() * 12;
+          const delay = Math.random() * 25;
+          const travel = 800 + Math.random() * 2000;
           const size = 1 + Math.random() * 2;
 
           return (
@@ -25,13 +25,13 @@ export const ShootingStars = () => {
                 left: `${startX}vw`,
                 height: `${size}px`,
                 background: `linear-gradient(90deg, ${color}, transparent)`,
-                filter: `drop-shadow(0 0 10px ${color})`,
+                filter: `drop-shadow(0 0 15px ${color})`,
                 transform: `rotate(${angle}deg)`,
                 animationDelay: `${delay}s`,
                 animationDuration: `${duration}s`,
                 ['--travel-dist' as any]: `${travel}px`,
                 ['--star-color' as any]: color,
-                opacity: 0.2 + Math.random() * 0.6
+                opacity: 0.1 + Math.random() * 0.5
               }}
             />
           );

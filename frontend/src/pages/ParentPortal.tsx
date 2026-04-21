@@ -248,29 +248,49 @@ export const ParentPortal = () => {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] -ml-32 -mb-32" />
       </div>
 
-      {/* School Notices */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 px-2">
-          <Megaphone className="text-blue-600 dark:text-blue-400" size={20} />
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">School Announcements</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {notices.map(notice => (
-            <div key={notice.id} className="group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                  notice.priority === 'High'
-                  ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
-                  : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                }`}>
-                  {notice.priority} Priority
-                </span>
-                <span className="text-xs font-medium text-slate-400">{notice.time}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* School Notices */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center gap-2 px-2">
+            <Megaphone className="text-blue-600 dark:text-blue-400" size={20} />
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">School Announcements</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {notices.map(notice => (
+              <div key={notice.id} className="group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                    notice.priority === 'High'
+                    ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+                    : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                  }`}>
+                    {notice.priority} Priority
+                  </span>
+                  <span className="text-xs font-medium text-slate-400">{notice.time}</span>
+                </div>
+                <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 transition-colors">{notice.title}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{notice.content}</p>
               </div>
-              <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 transition-colors">{notice.title}</h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{notice.content}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Clinic Link */}
+        <div className="lg:col-span-1 bg-rose-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-rose-200 dark:shadow-none flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-all cursor-pointer" onClick={() => navigate('/clinic-chat')}>
+          <div className="relative z-10">
+            <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6">
+              <HeartPulse size={32} />
             </div>
-          ))}
+            <h3 className="text-2xl font-black mb-2">Clinic Support</h3>
+            <p className="text-rose-100 text-sm font-medium leading-relaxed">
+              Have concerns about your child's health? Message our medical staff directly for quick assistance.
+            </p>
+          </div>
+          <button className="relative z-10 mt-8 w-full py-4 bg-white text-rose-600 rounded-2xl font-bold text-sm hover:bg-rose-50 transition-all flex items-center justify-center gap-2">
+             Start Conversation
+          </button>
+          {/* Decoration */}
+          <HeartPulse size={120} className="absolute -bottom-10 -right-10 text-white/5 rotate-12 group-hover:scale-110 transition-transform duration-700" />
         </div>
       </div>
 
