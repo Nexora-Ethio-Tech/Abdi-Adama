@@ -326,7 +326,8 @@ export const mockCommunicationLogs: CommunicationLog[] = [
       social: 2,
       punctuality: 3,
       noteTaking: 3
-    }
+    },
+    teacherNote: "Abebe has shown great improvement in his participation this week. He is always ready with his materials."
   },
   {
     id: 'L2',
@@ -341,7 +342,8 @@ export const mockCommunicationLogs: CommunicationLog[] = [
       social: 3,
       punctuality: 2,
       noteTaking: 3
-    }
+    },
+    teacherNote: "Strong academic focus on homework completion. Needs to ensure uniform compliance every day."
   },
   {
     id: 'L3',
