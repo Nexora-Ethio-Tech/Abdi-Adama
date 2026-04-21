@@ -10,6 +10,7 @@ export const TeacherPortal = () => {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [ratings, setRatings] = useState<Record<string, number>>({});
+  const [teacherNote, setTeacherNote] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
   const pendingAssignments = mockExams.filter(e => e.category === 'Assignment').length;
@@ -171,6 +172,7 @@ export const TeacherPortal = () => {
                       onClick={() => {
                         setSelectedStudent(student);
                         setRatings({});
+                        setTeacherNote('');
                       }}
                       className={`w-full p-3 flex items-center gap-3 rounded-xl transition-all ${selectedStudent?.id === student.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600' : 'hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                     >
@@ -241,6 +243,16 @@ export const TeacherPortal = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Teacher's Remark (Optional)</label>
+                  <textarea
+                    value={teacherNote}
+                    onChange={(e) => setTeacherNote(e.target.value)}
+                    placeholder="Write a brief observation about the student's week..."
+                    className="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all outline-none text-sm min-h-[100px] resize-none"
+                  />
                 </div>
 
                 <div className="p-6 bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-900/20 flex gap-4">
