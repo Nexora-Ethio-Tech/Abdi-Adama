@@ -4,8 +4,14 @@ import { Link } from 'react-router-dom';
 import { mockClasses, mockStudents, commFields, ratingLabels, mockWeeklyPlans, mockTeachers } from '../data/mockData';
 import { mockExams } from '../data/examData';
 import { useState } from 'react';
+import { useUser } from '../context/UserContext';
 
 export const TeacherPortal = () => {
+  const { user } = useUser();
+  const teacherProfile = mockTeachers.find(t => t.id === user?.id);
+  const isDean = teacherProfile?.isDean || false;
+  const isRoomTeacher = teacherProfile?.isRoomTeacher || false;
+
   const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'communication' | 'review'>('overview');
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
@@ -35,15 +41,13 @@ export const TeacherPortal = () => {
     }
   };
 
-  const isDean = mockTeachers.find(t => t.id === 'T1')?.isDean;
-
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-wrap gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
         {[
           { id: 'overview', label: 'Overview' },
           { id: 'plans', label: 'Weekly Plans' },
-          { id: 'communication', label: 'Comm. Book' },
+          ...(isRoomTeacher ? [{ id: 'communication', label: 'Comm. Book' }] : []),
           ...(isDean ? [{ id: 'review', label: 'Dept. Plans Review' }] : [])
         ].map(tab => (
           <button
