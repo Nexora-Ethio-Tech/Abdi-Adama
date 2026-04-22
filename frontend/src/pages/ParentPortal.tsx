@@ -358,133 +358,154 @@ export const ParentPortal = () => {
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      {/* Hero Welcome Section */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 rounded-[2rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-slate-700/50">
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-widest">
-              Parent Portal
+    <div className="space-y-12 animate-in fade-in duration-1000">
+      {/* Hero Welcome Section - Enhanced Visuals */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden border border-slate-700/30">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-[10px] font-black uppercase tracking-[0.2em]">
+              Family Dashboard
             </div>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight">Hello, Mr. Bikila</h2>
-            <p className="text-slate-300 text-lg max-w-md">Stay connected with your children's educational journey and academic milestones.</p>
+            <h2 className="text-5xl md:text-6xl font-black tracking-tight leading-none">
+              Hello, <span className="text-blue-400">Mr. Bikila</span>
+            </h2>
+            <p className="text-slate-300 text-lg max-w-lg leading-relaxed font-medium">
+              Your central hub for tracking educational milestones, health updates, and school announcements.
+            </p>
           </div>
-          <div className="flex items-center gap-6 bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10">
-            <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg rotate-3">
-              <User size={32} />
+
+          <div className="flex items-center gap-8 bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl">
+            <div className="w-20 h-20 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-xl rotate-6 transition-transform hover:rotate-0 duration-500">
+              <User size={40} />
             </div>
             <div>
-              <p className="text-sm font-bold text-white">Primary Account</p>
-              <p className="text-xs text-blue-300">Guardian Status: Verified</p>
+              <p className="text-lg font-black text-white">Family ID: #8824</p>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <p className="text-xs text-blue-300 font-bold uppercase tracking-widest">Verified Account</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -mr-48 -mt-48" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] -ml-32 -mb-32" />
+        {/* Abstract Background Art */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] -mr-64 -mt-64" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[120px] -ml-48 -mb-48" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* School Notices */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center gap-2 px-2">
-            <Megaphone className="text-blue-600 dark:text-blue-400" size={20} />
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">School Announcements</h3>
+      {/* Primary Navigation: My Children (Promoted to Top) */}
+      <div className="space-y-8">
+        <div className="flex items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+               <Award size={24} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">My Children</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <span className="bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl text-xs font-black text-slate-500 uppercase tracking-widest">
+            {children.length} Enrolled
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {children.map((child, i) => (
+            <div
+              key={i}
+              onClick={() => {
+                setSelectedChild(child);
+                setActivePortalTab('academic');
+              }}
+              className="group relative cursor-pointer"
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[3rem] blur-lg opacity-0 group-hover:opacity-20 transition duration-500" />
+              <div className="relative bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+                <div className="flex items-center justify-between mb-10">
+                  <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-3xl shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+                      {child.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-1">{child.name}</h4>
+                      <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Grade {child.grade}</p>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <ChevronRight size={24} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6 mb-4">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-[2rem] border border-slate-100 dark:border-slate-700/50">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Attendance</p>
+                    <p className="text-2xl font-black text-emerald-600">{child.attendance}</p>
+                  </div>
+                  <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-[2rem] border border-slate-100 dark:border-slate-700/50">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Academic Rank</p>
+                    <p className="text-2xl font-black text-blue-600">{child.performance}</p>
+                  </div>
+                </div>
+
+                <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-4 group-hover:text-blue-600 transition-colors">
+                  Click to view full academic profile & comm. book
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* School Notices - Balanced Layout */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="flex items-center gap-3 px-2">
+            <Megaphone className="text-blue-600 dark:text-blue-400" size={24} />
+            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">School Announcements</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {notices.map(notice => (
-              <div key={notice.id} className="group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+              <div key={notice.id} className="group bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] ${
                     notice.priority === 'High'
                     ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
                     : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
                   }`}>
-                    {notice.priority} Priority
+                    {notice.priority}
                   </span>
-                  <span className="text-xs font-medium text-slate-400">{notice.time}</span>
+                  <span className="text-xs font-bold text-slate-400">{notice.time}</span>
                 </div>
-                <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 transition-colors">{notice.title}</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{notice.content}</p>
+                <h4 className="text-lg font-black text-slate-900 dark:text-white mb-3 leading-tight group-hover:text-blue-600 transition-colors">{notice.title}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{notice.content}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Quick Clinic Link */}
-        <div className="lg:col-span-1 bg-rose-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-rose-200 dark:shadow-none flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-all cursor-pointer" onClick={() => navigate('/clinic-chat')}>
-          <div className="relative z-10">
-            <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6">
-              <HeartPulse size={32} />
-            </div>
-            <h3 className="text-2xl font-black mb-2">Clinic Support</h3>
-            <p className="text-rose-100 text-sm font-medium leading-relaxed">
-              Have concerns about your child's health? Message our medical staff directly for quick assistance.
-            </p>
-          </div>
-          <button className="relative z-10 mt-8 w-full py-4 bg-white text-rose-600 rounded-2xl font-bold text-sm hover:bg-rose-50 transition-all flex items-center justify-center gap-2">
-             Start Conversation
-          </button>
-          {/* Decoration */}
-          <HeartPulse size={120} className="absolute -bottom-10 -right-10 text-white/5 rotate-12 group-hover:scale-110 transition-transform duration-700" />
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2">
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">My Children</h3>
-          <div className="h-px flex-1 bg-slate-100 dark:bg-slate-800 mx-6 hidden md:block" />
-          <span className="text-sm font-medium text-slate-500">{children.length} Enrolled</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {children.map((child, i) => (
-            <div key={i} className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
-              <div className="relative bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
-                <div className="flex items-center gap-5 mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-2xl shadow-inner">
-                    {child.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-slate-800 dark:text-slate-100">{child.name}</h4>
-                    <p className="text-sm font-medium text-slate-400 uppercase tracking-tighter">Grade {child.grade}</p>
-                  </div>
+        {/* Clinic Support - Unified Card */}
+        <div className="lg:col-span-4">
+          <div
+            className="h-full bg-slate-900 dark:bg-slate-800 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] transition-all cursor-pointer border border-white/5"
+            onClick={() => navigate('/clinic-chat')}
+          >
+            <div className="relative z-10 h-full flex flex-col justify-between">
+              <div>
+                <div className="w-16 h-16 bg-blue-600 rounded-[1.5rem] flex items-center justify-center mb-8 shadow-xl shadow-blue-900/50 group-hover:scale-110 transition-transform">
+                  <HeartPulse size={32} />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                    <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Attendance</p>
-                    <p className="text-lg font-bold text-emerald-600">{child.attendance}</p>
-                  </div>
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                    <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Performance</p>
-                    <p className="text-lg font-bold text-blue-600">{child.performance}</p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <button
-                    onClick={() => {
-                      setSelectedChild(child);
-                      setActivePortalTab('academic');
-                    }}
-                    className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-lg shadow-slate-200 dark:shadow-blue-900/20"
-                  >
-                    View Student Profile
-                  </button>
-                  <button
-                    onClick={() => navigate('/clinic-chat')}
-                    className="w-full py-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all border border-rose-100 dark:border-rose-800/50"
-                  >
-                    <HeartPulse size={14} />
-                    Contact Clinic
-                  </button>
-                </div>
+                <h3 className="text-3xl font-black mb-4 leading-tight">Clinic<br />Support</h3>
+                <p className="text-slate-400 text-sm font-medium leading-relaxed">
+                  Direct encrypted line to our medical staff. Real-time updates on your child's health and well-being.
+                </p>
+              </div>
+              <div className="mt-12">
+                <button className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">
+                   Open Medical Chat
+                </button>
               </div>
             </div>
-          ))}
+            {/* Background Decoration */}
+            <HeartPulse size={200} className="absolute -bottom-20 -right-20 text-white/5 rotate-12 opacity-50 group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000" />
+          </div>
         </div>
       </div>
     </div>
