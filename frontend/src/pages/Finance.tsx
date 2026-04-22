@@ -1,22 +1,61 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell } from 'lucide-react';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock } from 'lucide-react';
 import { mockFinances, mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 
+interface PaymentLog {
+  status: boolean;
+  modifiedBy: string;
+  timestamp: string;
+}
+
 export const Finance = () => {
-  const { role } = useUser();
+  const { role, user } = useUser();
   const isAdmin = role === 'super-admin' || role === 'school-admin';
   const isClerk = role === 'finance-clerk';
   const isFinance = isClerk || isAdmin;
   const [showForm, setShowForm] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<Record<string, boolean>>({
-    '1': true,
-    '2': false,
+  const [selectedHistory, setSelectedHistory] = useState<{name: string, logs: PaymentLog[]} | null>(null);
+
+  const [paymentStatus, setPaymentStatus] = useState<Record<string, PaymentLog[]>>({
+    '1': [{ status: true, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
+    '2': [{ status: false, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
+    '3': [{ status: false, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
+    '6': [{ status: false, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
   });
 
+  const [activeView, setActiveView] = useState<'main' | 'audit'>('main');
+
+  const allAuditLogs = Object.entries(paymentStatus).flatMap(([id, logs]) => {
+    const student = mockStudents.find(s => s.id === id);
+    return logs.map(log => ({
+      ...log,
+      studentName: student?.name || 'Unknown Student',
+      studentId: id
+    }));
+  }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
   const togglePayment = (id: string) => {
-    setPaymentStatus(prev => ({ ...prev, [id]: !prev[id] }));
+    const currentLogs = paymentStatus[id] || [];
+    const lastStatus = currentLogs.length > 0 ? currentLogs[0].status : false;
+
+    const newLog: PaymentLog = {
+      status: !lastStatus,
+      modifiedBy: user?.name || 'Unknown Officer',
+      timestamp: new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    };
+
+    setPaymentStatus(prev => ({
+      ...prev,
+      [id]: [newLog, ...currentLogs]
+    }));
   };
 
   return (
@@ -58,9 +97,22 @@ export const Finance = () => {
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h3 className="font-semibold text-slate-800">
-              {isAdmin ? 'Financial Summaries' : 'Recent Transactions'}
-            </h3>
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+              <button
+                onClick={() => setActiveView('main')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeView === 'main' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+              >
+                {isAdmin ? 'Summaries' : 'Transactions'}
+              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => setActiveView('audit')}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeView === 'audit' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                >
+                  System Audit Log
+                </button>
+              )}
+            </div>
             {isFinance && (
               <button
                 onClick={() => setShowForm(true)}
@@ -88,7 +140,44 @@ export const Finance = () => {
           </div>
         </div>
         <div className="overflow-x-auto">
-          {isClerk ? (
+          {activeView === 'audit' ? (
+            <table className="w-full text-left text-sm min-w-[800px]">
+              <thead className="bg-slate-50 border-b border-slate-100">
+                <tr>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Timestamp</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Officer</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Action</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Target Student</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {allAuditLogs.map((log, i) => (
+                  <tr key={i} className="hover:bg-slate-50/50 transition-colors border-l-4 border-transparent hover:border-blue-600">
+                    <td className="px-6 py-4 text-slate-500 font-mono text-[10px]">{log.timestamp}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                         <div className="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-600">
+                           {log.modifiedBy[0]}
+                         </div>
+                         <span className="font-bold text-slate-800">{log.modifiedBy}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        log.status ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                      }`}>
+                        {log.status ? 'Approved Payment' : 'Revoked Payment'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                       <span className="font-medium text-slate-600">{log.studentName}</span>
+                       <span className="text-[10px] text-slate-400 ml-2">({log.studentId})</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : isClerk ? (
             <table className="w-full text-left text-sm min-w-[800px]">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>
@@ -100,7 +189,8 @@ export const Finance = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {mockStudents.map((student) => {
-                  const isPaid = paymentStatus[student.id];
+                  const logs = paymentStatus[student.id] || [];
+                  const isPaid = logs.length > 0 ? logs[0].status : false;
                   const scholarship = (student as any).isScholarship;
                   const busUser = (student as any).isBusUser;
                   const penalty = (student as any).penaltyFee || 0;
@@ -131,26 +221,39 @@ export const Finance = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col items-center gap-1">
-                          <button
-                            onClick={() => !scholarship && togglePayment(student.id)}
-                            disabled={scholarship}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                              scholarship
-                                ? 'bg-purple-600 text-white shadow-lg shadow-purple-200'
-                                : isPaid
-                                  ? 'bg-emerald-100 text-emerald-700 shadow-sm'
-                                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                            }`}
-                          >
-                            {scholarship ? (
-                              <Check size={14} />
-                            ) : isPaid ? (
-                              <Check size={14} />
-                            ) : (
-                              <div className="w-3.5" />
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => !scholarship && togglePayment(student.id)}
+                              disabled={scholarship}
+                              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                scholarship
+                                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-200'
+                                  : isPaid
+                                    ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                              }`}
+                            >
+                              {scholarship ? (
+                                <Check size={14} />
+                              ) : isPaid ? (
+                                <Check size={14} />
+                              ) : (
+                                <div className="w-3.5" />
+                              )}
+                              <span>{scholarship ? 'COVERED' : isPaid ? 'PAID' : 'PENDING'}</span>
+                            </button>
+
+                            {logs.length > 0 && (
+                              <button
+                                onClick={() => setSelectedHistory({ name: student.name, logs })}
+                                className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                title="Audit Trail"
+                              >
+                                <History size={16} />
+                              </button>
                             )}
-                            <span>{scholarship ? 'COVERED' : isPaid ? 'PAID' : 'PENDING'}</span>
-                          </button>
+                          </div>
+
                           {!scholarship && !isPaid && totalExpected > 0 && (
                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                               Total: {totalExpected.toLocaleString()} ETB
@@ -265,6 +368,63 @@ export const Finance = () => {
           )}
         </div>
       </div>
+
+      {selectedHistory && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
+                  <ShieldCheck size={24} />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter text-lg">Payment Audit Trail</h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{selectedHistory.name}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedHistory(null)} className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all shadow-sm">
+                <X size={20} className="text-slate-400" />
+              </button>
+            </div>
+
+            <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-slate-100 dark:before:bg-slate-800">
+                {selectedHistory.logs.map((log, index) => (
+                  <div key={index} className="relative flex items-center gap-6">
+                    <div className={`relative z-10 w-10 h-10 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-md ${
+                      log.status ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
+                    }`}>
+                      {log.status ? <Check size={18} /> : <X size={18} />}
+                    </div>
+                    <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
+                          log.status ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                        }`}>
+                          {log.status ? 'Paid' : 'Marked Pending'}
+                        </span>
+                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold">
+                          <Clock size={12} />
+                          {log.timestamp}
+                        </div>
+                      </div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                        <Users size={14} className="text-slate-400" />
+                        Modified by: <span className="text-blue-600">{log.modifiedBy}</span>
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-1 italic font-medium">Verified by Anti-Corruption Integrity Filter</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-8 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 text-center">
+               <p className="text-xs text-slate-400 font-medium">Transparency increases accountability. All actions are immutable and logged.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

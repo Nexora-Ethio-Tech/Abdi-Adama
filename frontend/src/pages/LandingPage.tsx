@@ -131,16 +131,16 @@ export const LandingPage = () => {
         <p className="text-slate-400 text-sm mb-6">Providing excellence in education since 2005.</p>
 
         <div className="flex justify-center gap-6 mb-8 text-slate-400 dark:text-slate-500">
-          <a href="#" className="hover:text-blue-500 transition-colors" title="Telegram">
+          <a href="https://t.me/abdiadamaschool" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors" title="Telegram">
             <Send size={20} />
           </a>
-          <a href="#" className="hover:text-rose-600 transition-colors" title="YouTube">
+          <a href="https://www.youtube.com/@AbdiadamaSchool-s1c" target="_blank" rel="noopener noreferrer" className="hover:text-rose-600 transition-colors" title="YouTube">
             <Video size={20} />
           </a>
-          <a href="#" className="hover:text-pink-500 transition-colors" title="Instagram">
+          <a href="https://www.instagram.com/abdi_adama_school/" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 transition-colors" title="Instagram">
             <Camera size={20} />
           </a>
-          <a href="#" className="hover:text-slate-900 dark:hover:text-white transition-colors" title="TikTok">
+          <a href="https://www.tiktok.com/@abdiadama1" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 dark:hover:text-white transition-colors" title="TikTok">
             <Music2 size={20} />
           </a>
         </div>
