@@ -1,18 +1,31 @@
 
 import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList, Star, Save, CheckCircle, ChevronRight, History, FileText, CheckSquare, MessageSquare, X, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { mockClasses, mockStudents, commFields, ratingLabels, mockWeeklyPlans, mockTeachers, type WeeklyPlan } from '../data/mockData';
 import { mockExams } from '../data/examData';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 
 export const TeacherPortal = () => {
   const { user } = useUser();
+  const [searchParams, setSearchParams] = useSearchParams();
   const teacherProfile = mockTeachers.find(t => t.id === user?.id);
   const isDean = teacherProfile?.isDean || false;
   const isRoomTeacher = teacherProfile?.isRoomTeacher || false;
 
   const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'communication' | 'review'>('overview');
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && ['overview', 'plans', 'communication', 'review'].includes(tab)) {
+      setActiveTab(tab as any);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tab: string) => {
+    setSearchParams({ tab });
+    setActiveTab(tab as any);
+  };
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [ratings, setRatings] = useState<Record<string, number>>({});
@@ -88,13 +101,13 @@ export const TeacherPortal = () => {
       <div className="flex overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 gap-2 p-1 bg-slate-100/50 dark:bg-slate-800/50 sm:bg-slate-100 dark:sm:bg-slate-800 rounded-xl w-auto sm:w-fit">
         {[
           { id: 'overview', label: 'Overview' },
-          { id: 'plans', label: 'Plans' },
+          { id: 'plans', label: 'Weekly Plans' },
           ...(isRoomTeacher ? [{ id: 'communication', label: 'Comm. Book' }] : []),
           ...(isDean ? [{ id: 'review', label: 'Review' }] : [])
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => handleTabChange(tab.id)}
             className={`px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
             {tab.label}
