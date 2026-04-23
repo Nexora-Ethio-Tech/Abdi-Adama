@@ -114,6 +114,9 @@ export const Teachers = () => {
                         {teacher.isExaminer && (
                           <span className="text-[8px] bg-blue-100 text-blue-700 px-1 rounded font-black uppercase tracking-tighter">Examiner ({teacher.assignedExamClass})</span>
                         )}
+                        {teacher.isDeptHead && (
+                          <span className="text-[8px] bg-purple-100 text-purple-700 px-1 rounded font-black uppercase tracking-tighter">Dept Head ({teacher.assignedGrades?.map((g: string) => g.replace('Grade ', '')).join(', ')})</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -242,6 +245,50 @@ export const Teachers = () => {
                           <option key={c.id} value={c.name}>{c.name}</option>
                         ))}
                       </select>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Department Head</p>
+                      <p className="text-[10px] text-slate-500">Lead academic departments</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPromotingTeacher({ ...promotingTeacher, isDeptHead: !promotingTeacher.isDeptHead })}
+                      className={`w-12 h-6 rounded-full transition-colors relative ${promotingTeacher.isDeptHead ? 'bg-purple-600' : 'bg-slate-300'}`}
+                    >
+                      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${promotingTeacher.isDeptHead ? 'left-7' : 'left-1'}`} />
+                    </button>
+                  </div>
+
+                  {promotingTeacher.isDeptHead && (
+                    <div className="space-y-1 animate-in slide-in-from-top-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Grade Levels</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'].map(grade => (
+                          <button
+                            key={grade}
+                            type="button"
+                            onClick={() => {
+                              const current = promotingTeacher.assignedGrades || [];
+                              const next = current.includes(grade)
+                                ? current.filter((g: string) => g !== grade)
+                                : [...current, grade];
+                              setPromotingTeacher({ ...promotingTeacher, assignedGrades: next });
+                            }}
+                            className={`px-2 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${
+                              (promotingTeacher.assignedGrades || []).includes(grade)
+                                ? 'bg-purple-600 border-purple-600 text-white'
+                                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500'
+                            }`}
+                          >
+                            {grade}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

@@ -116,8 +116,9 @@ export const Finance = () => {
               {(isClerk || role === 'super-admin') && (
                 <button
                   onClick={() => setActiveView('registration')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeView === 'registration' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeView === 'registration' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
                 >
+                  <UserPlus size={14} />
                   Registration
                 </button>
               )}
