@@ -1,16 +1,12 @@
 
-import { Plus, Search, Filter, MoreVertical, Download, ChevronRight, History, UserPlus, List } from 'lucide-react';
+import { Search, Filter, MoreVertical, Download, ChevronRight, History } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
 
 export const Students = () => {
-  const { role } = useUser();
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const grades = Array.from(new Set(mockStudents.map(s => s.grade))).sort();
-
-  const isAdmin = role === 'school-admin' || role === 'super-admin';
 
   if (selectedGrade) {
     const filteredStudents = mockStudents.filter(s => s.grade === selectedGrade);

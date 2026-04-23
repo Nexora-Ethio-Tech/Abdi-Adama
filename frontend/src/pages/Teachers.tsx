@@ -102,7 +102,7 @@ export const Teachers = () => {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold text-sm">
-                      {teacher.name.split(' ').map(n => n[0]).join('')}
+                      {teacher.name.split(' ').map((n: string) => n[0]).join('')}
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-800">{teacher.name}</p>
@@ -123,7 +123,7 @@ export const Teachers = () => {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1">
-                    {teacher.subjects.map(s => (
+                    {teacher.subjects.map((s: string) => (
                       <span key={s} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-medium">
                         {s}
                       </span>
