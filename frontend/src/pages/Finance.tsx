@@ -1,8 +1,9 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock } from 'lucide-react';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, UserPlus } from 'lucide-react';
 import { mockFinances, mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
+import { StudentRegistration } from '../components/StudentRegistration';
 
 interface PaymentLog {
   status: boolean;
@@ -25,7 +26,7 @@ export const Finance = () => {
     '6': [{ status: false, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
   });
 
-  const [activeView, setActiveView] = useState<'main' | 'audit'>('main');
+  const [activeView, setActiveView] = useState<'main' | 'audit' | 'registration'>('main');
 
   const allAuditLogs = Object.entries(paymentStatus).flatMap(([id, logs]) => {
     const student = mockStudents.find(s => s.id === id);
@@ -112,6 +113,15 @@ export const Finance = () => {
                   System Audit Log
                 </button>
               )}
+              {(isClerk || role === 'super-admin') && (
+                <button
+                  onClick={() => setActiveView('registration')}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeView === 'registration' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                >
+                  <UserPlus size={14} />
+                  Registration
+                </button>
+              )}
             </div>
             {isFinance && (
               <button
@@ -140,7 +150,11 @@ export const Finance = () => {
           </div>
         </div>
         <div className="overflow-x-auto">
-          {activeView === 'audit' ? (
+          {activeView === 'registration' ? (
+            <div className="p-6">
+              <StudentRegistration isAdminView={true} />
+            </div>
+          ) : activeView === 'audit' ? (
             <table className="w-full text-left text-sm min-w-[800px]">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>
