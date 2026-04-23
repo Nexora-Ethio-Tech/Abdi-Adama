@@ -1,10 +1,17 @@
 
 import { Bell, Search, User, LogOut, Moon, Sun, Menu, Calendar as CalendarIcon, X } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import { useStore } from '../context/useStore';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Calendar } from '../pages/Calendar';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 interface HeaderProps {
   title: string;
@@ -13,6 +20,7 @@ interface HeaderProps {
 
 export const Header = ({ title, onMenuClick }: HeaderProps) => {
   const { user, logout, selectedBranch, role } = useUser();
+  const { isExamLockedDown } = useStore();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [showCalendar, setShowCalendar] = useState(false);
@@ -42,18 +50,20 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-1 md:gap-6">
-        <div className="relative group hidden sm:block">
+        <div className={cn("relative group hidden sm:block", isExamLockedDown && "opacity-50 pointer-events-none")}>
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} />
           <input
             type="text"
             placeholder="Search..."
+            disabled={isExamLockedDown}
             className="pl-9 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-xs focus:ring-2 focus:ring-blue-500 outline-none w-32 md:w-48 xl:w-64"
           />
         </div>
 
         <button
           onClick={toggleTheme}
-          className="p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+          disabled={isExamLockedDown}
+          className={cn("p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all", isExamLockedDown && "opacity-50 cursor-not-allowed")}
           title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
           {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
@@ -61,13 +71,17 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
 
         <button
           onClick={() => setShowCalendar(true)}
-          className="p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+          disabled={isExamLockedDown}
+          className={cn("p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all", isExamLockedDown && "opacity-50 cursor-not-allowed")}
           title="Open Calendar"
         >
           <CalendarIcon size={20} />
         </button>
 
-        <button className="relative p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
+        <button
+          disabled={isExamLockedDown}
+          className={cn("relative p-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all", isExamLockedDown && "opacity-50 cursor-not-allowed")}
+        >
           <Bell size={20} />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-school-secondary rounded-full border-2 border-white dark:border-slate-900"></span>
         </button>
@@ -85,7 +99,8 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
 
           <button
             onClick={handleLogout}
-            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+            disabled={isExamLockedDown}
+            className={cn("p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all", isExamLockedDown && "opacity-50 cursor-not-allowed")}
             title="Sign Out"
           >
             <LogOut size={20} />

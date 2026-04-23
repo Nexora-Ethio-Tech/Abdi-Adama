@@ -1,8 +1,9 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, UserPlus } from 'lucide-react';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, UserPlus, Filter, ChevronDown, Bus, ArrowLeft } from 'lucide-react';
 import { mockFinances, mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { StudentRegistration } from '../components/StudentRegistration';
 
 interface PaymentLog {
@@ -12,6 +13,7 @@ interface PaymentLog {
 }
 
 export const Finance = () => {
+  const navigate = useNavigate();
   const { role, user } = useUser();
   const isAdmin = role === 'super-admin' || role === 'school-admin';
   const isClerk = role === 'finance-clerk';
@@ -26,7 +28,9 @@ export const Finance = () => {
     '6': [{ status: false, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
   });
 
-  const [activeView, setActiveView] = useState<'main' | 'audit' | 'registration'>('main');
+  const [activeView, setActiveView] = useState<'main' | 'audit' | 'registration' | 'matrix'>('main');
+  const [auditFilter, setAuditFilter] = useState<'In' | 'Out'>('In');
+  const [auditCategory, setAuditCategory] = useState<'Fees' | 'Staff'>('Fees');
 
   const allAuditLogs = Object.entries(paymentStatus).flatMap(([id, logs]) => {
     const student = mockStudents.find(s => s.id === id);
@@ -61,6 +65,13 @@ export const Finance = () => {
 
   return (
     <div className="space-y-8">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
           <div className="relative z-10">
@@ -122,6 +133,15 @@ export const Finance = () => {
                   Registration
                 </button>
               )}
+              {isFinance && (
+                <button
+                  onClick={() => setActiveView('matrix')}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeView === 'matrix' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                >
+                  <CreditCard size={14} />
+                  Finance Matrix
+                </button>
+              )}
             </div>
             {isFinance && (
               <button
@@ -150,47 +170,156 @@ export const Finance = () => {
           </div>
         </div>
         <div className="overflow-x-auto -mx-4 sm:mx-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
-          {activeView === 'registration' ? (
+          {activeView === 'matrix' ? (
+            <div className="p-6 overflow-x-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-bold text-slate-800">12-Month Payment Matrix</h3>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold">
+                    <div className="w-3 h-3 bg-emerald-500 rounded-sm"></div>
+                    <span className="text-slate-500 uppercase">Paid</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold">
+                    <div className="w-3 h-3 bg-rose-500 rounded-sm"></div>
+                    <span className="text-slate-500 uppercase">Unpaid</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold">
+                    <div className="w-3 h-3 bg-purple-500 rounded-sm"></div>
+                    <span className="text-slate-500 uppercase">Scholarship</span>
+                  </div>
+                </div>
+              </div>
+              <table className="w-full text-left text-[10px] border-collapse min-w-[1000px]">
+                <thead>
+                  <tr className="bg-slate-50">
+                    <th className="p-3 border border-slate-200 font-black uppercase text-slate-500 sticky left-0 bg-slate-50 z-10">Student</th>
+                    <th className="p-3 border border-slate-200 font-black uppercase text-slate-500 text-center">Bus</th>
+                    {['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'].map(m => (
+                      <th key={m} className="p-3 border border-slate-200 font-black uppercase text-slate-500 text-center">{m}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockStudents.map(student => {
+                    const isScholarship = (student as any).isScholarship;
+                    const isBus = (student as any).isBusUser;
+                    return (
+                      <tr key={student.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="p-3 border border-slate-200 font-bold text-slate-800 sticky left-0 bg-white z-10">
+                          {student.name}
+                        </td>
+                        <td className="p-3 border border-slate-200 text-center">
+                          <button
+                            className={`p-1.5 rounded ${isBus ? 'text-blue-600 bg-blue-50' : 'text-slate-300'}`}
+                            title="Toggle Bus Service"
+                          >
+                            <Bus size={14} />
+                          </button>
+                        </td>
+                        {['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'].map((m, i) => (
+                          <td key={m} className="p-2 border border-slate-200">
+                            <div className={`w-full h-6 rounded flex items-center justify-center font-black ${
+                              isScholarship
+                                ? 'bg-purple-100 text-purple-700'
+                                : i < 7 // Mocking past months
+                                  ? 'bg-emerald-100 text-emerald-700'
+                                  : 'bg-rose-100 text-rose-700'
+                            }`}>
+                              {isScholarship ? 'SCHOL' : i < 7 ? 'PAID' : 'PEND'}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : activeView === 'registration' ? (
             <div className="p-4 sm:p-6">
               <StudentRegistration isAdminView={true} />
             </div>
           ) : activeView === 'audit' ? (
-            <table className="w-full text-left text-sm min-w-[800px]">
-              <thead className="bg-slate-50 border-b border-slate-100">
-                <tr>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Timestamp</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Officer</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Action</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Target Student</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {allAuditLogs.map((log, i) => (
-                  <tr key={i} className="hover:bg-slate-50/50 transition-colors border-l-4 border-transparent hover:border-blue-600">
-                    <td className="px-6 py-4 text-slate-500 font-mono text-[10px]">{log.timestamp}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                         <div className="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-600">
-                           {log.modifiedBy[0]}
-                         </div>
-                         <span className="font-bold text-slate-800">{log.modifiedBy}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                        log.status ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-                      }`}>
-                        {log.status ? 'Approved Payment' : 'Revoked Payment'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                       <span className="font-medium text-slate-600">{log.studentName}</span>
-                       <span className="text-[10px] text-slate-400 ml-2">({log.studentId})</span>
-                    </td>
+            <div className="space-y-4">
+              <div className="p-4 bg-slate-50 border-b border-slate-100 flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Filter size={14} className="text-slate-400" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">Modular View:</span>
+                </div>
+                <div className="flex bg-white p-1 rounded-lg border border-slate-200">
+                  <button
+                    onClick={() => setAuditFilter('In')}
+                    className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${auditFilter === 'In' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500'}`}
+                  >
+                    Money In
+                  </button>
+                  <button
+                    onClick={() => setAuditFilter('Out')}
+                    className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${auditFilter === 'Out' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500'}`}
+                  >
+                    Money Out
+                  </button>
+                </div>
+                <div className="flex bg-white p-1 rounded-lg border border-slate-200">
+                  <button
+                    onClick={() => setAuditCategory('Fees')}
+                    className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${auditCategory === 'Fees' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}
+                  >
+                    Fees
+                  </button>
+                  <button
+                    onClick={() => setAuditCategory('Staff')}
+                    className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${auditCategory === 'Staff' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500'}`}
+                  >
+                    Staff
+                  </button>
+                </div>
+                <div className="relative">
+                  <select className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 outline-none focus:ring-1 focus:ring-blue-500">
+                    <option>All Grade/Sections</option>
+                    <option>Grade 9A</option>
+                    <option>Grade 10B</option>
+                  </select>
+                  <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" />
+                </div>
+              </div>
+              <table className="w-full text-left text-sm min-w-[800px]">
+                <thead className="bg-slate-50 border-b border-slate-100">
+                  <tr>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Timestamp</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Officer</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Action</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Target Student</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {allAuditLogs.map((log, i) => (
+                    <tr key={i} className="hover:bg-slate-50/50 transition-colors border-l-4 border-transparent hover:border-blue-600">
+                      <td className="px-6 py-4 text-slate-500 font-mono text-[10px]">{log.timestamp}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-600">
+                            {log.modifiedBy[0]}
+                          </div>
+                          <span className="font-bold text-slate-800">{log.modifiedBy}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                          log.status ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                        }`}>
+                          {log.status ? 'Approved Payment' : 'Revoked Payment'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="font-medium text-slate-600">{log.studentName}</span>
+                        <span className="text-[10px] text-slate-400 ml-2">({log.studentId})</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : isClerk ? (
             <table className="w-full text-left text-sm min-w-[800px]">
               <thead className="bg-slate-50 border-b border-slate-100">

@@ -22,6 +22,7 @@ import { Library } from './pages/Library';
 import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';
+import { Transcripts } from './pages/Transcripts';
 import Exams from './pages/Exams';
 import { Clinic } from './pages/Clinic';
 import { ParentClinicChat } from './pages/ParentClinicChat';
@@ -107,7 +108,7 @@ function App() {
             } />
 
             <Route path="attendance" element={
-              <ProtectedRoute allowedRoles={['school-admin', 'super-admin', 'teacher', 'student']}>
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin', 'teacher', 'student', 'vice-principal']}>
                  {role === 'teacher' ? <TeacherAttendance /> :
                   role === 'student' ? <AcademicHistory /> :
                   <Attendance />}
@@ -157,8 +158,14 @@ function App() {
             } />
 
             <Route path="grades" element={
-              <ProtectedRoute allowedRoles={['teacher']}>
+              <ProtectedRoute allowedRoles={['teacher', 'vice-principal', 'school-admin']}>
                 <GradeEntry />
+              </ProtectedRoute>
+            } />
+
+            <Route path="transcripts" element={
+              <ProtectedRoute allowedRoles={['vice-principal', 'super-admin']}>
+                <Transcripts />
               </ProtectedRoute>
             } />
 

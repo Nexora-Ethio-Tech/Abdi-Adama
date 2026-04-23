@@ -1,16 +1,24 @@
 
-import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck, Users, ShieldAlert, ArrowRight, X } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck, Users, ShieldAlert, ArrowRight, X, Send, Check } from 'lucide-react';
 import { mockStudents, mockTeachers } from '../data/mockData';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const Attendance = () => {
+  const navigate = useNavigate();
   const { role } = useUser();
   const isAdmin = role === 'school-admin' || role === 'super-admin';
+  const isVP = role === 'vice-principal';
   const [selectedGrade, setSelectedGrade] = useState('10A');
   const [attendance, setAttendance] = useState<Record<string, 'present' | 'absent' | 'late'>>({});
   const [showSubModal, setShowSubModal] = useState(false);
   const [absentTeacher, setAbsentTeacher] = useState<any>(null);
+  const [absentReviewQueue, setAbsentReviewQueue] = useState([
+    { id: '1', studentName: 'Ahmed Ali', grade: '10A', reason: 'Not reported', time: '08:15 AM' },
+    { id: '2', studentName: 'Sara Mohammed', grade: '9B', reason: 'Family emergency', time: '08:45 AM' },
+  ]);
 
   const students = mockStudents.filter(s => s.grade === selectedGrade);
 
@@ -38,6 +46,66 @@ export const Attendance = () => {
 
   return (
     <div className="space-y-6">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
+      {isVP && absentReviewQueue.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-rose-100 dark:border-rose-900/30 overflow-hidden shadow-xl shadow-rose-50 dark:shadow-none">
+          <div className="bg-rose-50 dark:bg-rose-900/20 px-6 py-4 border-b border-rose-100 dark:border-rose-900/30 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-rose-500 text-white rounded-lg animate-pulse">
+                <ShieldAlert size={20} />
+              </div>
+              <div>
+                <h3 className="font-black text-rose-900 dark:text-rose-100 text-sm uppercase tracking-wider">VP Attendance Review Queue</h3>
+                <p className="text-xs text-rose-700 dark:text-rose-300">Unexcused absences requiring escalation</p>
+              </div>
+            </div>
+            <span className="px-3 py-1 bg-rose-200 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 rounded-full text-xs font-black">
+              {absentReviewQueue.length} PENDING
+            </span>
+          </div>
+          <div className="divide-y divide-rose-50 dark:divide-rose-900/20">
+            {absentReviewQueue.map((item) => (
+              <div key={item.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-rose-50/30 dark:hover:bg-rose-900/10 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-rose-600 font-black shadow-sm border border-rose-100 dark:border-rose-900/30">
+                    {item.studentName[0]}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-800 dark:text-slate-100">{item.studentName}</p>
+                    <p className="text-xs text-slate-500 font-medium">Grade {item.grade} • Reported at {item.time}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setAbsentReviewQueue(prev => prev.filter(q => q.id !== item.id))}
+                    className="flex-1 sm:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-100"
+                  >
+                    <Check size={16} />
+                    Pass (Excused)
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert(`Notifying parents of ${item.studentName}...`);
+                      setAbsentReviewQueue(prev => prev.filter(q => q.id !== item.id));
+                    }}
+                    className="flex-1 sm:flex-none px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-100"
+                  >
+                    <Send size={16} />
+                    Notify Parents
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Student Attendance</h2>

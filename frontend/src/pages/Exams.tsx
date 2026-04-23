@@ -16,11 +16,15 @@ import {
   Upload,
   AlignLeft,
   CheckSquare,
-  Layers
+  Layers,
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { mockExams } from '../data/examData';
 import type { Exam, ExamCategory } from '../data/examData';
+import { useStore } from '../context/useStore';
 
 const Exams = () => {
   const { role } = useUser();
@@ -56,6 +60,13 @@ const Exams = () => {
 
   return (
     <div className="space-y-6">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Exams & Assignments</h1>
@@ -141,8 +152,13 @@ const Exams = () => {
 };
 
 const ExamCard = ({ exam, role, onStart }: { exam: Exam, role: string | null, onStart: () => void }) => {
+  const [locked, setLocked] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  if (hidden && role !== 'teacher' && role !== 'school-admin') return null;
+
   return (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all group">
+    <div className={`bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all group relative ${hidden ? 'opacity-60 grayscale' : ''}`}>
       <div className="flex justify-between items-start mb-4">
         <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-blue-600">
           <ClipboardList size={24} />
@@ -171,17 +187,42 @@ const ExamCard = ({ exam, role, onStart }: { exam: Exam, role: string | null, on
       <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
         {role === 'student' ? (
           <button
+            disabled={locked}
             onClick={onStart}
-            className="w-full flex items-center justify-center gap-2 text-blue-600 font-medium hover:gap-3 transition-all"
+            className={`w-full flex items-center justify-center gap-2 font-medium transition-all ${locked ? 'text-slate-400 cursor-not-allowed' : 'text-blue-600 hover:gap-3'}`}
           >
-            Start Exam <ChevronRight size={18} />
+            {locked ? (
+              <>Locked with Code <Lock size={16} /></>
+            ) : (
+              <>Start Exam <ChevronRight size={18} /></>
+            )}
           </button>
         ) : (
           <div className="flex justify-between items-center text-sm">
-            <span className={exam.status === 'available' ? 'text-green-600' : 'text-slate-400'}>
-              {exam.status === 'available' ? '• Active' : '• Draft'}
-            </span>
-            <button className="text-slate-400 hover:text-blue-600 transition-colors">
+            <div className="flex items-center gap-3">
+              <span className={exam.status === 'available' ? 'text-green-600 font-bold' : 'text-slate-400'}>
+                {exam.status === 'available' ? '• Active' : '• Draft'}
+              </span>
+              {(role === 'teacher' || role === 'school-admin') && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setLocked(!locked)}
+                    className={`p-1 rounded ${locked ? 'text-rose-600 bg-rose-50' : 'text-slate-400 hover:bg-slate-50'}`}
+                    title={locked ? 'Unlock' : 'Lock with Code'}
+                  >
+                    <Lock size={14} />
+                  </button>
+                  <button
+                    onClick={() => setHidden(!hidden)}
+                    className={`p-1 rounded ${hidden ? 'text-amber-600 bg-amber-50' : 'text-slate-400 hover:bg-slate-50'}`}
+                    title={hidden ? 'Unveil' : 'Hide'}
+                  >
+                    {hidden ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
+              )}
+            </div>
+            <button className="text-slate-400 hover:text-blue-600 transition-colors font-bold uppercase text-[10px] tracking-widest">
               View Details
             </button>
           </div>

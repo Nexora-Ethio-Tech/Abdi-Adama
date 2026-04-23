@@ -15,12 +15,14 @@ import {
   ClipboardList,
   X,
   UserCog,
-  HeartPulse
+  HeartPulse,
+  FileText
 } from 'lucide-react';
 import logo from '../assets/logo.jpg';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useUser } from '../context/UserContext';
+import { useStore } from '../context/useStore';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,6 +35,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { role, logout, switchRole, schoolName } = useUser();
+  const { isExamLockedDown } = useStore();
   const navigate = useNavigate();
 
   const displaySchoolName = schoolName.english;
@@ -64,6 +67,15 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: Wallet, label: 'Finance', path: '/finance' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
+        ];
+      case 'vice-principal':
+        return [
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+          { icon: Users, label: 'Students', path: '/students' },
+          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
+          { icon: FileText, label: 'Transcripts', path: '/transcripts' },
+          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
+          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
         ];
       case 'teacher':
         return [
@@ -117,6 +129,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { id: 'student', label: 'Student' },
     { id: 'parent', label: 'Parent' },
     { id: 'finance-clerk', label: 'Finance Clerk' },
+    { id: 'vice-principal', label: 'Vice Principal' },
     { id: 'librarian', label: 'Librarian' },
     { id: 'clinic-admin', label: 'Clinic Admin' },
   ];
@@ -148,13 +161,18 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         {navItems.map((item) => (
           <NavLink
             key={item.path}
-            to={item.path}
-            onClick={() => {
+            to={isExamLockedDown ? '#' : item.path}
+            onClick={(e) => {
+              if (isExamLockedDown) {
+                e.preventDefault();
+                return;
+              }
               if (window.innerWidth < 1024) onClose();
             }}
             className={({ isActive }) => cn(
               "flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group",
-              isActive
+              isExamLockedDown && "opacity-50 cursor-not-allowed",
+              isActive && !isExamLockedDown
                 ? "bg-school-primary text-white shadow-lg shadow-school-primary/20 scale-[1.02]"
                 : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
             )}
@@ -176,7 +194,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <select
               value={role || ''}
               onChange={(e) => switchRole(e.target.value as any)}
-              className="bg-transparent text-xs font-bold outline-none cursor-pointer w-full appearance-none"
+            disabled={isExamLockedDown}
+            className={cn(
+              "bg-transparent text-xs font-bold outline-none cursor-pointer w-full appearance-none",
+              isExamLockedDown && "cursor-not-allowed"
+            )}
             >
               {roles.map(r => (
                 <option key={r.id} value={r.id || ''} className="bg-slate-900 text-white">
@@ -190,7 +212,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         <button
           onClick={handleLogout}
-          className="flex items-center gap-4 px-5 py-4 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl transition-all duration-300 group"
+          disabled={isExamLockedDown}
+          className={cn(
+            "flex items-center gap-4 px-5 py-4 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl transition-all duration-300 group",
+            isExamLockedDown && "opacity-50 cursor-not-allowed"
+          )}
         >
           <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span className="font-bold text-sm tracking-wide">Logout Session</span>

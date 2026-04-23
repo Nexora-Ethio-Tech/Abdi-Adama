@@ -10,12 +10,18 @@ import {
   Download,
   AlertCircle,
   ChevronRight,
-  ShieldAlert
+  ShieldAlert,
+  MapPin
 } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useStore } from '../context/useStore';
+import { ArrowLeft } from 'lucide-react';
 
 export const Analytics = () => {
+  const navigate = useNavigate();
+  const { selectedBranchId, setSelectedBranchId } = useStore();
   const metrics = [
     { label: 'Total Revenue', value: '4.8M ETB', trend: '+12.5%', isPositive: true, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Total Students', value: '1,284', trend: '+4.3%', isPositive: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -32,12 +38,37 @@ export const Analytics = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Global Analytics</h2>
-          <p className="text-sm text-slate-500">Cross-branch performance metrics and financial trends.</p>
+          <h2 className="text-2xl font-bold text-slate-800">
+            {selectedBranchId ? `${branchPerformance.find(b => b.name.includes(selectedBranchId))?.name || 'Branch'} Analytics` : 'Global Analytics'}
+          </h2>
+          <p className="text-sm text-slate-500">
+            {selectedBranchId ? 'Detailed branch performance and local trends.' : 'Cross-branch performance metrics and financial trends.'}
+          </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <select
+              value={selectedBranchId || ''}
+              onChange={(e) => setSelectedBranchId(e.target.value || null)}
+              className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none min-w-[160px]"
+            >
+              <option value="">All Branches</option>
+              <option value="Main">Main Branch</option>
+              <option value="Bole">Bole Branch</option>
+              <option value="Megenagna">Megenagna Branch</option>
+              <option value="Adama">Adama Branch</option>
+            </select>
+          </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
             <Filter size={18} />
             This Year

@@ -1,13 +1,16 @@
 
-import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check } from 'lucide-react';
+import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, User } from 'lucide-react';
 import { mockTeachers, mockSchedules, mockClasses } from '../data/mockData';
 import { useState } from 'react';
 
 import { useUser } from '../context/UserContext';
+import { ArrowLeft } from 'lucide-react';
 
 export const Teachers = () => {
+  const navigate = useNavigate();
   const { role } = useUser();
   const isAdmin = role === 'school-admin' || role === 'super-admin';
+  const isVP = role === 'vice-principal';
   const [teachers, setTeachers] = useState<any[]>(mockTeachers);
   const [viewingSchedule, setViewingSchedule] = useState<string | null>(null);
   const [promotingTeacher, setPromotingTeacher] = useState<any | null>(null);
@@ -63,6 +66,13 @@ export const Teachers = () => {
 
   return (
     <div className="space-y-6">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors w-full md:w-fit text-sm md:text-base">
           <UserPlus size={20} />
@@ -162,6 +172,14 @@ export const Teachers = () => {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
+                    {(isAdmin || isVP) && (
+                      <button
+                        onClick={() => alert(`Full Teacher Profile for ${teacher.name}\nClasses: ${teacher.classes}\nSubjects: ${teacher.subjects.join(', ')}`)}
+                        className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Full Profile"
+                      >
+                        <User size={18} />
+                      </button>
+                    )}
                     {isAdmin && (
                       <button
                         onClick={() => setPromotingTeacher({ ...teacher })}

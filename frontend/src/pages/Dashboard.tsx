@@ -23,18 +23,20 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 );
 
 export const Dashboard = () => {
-  const { role, gradesLocked, setGradesLocked } = useUser();
+  const { role, user, gradesLocked, setGradesLocked } = useUser();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [watchlistExpanded, setWatchlistExpanded] = useState(true);
   const [notices] = useState([
     { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago', expiresAt: '2024-06-30' },
     { id: 2, title: 'School Bus Maintenance', content: 'Route B buses will be undergoing maintenance this Friday. Please expect minor delays.', priority: 'Medium', time: 'Yesterday', expiresAt: '2024-05-15' }
   ]);
 
   const isAdmin = role === 'super-admin' || role === 'school-admin';
+  const isVP = role === 'vice-principal';
 
   return (
     <div className="space-y-8">
-      {role === 'school-admin' && (
+      {(role === 'school-admin' || isVP || role === 'super-admin') && (
         <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300 ${
           gradesLocked
             ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
@@ -54,19 +56,36 @@ export const Dashboard = () => {
                 {gradesLocked
                   ? 'System is currently performing averages and ranking.'
                   : 'Teachers can currently enter and modify student grades.'}
+                {role === 'super-admin' && ' (Super Admin: Read-only access)'}
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setGradesLocked(!gradesLocked)}
-            className={`w-full sm:w-auto px-6 py-2 rounded-lg font-bold transition-colors ${
-              gradesLocked
-                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                : 'bg-amber-600 hover:bg-amber-700 text-white'
-            }`}
-          >
-            {gradesLocked ? 'Open Insertion' : 'Close Insertion'}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {isVP && (
+              <button
+                onClick={() => {
+                  alert('Calculating Student Ranks for all sections...');
+                }}
+                className="w-full sm:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-200"
+              >
+                <TrendingUp size={18} />
+                Calculate Ranks
+              </button>
+            )}
+            {(role === 'school-admin' || role === 'super-admin') && (
+              <button
+                disabled={role === 'super-admin'}
+                onClick={() => setGradesLocked(!gradesLocked)}
+                className={`w-full sm:w-auto px-6 py-2 rounded-lg font-bold transition-colors ${
+                  gradesLocked
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                }`}
+              >
+                {gradesLocked ? 'Open Insertion' : 'Close Insertion'}
+              </button>
+            )}
+          </div>
         </div>
       )}
 
@@ -182,30 +201,36 @@ export const Dashboard = () => {
         {isAdmin && (
           <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <button
+                onClick={() => setWatchlistExpanded(!watchlistExpanded)}
+                className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2 hover:opacity-70 transition-opacity"
+              >
                 <ShieldAlert size={20} className="text-rose-600" />
                 Priority Watchlist
-              </h3>
+                <ChevronRight size={18} className={`transition-transform duration-300 ${watchlistExpanded ? 'rotate-90' : ''}`} />
+              </button>
               <Link to="/analytics" className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest">
                 Full Report
               </Link>
             </div>
-            <div className="space-y-4">
-              {mockStudents.filter(s => s.riskLevel === 'High' || s.riskLevel === 'Medium').slice(0, 4).map((student, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${student.riskLevel === 'High' ? 'bg-rose-500' : 'bg-amber-500'}`} />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{student.name}</p>
-                      <p className="text-[10px] text-slate-400 font-medium uppercase">Grade {student.grade} • {student.riskLevel} Risk</p>
+            {watchlistExpanded && (
+              <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                {mockStudents.filter(s => s.riskLevel === 'High' || s.riskLevel === 'Medium').slice(0, 4).map((student, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2 h-2 rounded-full ${student.riskLevel === 'High' ? 'bg-rose-500' : 'bg-amber-500'}`} />
+                      <div>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{student.name}</p>
+                        <p className="text-[10px] text-slate-400 font-medium uppercase">Grade {student.grade} • {student.riskLevel} Risk</p>
+                      </div>
                     </div>
+                    <Link to={`/students/${student.id}`} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">
+                      <ArrowRight size={16} />
+                    </Link>
                   </div>
-                  <Link to={`/students/${student.id}`} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

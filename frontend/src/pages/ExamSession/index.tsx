@@ -25,6 +25,8 @@ export const ExamSession: React.FC = () => {
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [lastViolationType, setLastViolationType] = useState<string>('');
   const [hasStarted, setHasStarted] = useState(false);
+  const [reentryPassword, setReentryPassword] = useState('');
+  const [showReentryModal, setShowReentryModal] = useState(false);
 
   // --- Persistence ---
   const STORAGE_KEY = `exam_session_${examId}`;
@@ -77,7 +79,11 @@ export const ExamSession: React.FC = () => {
   const handleViolation = useCallback((type: string) => {
     setViolations(prev => [...prev, type]);
     setLastViolationType(type);
-    setShowWarningModal(true);
+    if (type === 'Visibility Change' || type === 'Window Blur') {
+      setShowReentryModal(true);
+    } else {
+      setShowWarningModal(true);
+    }
   }, []);
 
   const handleSubmit = useCallback(async (auto = false) => {
@@ -117,7 +123,7 @@ export const ExamSession: React.FC = () => {
   }, [examId, answers, violations.length, examStartedAt, STORAGE_KEY, isSubmitting]);
 
   const { requestFullscreen } = useAntiCheat({
-    onViolation: isSubmitting || submitStatus === 'success' ? () => {} : handleViolation,
+    onViolation: isSubmitting || submitStatus === 'success' || showReentryModal ? () => {} : handleViolation,
     maxWarnings: 3,
     autoSubmit: () => handleSubmit(true)
   });
@@ -189,6 +195,44 @@ export const ExamSession: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24">
+      {/* Teacher Re-entry Modal */}
+      {showReentryModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900 backdrop-blur-xl p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-md w-full p-8 text-center border-4 border-rose-500 animate-in zoom-in duration-300">
+            <div className="w-20 h-20 bg-rose-100 dark:bg-rose-900/30 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock size={40} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">LOCKDOWN ACTIVE</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-8 font-medium">
+              You attempted to leave the exam environment. A teacher must enter their password to resume the session.
+            </p>
+            <div className="space-y-4">
+              <input
+                type="password"
+                placeholder="Teacher Password"
+                className="w-full px-6 py-4 bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:border-blue-500 transition-all text-center font-bold tracking-widest"
+                value={reentryPassword}
+                onChange={(e) => setReentryPassword(e.target.value)}
+              />
+              <button
+                onClick={() => {
+                  if (reentryPassword === 'teacher123') { // Mock validation
+                    setShowReentryModal(false);
+                    setReentryPassword('');
+                    requestFullscreen();
+                  } else {
+                    alert('Invalid Teacher Password');
+                  }
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 transition-all"
+              >
+                UNBLOCK SESSION
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SubmitOverlay
         status={submitStatus}
         onRetry={() => handleSubmit()}

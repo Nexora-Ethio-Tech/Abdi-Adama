@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-export type UserRole = 'super-admin' | 'school-admin' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian' | 'clinic-admin';
+export type UserRole = 'super-admin' | 'school-admin' | 'vice-principal' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian' | 'clinic-admin';
 
 export interface User {
   id: string;
@@ -146,6 +146,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } else if (id.startsWith('AD')) {
       mockUser.role = 'school-admin';
       mockUser.name = 'Admin';
+    } else if (id.startsWith('VP')) {
+      mockUser.role = 'vice-principal';
+      mockUser.name = 'Vice Principal';
     } else if (id.startsWith('TR')) {
       mockUser.role = 'teacher';
       mockUser.name = 'Teacher';
