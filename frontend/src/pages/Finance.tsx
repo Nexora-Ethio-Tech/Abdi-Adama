@@ -97,18 +97,18 @@ export const Finance = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex bg-slate-100 p-1 rounded-xl">
+          <div className="flex items-center gap-4 w-full sm:w-auto overflow-hidden">
+            <div className="flex bg-slate-100 p-1 rounded-xl overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setActiveView('main')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeView === 'main' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${activeView === 'main' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
               >
                 {isAdmin ? 'Summaries' : 'Transactions'}
               </button>
               {isAdmin && (
                 <button
                   onClick={() => setActiveView('audit')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeView === 'audit' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${activeView === 'audit' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
                 >
                   System Audit Log
                 </button>
@@ -116,7 +116,7 @@ export const Finance = () => {
               {(isClerk || role === 'super-admin') && (
                 <button
                   onClick={() => setActiveView('registration')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeView === 'registration' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeView === 'registration' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
                 >
                   <UserPlus size={14} />
                   Registration
@@ -126,7 +126,7 @@ export const Finance = () => {
             {isFinance && (
               <button
                 onClick={() => setShowForm(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold"
+                className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold flex-shrink-0"
               >
                 <Plus size={16} />
                 <span>New TX</span>
@@ -149,9 +149,9 @@ export const Finance = () => {
             </button>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-4 sm:mx-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
           {activeView === 'registration' ? (
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <StudentRegistration isAdminView={true} />
             </div>
           ) : activeView === 'audit' ? (
@@ -323,14 +323,15 @@ export const Finance = () => {
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
                     {isAdmin ? 'Details' : 'Type'}
                   </th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Verified By</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {isAdmin ? (
                   mockFinances.summaries.map((summary) => (
-                    <tr key={summary.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={summary.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className={`p-2 rounded-lg ${
@@ -364,13 +365,27 @@ export const Finance = () => {
                   ))
                 ) : (
                   mockFinances.recentTransactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={tx.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="px-6 py-4 font-mono text-slate-500">{tx.id}</td>
                       <td className="px-6 py-4 font-medium text-slate-800">{tx.student}</td>
                       <td className="px-6 py-4">
                         <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
                           {tx.type}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 group relative cursor-help">
+                           <ShieldCheck size={14} className="text-emerald-500" />
+                           <span className="text-xs font-bold text-slate-700">{tx.verifiedBy}</span>
+                           <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block w-48 p-2 bg-slate-900 text-white text-[8px] rounded-lg shadow-xl z-10 border border-white/10">
+                              <p className="font-mono opacity-60 mb-1">DIGITAL SIGNATURE</p>
+                              <p className="font-mono break-all">{btoa(tx.verifiedBy + tx.id).slice(0, 32)}...</p>
+                              <div className="mt-1 flex items-center gap-1 text-emerald-400 font-bold uppercase">
+                                 <Check size={8} />
+                                 Authenticity Verified
+                              </div>
+                           </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-slate-500">{tx.date}</td>
                       <td className="px-6 py-4 text-right font-bold text-slate-800">{tx.amount.toLocaleString()} ETB</td>

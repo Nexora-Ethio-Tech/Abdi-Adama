@@ -1,7 +1,7 @@
 
-import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList, Star, Save, CheckCircle, ChevronRight, History, FileText, CheckSquare, MessageSquare } from 'lucide-react';
+import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList, Star, Save, CheckCircle, ChevronRight, History, FileText, CheckSquare, MessageSquare, X, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockClasses, mockStudents, commFields, ratingLabels, mockWeeklyPlans, mockTeachers } from '../data/mockData';
+import { mockClasses, mockStudents, commFields, ratingLabels, mockWeeklyPlans, mockTeachers, type WeeklyPlan } from '../data/mockData';
 import { mockExams } from '../data/examData';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
@@ -18,6 +18,48 @@ export const TeacherPortal = () => {
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const [teacherNote, setTeacherNote] = useState('');
   const [isSaved, setIsSaved] = useState(false);
+
+  // Smart Lesson Planning State
+  const [plans, setPlans] = useState<WeeklyPlan[]>(mockWeeklyPlans);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [newPlan, setNewPlan] = useState<Partial<WeeklyPlan>>({
+    date: new Date().toISOString().split('T')[0],
+    content: '',
+    objectives: '',
+    teacherActivity: '',
+    time: '',
+    studentActivity: '',
+    teachingMethod: '',
+    teachingAids: '',
+    evaluation: '',
+    remark: '',
+    status: 'Pending'
+  });
+
+  const handleAddPlan = (e: React.FormEvent) => {
+    e.preventDefault();
+    const plan: WeeklyPlan = {
+      ...newPlan as WeeklyPlan,
+      id: `P${plans.length + 1}`,
+      teacherId: user?.id || 'T1',
+      status: 'Pending'
+    };
+    setPlans([plan, ...plans]);
+    setIsPlanModalOpen(false);
+    setNewPlan({
+      date: new Date().toISOString().split('T')[0],
+      content: '',
+      objectives: '',
+      teacherActivity: '',
+      time: '',
+      studentActivity: '',
+      teachingMethod: '',
+      teachingAids: '',
+      evaluation: '',
+      remark: '',
+      status: 'Pending'
+    });
+  };
 
   const pendingAssignments = mockExams.filter(e => e.category === 'Assignment').length;
 
@@ -43,22 +85,163 @@ export const TeacherPortal = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
+      <div className="flex overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 gap-2 p-1 bg-slate-100/50 dark:bg-slate-800/50 sm:bg-slate-100 dark:sm:bg-slate-800 rounded-xl w-auto sm:w-fit">
         {[
           { id: 'overview', label: 'Overview' },
-          { id: 'plans', label: 'Weekly Plans' },
+          { id: 'plans', label: 'Plans' },
           ...(isRoomTeacher ? [{ id: 'communication', label: 'Comm. Book' }] : []),
-          ...(isDean ? [{ id: 'review', label: 'Dept. Plans Review' }] : [])
+          ...(isDean ? [{ id: 'review', label: 'Review' }] : [])
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-4 md:px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
             {tab.label}
           </button>
         ))}
       </div>
+
+      {isPlanModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-4xl my-auto animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-5 sm:p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
+                  <FileText size={24} />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter text-xl">Create Weekly Plan</h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Smart Lesson Planning System</p>
+                </div>
+              </div>
+              <button onClick={() => setIsPlanModalOpen(false)} className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all shadow-sm">
+                <X size={20} className="text-slate-400" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddPlan} className="p-5 sm:p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date</label>
+                  <input
+                    required
+                    type="date"
+                    value={newPlan.date}
+                    onChange={e => setNewPlan({...newPlan, date: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div className="space-y-1 lg:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Content / Topic</label>
+                  <input
+                    required
+                    placeholder="e.g. Mathematics: Quadratic Equations"
+                    value={newPlan.content}
+                    onChange={e => setNewPlan({...newPlan, content: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Time (Duration)</label>
+                  <input
+                    required
+                    placeholder="e.g. 45 mins"
+                    value={newPlan.time}
+                    onChange={e => setNewPlan({...newPlan, time: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div className="space-y-1 lg:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Specific Objectives</label>
+                  <textarea
+                    required
+                    placeholder="What should students achieve?"
+                    value={newPlan.objectives}
+                    onChange={e => setNewPlan({...newPlan, objectives: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-medium h-20 resize-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Teacher Activity</label>
+                  <textarea
+                    required
+                    placeholder="What will you do?"
+                    value={newPlan.teacherActivity}
+                    onChange={e => setNewPlan({...newPlan, teacherActivity: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-medium h-20 resize-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Student Activity</label>
+                  <textarea
+                    required
+                    placeholder="What will students do?"
+                    value={newPlan.studentActivity}
+                    onChange={e => setNewPlan({...newPlan, studentActivity: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-medium h-20 resize-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Teaching Method</label>
+                  <input
+                    required
+                    placeholder="e.g. Interactive Lecture"
+                    value={newPlan.teachingMethod}
+                    onChange={e => setNewPlan({...newPlan, teachingMethod: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Teaching Aids</label>
+                  <input
+                    required
+                    placeholder="e.g. Textbook, Whiteboard"
+                    value={newPlan.teachingAids}
+                    onChange={e => setNewPlan({...newPlan, teachingAids: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Evaluation</label>
+                  <input
+                    required
+                    placeholder="e.g. Short Quiz"
+                    value={newPlan.evaluation}
+                    onChange={e => setNewPlan({...newPlan, evaluation: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div className="space-y-1 lg:col-span-3">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Remark (Optional)</label>
+                  <input
+                    placeholder="Any additional notes..."
+                    value={newPlan.remark}
+                    onChange={e => setNewPlan({...newPlan, remark: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-blue-600 outline-none text-sm font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-blue-200 dark:shadow-none uppercase tracking-widest text-xs order-1 sm:order-2"
+                >
+                  Submit Plan for Approval
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPlanModalOpen(false)}
+                  className="px-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black py-4 sm:py-0 rounded-2xl hover:bg-slate-200 transition-all uppercase tracking-widest text-xs order-2 sm:order-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {activeTab === 'overview' ? (
         <>
@@ -156,13 +339,18 @@ export const TeacherPortal = () => {
                 <h2 className="text-2xl font-black text-slate-900 dark:text-white">Smart Lesson Planning</h2>
                 <p className="text-slate-500 font-medium italic text-sm">Automated curriculum alignment and activity tracking.</p>
               </div>
-              <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 dark:shadow-none">
-                <FileText size={18} />
+              <button
+                onClick={() => setIsPlanModalOpen(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 dark:shadow-none"
+              >
+                <Plus size={18} />
                 Create New Plan
               </button>
             </div>
 
-            <div className="overflow-x-auto -mx-8">
+            <div className="overflow-x-auto -mx-4 sm:-mx-8 relative">
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-slate-900 to-transparent z-10 pointer-events-none sm:hidden"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-slate-900 to-transparent z-10 pointer-events-none sm:hidden"></div>
               <table className="w-full text-left border-collapse min-w-[1500px]">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-800">
@@ -180,7 +368,7 @@ export const TeacherPortal = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {mockWeeklyPlans.filter(p => p.teacherId === 'T1').map(plan => (
+                  {plans.filter(p => p.teacherId === user?.id || p.teacherId === 'T1').map(plan => (
                     <tr key={plan.id} className="group hover:bg-blue-50/30 dark:hover:bg-blue-900/5 transition-colors">
                       <td className="px-6 py-5">
                         <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{plan.date}</p>
@@ -224,7 +412,7 @@ export const TeacherPortal = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {mockWeeklyPlans.filter(p => p.teacherId !== 'T1').map(plan => (
+            {plans.filter(p => p.teacherId !== user?.id && p.teacherId !== 'T1').map(plan => (
               <div key={plan.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm group hover:border-blue-200 transition-all">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-4">
@@ -274,7 +462,7 @@ export const TeacherPortal = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 space-y-6">
+          <div className={`${selectedStudent ? 'hidden lg:block' : 'block'} lg:col-span-4 space-y-6`}>
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
               <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Select Class</h3>
               <div className="space-y-2">
@@ -319,7 +507,18 @@ export const TeacherPortal = () => {
             )}
           </div>
 
-          <div className="lg:col-span-8">
+          <div className={`${selectedStudent ? 'block' : 'hidden lg:block'} lg:col-span-8`}>
+            {selectedStudent ? (
+              <div className="lg:hidden mb-6">
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="flex items-center gap-2 text-blue-600 font-bold"
+                >
+                  <ArrowRight size={18} className="rotate-180" />
+                  Back to Students
+                </button>
+              </div>
+            ) : null}
             {selectedStudent ? (
               <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

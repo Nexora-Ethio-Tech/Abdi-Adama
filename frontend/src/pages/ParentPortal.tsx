@@ -360,9 +360,9 @@ export const ParentPortal = () => {
   return (
     <div className="space-y-12 animate-in fade-in duration-1000">
       {/* Hero Welcome Section - Enhanced Visuals */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden border border-slate-700/30">
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 md:p-16 text-white shadow-2xl relative overflow-hidden border border-slate-700/30">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-[10px] font-black uppercase tracking-[0.2em]">
               Family Dashboard
             </div>
@@ -417,8 +417,8 @@ export const ParentPortal = () => {
               }}
               className="group relative cursor-pointer"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[3rem] blur-lg opacity-0 group-hover:opacity-20 transition duration-500" />
-              <div className="relative bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] sm:rounded-[3rem] blur-lg opacity-0 group-hover:opacity-20 transition duration-500" />
+              <div className="relative bg-white dark:bg-slate-900 p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
                 <div className="flex items-center justify-between mb-10">
                   <div className="flex items-center gap-6">
                     <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-3xl shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
@@ -463,7 +463,7 @@ export const ParentPortal = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {notices.map(notice => (
-              <div key={notice.id} className="group bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
+              <div key={notice.id} className="group bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between mb-6">
                   <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] ${
                     notice.priority === 'High'

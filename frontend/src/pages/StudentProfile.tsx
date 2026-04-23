@@ -57,10 +57,10 @@ export const StudentProfile = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 -mx-4 sm:mx-0">
         {/* Profile Card */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center">
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm text-center">
             <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-4xl mx-auto mb-6">
               {student.name.charAt(0)}
             </div>
@@ -175,7 +175,7 @@ export const StudentProfile = () => {
         {/* Content Tabs/Details */}
         <div className="lg:col-span-8 space-y-8">
           {/* Bio Section */}
-          <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
               <User size={120} />
             </div>
@@ -220,7 +220,7 @@ export const StudentProfile = () => {
             )}
           </div>
           {/* Action Header */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 px-4 sm:px-0">
             <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${
               student.riskLevel === 'High' ? 'bg-rose-50 border-rose-100 text-rose-700' :
               student.riskLevel === 'Medium' ? 'bg-amber-50 border-amber-100 text-amber-700' :
@@ -245,7 +245,7 @@ export const StudentProfile = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 sm:px-0">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
               <div className="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
                 <Clock size={20} />
@@ -270,7 +270,7 @@ export const StudentProfile = () => {
           </div>
 
           {/* Academic History */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h4 className="font-bold text-slate-800 flex items-center gap-2">
                 <FileText size={20} className="text-blue-600" />
@@ -309,7 +309,7 @@ export const StudentProfile = () => {
           </div>
 
           {/* Attendance Trend */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-100 shadow-sm">
             <h4 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
               <Clock size={20} className="text-emerald-600" />
               Attendance Trend (Current Year)
@@ -340,7 +340,7 @@ export const StudentProfile = () => {
           </div>
 
           {/* Document Vault */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h4 className="font-bold text-slate-800 flex items-center gap-2">
                 <FileUp size={20} className="text-blue-600" />

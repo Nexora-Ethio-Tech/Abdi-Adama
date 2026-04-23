@@ -103,7 +103,7 @@ export const Clinic = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-3">
@@ -112,22 +112,22 @@ export const Clinic = () => {
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium">Monitor student health and manage clinical visits</p>
         </div>
-        <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
+        <div className="flex overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-auto sm:w-fit">
           <button
             onClick={() => setActiveTab('directory')}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'directory' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
+            className={`flex-shrink-0 px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'directory' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
           >
             Directory
           </button>
           <button
             onClick={() => setActiveTab('visits')}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'visits' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
+            className={`flex-shrink-0 px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'visits' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
           >
             Visits
           </button>
           <button
             onClick={() => setActiveTab('chat')}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all relative ${activeTab === 'chat' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
+            className={`flex-shrink-0 px-6 py-2 rounded-lg text-sm font-bold transition-all relative ${activeTab === 'chat' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500'}`}
           >
             Chats
             {unreadCount > 0 && (
@@ -140,7 +140,7 @@ export const Clinic = () => {
       </div>
 
       {activeTab === 'directory' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 -mx-4 sm:mx-0">
           <div className={`${selectedStudent ? 'hidden lg:block' : 'block'} lg:col-span-4 space-y-6`}>
             <div className="card p-4">
               <div className="relative">
@@ -291,8 +291,8 @@ export const Clinic = () => {
           </div>
         </div>
       ) : activeTab === 'visits' ? (
-        <div className="card overflow-hidden">
-          <table className="w-full text-left border-collapse">
+        <div className="card overflow-hidden -mx-4 sm:mx-0 overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead className="bg-slate-50 dark:bg-slate-800/50">
               <tr>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Student</th>
@@ -330,7 +330,7 @@ export const Clinic = () => {
           </table>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[600px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-250px)] min-h-[500px] -mx-4 sm:mx-0">
           <div className={`${selectedChat ? 'hidden lg:flex' : 'flex'} lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden flex-col`}>
             <div className="p-6 border-b border-slate-100 dark:border-slate-800">
               <h3 className="font-black text-slate-800 dark:text-white uppercase tracking-wider text-xs">Conversations</h3>
