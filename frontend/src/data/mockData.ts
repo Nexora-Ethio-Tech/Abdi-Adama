@@ -102,8 +102,8 @@ export const mockStudents = [
 ];
 
 export const mockTeachers = [
-  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true, isDean: true, isRoomTeacher: true, department: 'Science' },
-  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false, isRoomTeacher: true, department: 'Science' },
+  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true, isDean: true, isRoomTeacher: true, assignedRoomClass: 'Grade 10A', department: 'Science' },
+  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false, isRoomTeacher: true, assignedRoomClass: 'Grade 9B', department: 'Science' },
   { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true, department: 'Social Science' },
   { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false, department: 'Languages' },
   { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false, department: 'Vocational' },
