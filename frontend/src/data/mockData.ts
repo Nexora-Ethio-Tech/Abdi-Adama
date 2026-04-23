@@ -118,8 +118,9 @@ export const mockFinances = {
   totalRevenue: 1250000,
   pendingFees: 45000,
   recentTransactions: [
-    { id: 'TX1', student: 'Abebe Bikila', amount: 5000, type: 'Registration', date: '2026-04-10' },
-    { id: 'TX2', student: 'Sara Kebede', amount: 5000, type: 'Registration', date: '2026-04-11' },
+    { id: 'TX1', student: 'Abebe Bikila', amount: 5000, type: 'Registration', date: '2026-04-10', verifiedBy: 'Ato Solomon (Finance Clerk)' },
+    { id: 'TX2', student: 'Sara Kebede', amount: 5000, type: 'Registration', date: '2026-04-11', verifiedBy: 'W/ro Selam (Finance Clerk)' },
+    { id: 'TX3', student: 'Dawit Lema', amount: 6500, type: 'Monthly Fee', date: '2026-04-12', verifiedBy: 'System (Auto-verify)' },
   ],
   summaries: [
     { id: 'S1', category: 'Student Fees', description: 'April Student Fee', amount: 450000, count: 1200, type: 'Income', date: '2026-04-01' },

@@ -323,6 +323,7 @@ export const Finance = () => {
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
                     {isAdmin ? 'Details' : 'Type'}
                   </th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Verified By</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Amount</th>
                 </tr>
@@ -371,6 +372,12 @@ export const Finance = () => {
                         <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
                           {tx.type}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                           <ShieldCheck size={14} className="text-emerald-500" />
+                           <span className="text-xs font-bold text-slate-700">{tx.verifiedBy}</span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-slate-500">{tx.date}</td>
                       <td className="px-6 py-4 text-right font-bold text-slate-800">{tx.amount.toLocaleString()} ETB</td>

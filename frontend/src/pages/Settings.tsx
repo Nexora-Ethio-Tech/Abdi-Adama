@@ -8,7 +8,7 @@ import { useUser } from '../context/UserContext';
 export const Settings = () => {
   const [activeTab, setActiveTab] = useState('General');
   const { style, setStyle, autoDarkMode, setAutoDarkMode } = useAppearance();
-  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role } = useUser();
+  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role, branches } = useUser();
 
   const tabs = [
     { id: 'General', icon: Building },
@@ -159,7 +159,7 @@ export const Settings = () => {
             )}
 
             {activeTab === 'Financial Policy' && (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-slate-500 uppercase">Monthly Late Penalty (ETB)</label>
@@ -168,13 +168,92 @@ export const Settings = () => {
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-slate-500 uppercase">Payment Deadline (Day of Month)</label>
-                    <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue={10}>
                       {[5, 10, 15, 20, 25, 30].map(day => (
-                        <option key={day} value={day} selected={day === 10}>Day {day}</option>
+                        <option key={day} value={day}>Day {day}</option>
                       ))}
                     </select>
                   </div>
                 </div>
+
+                {role === 'super-admin' && (
+                  <div className="pt-8 border-t border-slate-100 dark:border-slate-800 space-y-6">
+                    <div>
+                      <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest mb-1">Fee Structure Management</h4>
+                      <p className="text-xs text-slate-500 font-medium">Configure school fees per branch and grade level.</p>
+                    </div>
+
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Branch</label>
+                        <select className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                          {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Grade</label>
+                        <select className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                          {['KG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(g => <option key={g} value={g}>Grade {g}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Monthly Fee</label>
+                        <input type="number" placeholder="5000" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Registration</label>
+                        <input type="number" placeholder="2500" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Bus Fee</label>
+                        <input type="number" placeholder="1200" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                      </div>
+                      <div className="flex items-end lg:col-span-5">
+                        <button className="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200">
+                          <Plus size={16} />
+                          <span>Apply Fee Configuration</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-2xl border border-slate-100 dark:border-slate-800">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-50 dark:bg-slate-800/50">
+                          <tr>
+                            <th className="px-4 py-3 font-bold text-slate-500 uppercase">Branch</th>
+                            <th className="px-4 py-3 font-bold text-slate-500 uppercase">Grade</th>
+                            <th className="px-4 py-3 font-bold text-slate-500 uppercase">Monthly</th>
+                            <th className="px-4 py-3 font-bold text-slate-500 uppercase">Registration</th>
+                            <th className="px-4 py-3 font-bold text-slate-500 uppercase">Bus Fee</th>
+                            <th className="px-4 py-3 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                          <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                            <td className="px-4 py-3 font-medium">Main Branch</td>
+                            <td className="px-4 py-3 font-bold text-blue-600">Grade 10</td>
+                            <td className="px-4 py-3 font-bold">5,000 ETB</td>
+                            <td className="px-4 py-3 font-bold">2,500 ETB</td>
+                            <td className="px-4 py-3 font-bold">1,200 ETB</td>
+                            <td className="px-4 py-3 text-right">
+                              <button className="text-rose-500 hover:text-rose-700 p-1"><Trash2 size={14} /></button>
+                            </td>
+                          </tr>
+                          <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                            <td className="px-4 py-3 font-medium">Bole Branch</td>
+                            <td className="px-4 py-3 font-bold text-blue-600">Grade 9</td>
+                            <td className="px-4 py-3 font-bold">4,800 ETB</td>
+                            <td className="px-4 py-3 font-bold">2,200 ETB</td>
+                            <td className="px-4 py-3 font-bold">1,000 ETB</td>
+                            <td className="px-4 py-3 text-right">
+                              <button className="text-rose-500 hover:text-rose-700 p-1"><Trash2 size={14} /></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
