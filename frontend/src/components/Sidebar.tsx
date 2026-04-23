@@ -68,6 +68,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       case 'teacher':
         return [
           { icon: LayoutDashboard, label: 'Teacher Portal', path: '/' },
+          { icon: BookOpen, label: 'Weekly Plans', path: '/?tab=plans' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
           { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
