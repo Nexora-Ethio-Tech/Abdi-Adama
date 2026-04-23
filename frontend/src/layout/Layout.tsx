@@ -84,12 +84,12 @@ export const Layout = () => {
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       )}
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
         <Header
           title={getTitle(location.pathname)}
           onMenuClick={() => setIsSidebarOpen(true)}
         />
-        <main className={`p-4 md:p-8 ${role === 'parent' ? 'max-w-7xl mx-auto w-full' : ''}`}>
+        <main className={`p-4 md:p-8 flex-1 w-full ${role === 'parent' ? 'max-w-7xl mx-auto' : ''}`}>
           <Outlet />
         </main>
         {!isExamPage && <Chatbot />}

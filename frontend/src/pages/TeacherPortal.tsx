@@ -348,7 +348,7 @@ export const TeacherPortal = () => {
               </button>
             </div>
 
-            <div className="overflow-x-auto -mx-8 relative">
+            <div className="overflow-x-auto -mx-4 sm:-mx-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-slate-900 to-transparent z-10 pointer-events-none sm:hidden"></div>
               <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-slate-900 to-transparent z-10 pointer-events-none sm:hidden"></div>
               <table className="w-full text-left border-collapse min-w-[1500px]">
@@ -462,7 +462,7 @@ export const TeacherPortal = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 space-y-6">
+          <div className={`${selectedStudent ? 'hidden lg:block' : 'block'} lg:col-span-4 space-y-6`}>
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
               <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Select Class</h3>
               <div className="space-y-2">
@@ -507,7 +507,18 @@ export const TeacherPortal = () => {
             )}
           </div>
 
-          <div className="lg:col-span-8">
+          <div className={`${selectedStudent ? 'block' : 'hidden lg:block'} lg:col-span-8`}>
+            {selectedStudent ? (
+              <div className="lg:hidden mb-6">
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="flex items-center gap-2 text-blue-600 font-bold"
+                >
+                  <ArrowRight size={18} className="rotate-180" />
+                  Back to Students
+                </button>
+              </div>
+            ) : null}
             {selectedStudent ? (
               <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

@@ -1,5 +1,5 @@
 
-import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio, GraduationCap, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio, GraduationCap, Plus, Trash2, AlertCircle, Lock, Unlock, Hash, Package } from 'lucide-react';
 import { useState } from 'react';
 import { useAppearance, type UIStyle } from '../context/AppearanceContext';
 import { mockGradingConfigs } from '../data/mockData';
@@ -8,7 +8,7 @@ import { useUser } from '../context/UserContext';
 export const Settings = () => {
   const [activeTab, setActiveTab] = useState('General');
   const { style, setStyle, autoDarkMode, setAutoDarkMode } = useAppearance();
-  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role, branches } = useUser();
+  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role, branches, gradesLocked, setGradesLocked } = useUser();
 
   const tabs = [
     { id: 'General', icon: Building },
@@ -151,6 +151,36 @@ export const Settings = () => {
                     </select>
                   </div>
                 </div>
+
+                {role === 'super-admin' && (
+                  <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Global System Controls</h4>
+                    <div
+                      onClick={() => setGradesLocked(!gradesLocked)}
+                      className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                        gradesLocked
+                          ? 'border-rose-200 bg-rose-50 text-rose-700'
+                          : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${gradesLocked ? 'bg-rose-500' : 'bg-emerald-500'} text-white`}>
+                          {gradesLocked ? <Lock size={18} /> : <Unlock size={18} />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold uppercase tracking-tight">Grade Entry {gradesLocked ? 'Locked' : 'Open'}</p>
+                          <p className="text-[10px] font-medium opacity-80">
+                            {gradesLocked ? 'Teachers cannot modify marks.' : 'Teachers can submit and edit student marks.'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`w-10 h-5 rounded-full relative transition-colors ${gradesLocked ? 'bg-rose-600' : 'bg-emerald-600'}`}>
+                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${gradesLocked ? 'right-0.5' : 'left-0.5'}`} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-500 uppercase">School Address</label>
                   <textarea rows={3} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" defaultValue="Bole Sub-city, Woreda 03, House No 1234, Addis Ababa, Ethiopia" />
@@ -216,8 +246,8 @@ export const Settings = () => {
                       </div>
                     </div>
 
-                    <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-2xl border border-slate-100 dark:border-slate-800">
-                      <table className="w-full text-left text-xs min-w-[600px]">
+                    <div className="overflow-x-auto -mx-4 sm:mx-0 sm:rounded-2xl border-y sm:border border-slate-100 dark:border-slate-800">
+                      <table className="w-full text-left text-[10px] sm:text-xs min-w-[600px]">
                         <thead className="bg-slate-50 dark:bg-slate-800/50">
                           <tr>
                             <th className="px-4 py-3 font-bold text-slate-500 uppercase">Branch</th>
@@ -259,6 +289,43 @@ export const Settings = () => {
 
             {activeTab === 'Hardware' && (
               <div className="space-y-8">
+                {role === 'super-admin' && (
+                  <div className="p-6 bg-slate-900 text-white rounded-3xl space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-600 rounded-xl">
+                        <Package size={20} />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black uppercase tracking-widest">Inventory & Resource Control</h4>
+                        <p className="text-[10px] text-slate-400">Configure global resource thresholds.</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                          <AlertCircle size={10} />
+                          Low-Stock Alert Threshold
+                        </label>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-xl">
+                           <input type="number" defaultValue={5} className="bg-transparent text-xl font-black w-full outline-none text-blue-400" />
+                           <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap px-3 border-l border-white/10">ITEMS</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                          <Users size={10} />
+                          Avg. Branch Capacity Limit
+                        </label>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-xl">
+                           <input type="number" defaultValue={1200} className="bg-transparent text-xl font-black w-full outline-none text-emerald-400" />
+                           <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap px-3 border-l border-white/10">STUDENTS</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <h4 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
                     <Radio size={16} className="text-blue-600" />
@@ -341,7 +408,7 @@ export const Settings = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between px-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Active Assessment Methods</h4>
                     <div className="flex items-center gap-2">
                       <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
