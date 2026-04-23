@@ -109,13 +109,13 @@ export const Teachers = () => {
                       <div className="flex flex-wrap gap-1 mt-0.5">
                         <p className="text-[10px] text-slate-500">{teacher.branch} Campus</p>
                         {teacher.isRoomTeacher && (
-                          <span className="text-[8px] bg-emerald-100 text-emerald-700 px-1 rounded font-black uppercase tracking-tighter">Room Teacher</span>
+                          <span className="text-[8px] bg-emerald-100 text-emerald-700 px-1 rounded font-black uppercase tracking-tighter">Room Teacher ({teacher.assignedRoomClass})</span>
                         )}
                         {teacher.isExaminer && (
-                          <span className="text-[8px] bg-blue-100 text-blue-700 px-1 rounded font-black uppercase tracking-tighter">Examiner ({teacher.assignedExamClass})</span>
+                          <span className="text-[8px] bg-blue-100 text-blue-700 px-1 rounded font-black uppercase tracking-tighter">Examiner ({teacher.examTitle} - {teacher.assignedExamClass} @ {teacher.examDate})</span>
                         )}
                         {teacher.isDeptHead && (
-                          <span className="text-[8px] bg-purple-100 text-purple-700 px-1 rounded font-black uppercase tracking-tighter">Dept Head ({teacher.assignedGrades?.map((g: string) => g.replace('Grade ', '')).join(', ')})</span>
+                          <span className="text-[8px] bg-purple-100 text-purple-700 px-1 rounded font-black uppercase tracking-tighter">Dept Head ({teacher.deptSubject}: {teacher.assignedGrades?.map((g: string) => g.replace('Grade ', '')).join(', ')})</span>
                         )}
                       </div>
                     </div>
@@ -185,8 +185,8 @@ export const Teachers = () => {
 
       {promotingTeacher && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-lg">
                   <Award size={20} />
@@ -200,20 +200,39 @@ export const Teachers = () => {
                 <X size={20} />
               </button>
             </div>
-            <form className="p-6 space-y-6" onSubmit={handlePromote}>
+            <form className="p-6 space-y-6 overflow-y-auto custom-scrollbar" onSubmit={handlePromote}>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <div>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Room Teacher</p>
-                    <p className="text-[10px] text-slate-500">Assign as a primary class manager</p>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Room Teacher</p>
+                      <p className="text-[10px] text-slate-500">Assign as a primary class manager</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPromotingTeacher({ ...promotingTeacher, isRoomTeacher: !promotingTeacher.isRoomTeacher })}
+                      className={`w-12 h-6 rounded-full transition-colors relative ${promotingTeacher.isRoomTeacher ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                    >
+                      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${promotingTeacher.isRoomTeacher ? 'left-7' : 'left-1'}`} />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setPromotingTeacher({ ...promotingTeacher, isRoomTeacher: !promotingTeacher.isRoomTeacher })}
-                    className={`w-12 h-6 rounded-full transition-colors relative ${promotingTeacher.isRoomTeacher ? 'bg-emerald-500' : 'bg-slate-300'}`}
-                  >
-                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${promotingTeacher.isRoomTeacher ? 'left-7' : 'left-1'}`} />
-                  </button>
+
+                  {promotingTeacher.isRoomTeacher && (
+                    <div className="space-y-1 animate-in slide-in-from-top-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Class</label>
+                      <select
+                        required
+                        value={promotingTeacher.assignedRoomClass || ''}
+                        onChange={(e) => setPromotingTeacher({ ...promotingTeacher, assignedRoomClass: e.target.value })}
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                      >
+                        <option value="">Select a class...</option>
+                        {mockClasses.map(c => (
+                          <option key={c.id} value={c.name}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
@@ -232,19 +251,42 @@ export const Teachers = () => {
                   </div>
 
                   {promotingTeacher.isExaminer && (
-                    <div className="space-y-1 animate-in slide-in-from-top-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Exam Class</label>
-                      <select
-                        required
-                        value={promotingTeacher.assignedExamClass || ''}
-                        onChange={(e) => setPromotingTeacher({ ...promotingTeacher, assignedExamClass: e.target.value })}
-                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                      >
-                        <option value="">Select a class...</option>
-                        {mockClasses.map(c => (
-                          <option key={c.id} value={c.name}>{c.name}</option>
-                        ))}
-                      </select>
+                    <div className="space-y-3 animate-in slide-in-from-top-2">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Exam Title</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Mid-term Exam"
+                          value={promotingTeacher.examTitle || ''}
+                          onChange={(e) => setPromotingTeacher({ ...promotingTeacher, examTitle: e.target.value })}
+                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Exam Date</label>
+                        <input
+                          type="date"
+                          required
+                          value={promotingTeacher.examDate || ''}
+                          onChange={(e) => setPromotingTeacher({ ...promotingTeacher, examDate: e.target.value })}
+                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Exam Class</label>
+                        <select
+                          required
+                          value={promotingTeacher.assignedExamClass || ''}
+                          onChange={(e) => setPromotingTeacher({ ...promotingTeacher, assignedExamClass: e.target.value })}
+                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        >
+                          <option value="">Select a class...</option>
+                          {mockClasses.map(c => (
+                            <option key={c.id} value={c.name}>{c.name}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -265,29 +307,45 @@ export const Teachers = () => {
                   </div>
 
                   {promotingTeacher.isDeptHead && (
-                    <div className="space-y-1 animate-in slide-in-from-top-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Grade Levels</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'].map(grade => (
-                          <button
-                            key={grade}
-                            type="button"
-                            onClick={() => {
-                              const current = promotingTeacher.assignedGrades || [];
-                              const next = current.includes(grade)
-                                ? current.filter((g: string) => g !== grade)
-                                : [...current, grade];
-                              setPromotingTeacher({ ...promotingTeacher, assignedGrades: next });
-                            }}
-                            className={`px-2 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${
-                              (promotingTeacher.assignedGrades || []).includes(grade)
-                                ? 'bg-purple-600 border-purple-600 text-white'
-                                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500'
-                            }`}
-                          >
-                            {grade}
-                          </button>
-                        ))}
+                    <div className="space-y-3 animate-in slide-in-from-top-2">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Department Subject</label>
+                        <select
+                          required
+                          value={promotingTeacher.deptSubject || ''}
+                          onChange={(e) => setPromotingTeacher({ ...promotingTeacher, deptSubject: e.target.value })}
+                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                        >
+                          <option value="">Select a subject...</option>
+                          {Array.from(new Set(mockTeachers.flatMap(t => t.subjects))).map(s => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Grade Levels</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'].map(grade => (
+                            <button
+                              key={grade}
+                              type="button"
+                              onClick={() => {
+                                const current = promotingTeacher.assignedGrades || [];
+                                const next = current.includes(grade)
+                                  ? current.filter((g: string) => g !== grade)
+                                  : [...current, grade];
+                                setPromotingTeacher({ ...promotingTeacher, assignedGrades: next });
+                              }}
+                              className={`px-2 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${
+                                (promotingTeacher.assignedGrades || []).includes(grade)
+                                  ? 'bg-purple-600 border-purple-600 text-white'
+                                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500'
+                              }`}
+                            >
+                              {grade}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}
