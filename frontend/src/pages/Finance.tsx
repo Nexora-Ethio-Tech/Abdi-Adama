@@ -323,7 +323,7 @@ export const Finance = () => {
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">
                     {isAdmin ? 'Details' : 'Type'}
                   </th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Verified By</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Verified By</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Amount</th>
                 </tr>

@@ -85,17 +85,17 @@ export const TeacherPortal = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
+      <div className="flex overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 gap-2 p-1 bg-slate-100/50 dark:bg-slate-800/50 sm:bg-slate-100 dark:sm:bg-slate-800 rounded-xl w-auto sm:w-fit">
         {[
           { id: 'overview', label: 'Overview' },
-          { id: 'plans', label: 'Weekly Plans' },
+          { id: 'plans', label: 'Plans' },
           ...(isRoomTeacher ? [{ id: 'communication', label: 'Comm. Book' }] : []),
-          ...(isDean ? [{ id: 'review', label: 'Dept. Plans Review' }] : [])
+          ...(isDean ? [{ id: 'review', label: 'Review' }] : [])
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-4 md:px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
             {tab.label}
           </button>
@@ -103,9 +103,9 @@ export const TeacherPortal = () => {
       </div>
 
       {isPlanModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-4xl my-8 animate-in fade-in zoom-in-95 duration-300">
-            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-4xl my-auto animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-5 sm:p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
                   <FileText size={24} />
@@ -120,8 +120,8 @@ export const TeacherPortal = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddPlan} className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <form onSubmit={handleAddPlan} className="p-5 sm:p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div className="space-y-1">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date</label>
                   <input
@@ -223,17 +223,17 @@ export const TeacherPortal = () => {
                 </div>
               </div>
 
-              <div className="mt-10 flex gap-4">
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-blue-200 dark:shadow-none uppercase tracking-widest text-xs"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-blue-200 dark:shadow-none uppercase tracking-widest text-xs order-1 sm:order-2"
                 >
                   Submit Plan for Approval
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsPlanModalOpen(false)}
-                  className="px-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black rounded-2xl hover:bg-slate-200 transition-all uppercase tracking-widest text-xs"
+                  className="px-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black py-4 sm:py-0 rounded-2xl hover:bg-slate-200 transition-all uppercase tracking-widest text-xs order-2 sm:order-1"
                 >
                   Cancel
                 </button>
@@ -348,7 +348,9 @@ export const TeacherPortal = () => {
               </button>
             </div>
 
-            <div className="overflow-x-auto -mx-8">
+            <div className="overflow-x-auto -mx-8 relative">
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-slate-900 to-transparent z-10 pointer-events-none sm:hidden"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-slate-900 to-transparent z-10 pointer-events-none sm:hidden"></div>
               <table className="w-full text-left border-collapse min-w-[1500px]">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-800">

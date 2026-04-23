@@ -34,19 +34,19 @@ export const Settings = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className="w-full lg:w-64 space-y-1">
+        <div className="w-full lg:w-64 flex overflow-x-auto lg:flex-col no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0 gap-2 lg:space-y-1 pb-4 lg:pb-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
+              className={`flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
                 activeTab === tab.id
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-100 dark:shadow-none'
-                  : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 bg-slate-50 dark:bg-slate-800/50 lg:bg-transparent'
               }`}
             >
               <tab.icon size={18} />
-              <span>{tab.id}</span>
+              <span className="whitespace-nowrap">{tab.id}</span>
             </button>
           ))}
         </div>
@@ -183,7 +183,7 @@ export const Settings = () => {
                       <p className="text-xs text-slate-500 font-medium">Configure school fees per branch and grade level.</p>
                     </div>
 
-                    <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-6 rounded-3xl border border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                       <div className="space-y-1">
                         <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Branch</label>
                         <select className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500">
@@ -209,15 +209,15 @@ export const Settings = () => {
                         <input type="number" placeholder="1200" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500" />
                       </div>
                       <div className="flex items-end lg:col-span-5">
-                        <button className="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200">
+                        <button className="w-full bg-slate-900 text-white py-4 sm:py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200">
                           <Plus size={16} />
                           <span>Apply Fee Configuration</span>
                         </button>
                       </div>
                     </div>
 
-                    <div className="overflow-x-auto rounded-2xl border border-slate-100 dark:border-slate-800">
-                      <table className="w-full text-left text-xs">
+                    <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-2xl border border-slate-100 dark:border-slate-800">
+                      <table className="w-full text-left text-xs min-w-[600px]">
                         <thead className="bg-slate-50 dark:bg-slate-800/50">
                           <tr>
                             <th className="px-4 py-3 font-bold text-slate-500 uppercase">Branch</th>
