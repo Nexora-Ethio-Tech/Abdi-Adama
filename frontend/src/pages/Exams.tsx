@@ -42,16 +42,13 @@ const Exams = () => {
   const isTeacher = role === 'teacher';
   const isStudent = role === 'student';
 
-  const categories: ExamCategory[] = ['Mid-term', 'Final', 'Quiz', 'Assignment'];
+  const categories: ExamCategory[] = ['Mid-term', 'Final'];
 
   const filteredExams = exams.filter(exam => {
-    const categoryMatch = filterCategory === 'All' || exam.category === filterCategory;
+    const isOfficial = exam.category === 'Mid-term' || exam.category === 'Final';
+    if (!isOfficial) return false;
 
-    // School Admin restriction: Only Mid-term and Final
-    if (isSchoolAdmin) {
-      const isAdminCategory = exam.category === 'Mid-term' || exam.category === 'Final';
-      return categoryMatch && isAdminCategory;
-    }
+    const categoryMatch = filterCategory === 'All' || exam.category === filterCategory;
 
     if (isTeacher) return categoryMatch && exam.teacherId === 't1'; // Mocking teacher ID
     return categoryMatch;
@@ -92,28 +89,20 @@ const Exams = () => {
       </div>
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Exams & Assignments</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Official Examinations</h1>
           <p className="text-slate-500 dark:text-slate-400">
-            {isSchoolAdmin && "Monitor and manage school-wide examinations and coursework."}
-            {isTeacher && "Manage your course examinations, assignments, and student results."}
-            {isStudent && "View and attempt your active examinations and assignments."}
+            {isTeacher && "Manage official mid-term and final examinations for your courses."}
+            {isStudent && "Access and attempt your scheduled mid-term and final examinations."}
           </p>
         </div>
         {isTeacher && (
           <div className="flex gap-2">
             <button
-              onClick={() => { setCreationType('Assignment'); setShowCreateForm(true); }}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-            >
-              <FileText size={20} />
-              New Assignment
-            </button>
-            <button
               onClick={() => { setCreationType('Exam'); setShowCreateForm(true); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-200"
             >
               <Plus size={20} />
-              New Exam
+              New Examination
             </button>
           </div>
         )}
@@ -328,7 +317,7 @@ interface FlexibleQuestion {
 const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', onCancel: () => void, onSave: (exam: Exam) => void }) => {
   const [examData, setExamData] = useState<Partial<Exam>>({
     title: '',
-    category: type === 'Assignment' ? 'Assignment' : 'Quiz',
+    category: 'Mid-term',
     durationMinutes: 60,
     courseName: '',
     questions: []
@@ -504,8 +493,6 @@ const ExamCreator = ({ type, onCancel, onSave }: { type: 'Exam' | 'Assignment', 
             >
               <option value="Mid-term" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Mid-term</option>
               <option value="Final" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Final</option>
-              <option value="Quiz" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Quiz</option>
-              <option value="Assignment" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Assignment</option>
             </select>
           </div>
           <div className="space-y-1">

@@ -75,7 +75,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
           { icon: Package, label: 'Inventory', path: '/inventory' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
           { icon: Settings, label: 'Settings', path: '/settings' },
         ];
       case 'vice-principal':
@@ -85,7 +84,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
           { icon: FileText, label: 'Transcripts', path: '/transcripts' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
+          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
         ];
       case 'teacher':
         return [
@@ -93,21 +92,21 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: BookOpen, label: 'Weekly Plans', path: '/?tab=plans' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
+          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
         ];
       case 'student':
         return [
           { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
           { icon: BookOpen, label: 'Grades & Courses', path: '/courses' },
           { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
+          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
         ];
       case 'parent':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'My Children', path: '/students' },
           { icon: HeartPulse, label: 'Clinic Support', path: '/clinic-chat' },
-          { icon: ClipboardList, label: 'Exams & Assignments', path: '/exams' },
+          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
         ];
       case 'finance-clerk':
         return [

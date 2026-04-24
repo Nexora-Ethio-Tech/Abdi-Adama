@@ -177,7 +177,11 @@ function App() {
             } />
 
             <Route path="finance" element={<Finance />} />
-            <Route path="exams" element={<Exams />} />
+            <Route path="exams" element={
+              <ProtectedRoute allowedRoles={['teacher', 'vice-principal', 'student', 'parent']}>
+                <Exams />
+              </ProtectedRoute>
+            } />
             <Route path="settings" element={<Settings />} />
             <Route path="exam/:examId" element={<ExamSession />} />
 

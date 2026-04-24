@@ -7,8 +7,7 @@ import { mockTeachers } from '../data/mockData';
 import { useState } from 'react';
 
 export const StudentPortal = () => {
-  const assignmentCount = mockExams.filter(e => e.category === 'Assignment').length;
-  const examCount = mockExams.filter(e => e.category !== 'Assignment').length;
+  const examCount = mockExams.filter(e => e.category === 'Mid-term' || e.category === 'Final').length;
   const [votedTeacher, setVotedTeacher] = useState<string | null>(null);
   const [hideVoting, setHideVoting] = useState(false);
 
@@ -94,7 +93,7 @@ export const StudentPortal = () => {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 md:p-10 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-3xl md:text-4xl font-black mb-3">Welcome back, Abebe!</h2>
-          <p className="opacity-90 text-lg font-medium">Keep up the great work. You have <span className="underline decoration-wavy decoration-yellow-400 font-bold">{assignmentCount} assignments</span> and <span className="underline decoration-wavy decoration-emerald-400 font-bold">{examCount} exams</span> pending.</p>
+          <p className="opacity-90 text-lg font-medium">Keep up the great work. You have <span className="underline decoration-wavy decoration-emerald-400 font-bold">{examCount} official examinations</span> pending.</p>
         </div>
         <div className="absolute top-0 right-0 p-12 opacity-10 rotate-12">
           <Award size={160} />
