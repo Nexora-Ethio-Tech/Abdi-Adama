@@ -102,11 +102,11 @@ export const mockStudents = [
 ];
 
 export const mockTeachers = [
-  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true, isDean: true, isRoomTeacher: true, assignedRoomClass: 'Grade 10A', department: 'Science' },
-  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false, isRoomTeacher: true, assignedRoomClass: 'Grade 9B', department: 'Science' },
-  { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true, department: 'Social Science' },
-  { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false, department: 'Languages' },
-  { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false, department: 'Vocational' },
+  { id: 'T1', name: 'Ato Solomon', subjects: ['Math', 'Physics'], branch: 'Main', classes: 2, isInClass: true, isDean: true, isRoomTeacher: true, assignedRoomClass: 'Grade 10A', department: 'Science', hireDate: '2015-09-01', experience: '12 Years', bio: 'Senior educator with a passion for theoretical physics and mathematical modeling.' },
+  { id: 'T2', name: 'W/ro Selam', subjects: ['Biology', 'Chemistry'], branch: 'Main', classes: 3, isInClass: false, isRoomTeacher: true, assignedRoomClass: 'Grade 9B', department: 'Science', hireDate: '2018-10-15', experience: '8 Years', bio: 'Expert in molecular biology and interactive lab teaching methods.' },
+  { id: 'T3', name: 'Ato Kebede', subjects: ['History', 'Geography'], branch: 'Bole', classes: 4, isInClass: true, department: 'Social Science', hireDate: '2020-01-10', experience: '15 Years', bio: 'Specializes in Ethiopian history and regional geographical studies.' },
+  { id: 'T4', name: 'W/ro Aster', subjects: ['English', 'Amharic'], branch: 'Megenagna', classes: 2, isInClass: false, department: 'Languages', hireDate: '2021-09-01', experience: '5 Years', bio: 'Focused on bilingual education and creative writing for young learners.' },
+  { id: 'T5', name: 'Ato Tadesse', subjects: ['Physical Education'], branch: 'Adama', classes: 5, isInClass: false, department: 'Vocational', hireDate: '2019-02-20', experience: '10 Years', bio: 'Certified athletics coach and advocate for healthy student lifestyles.' },
 ];
 
 export const mockClasses = [

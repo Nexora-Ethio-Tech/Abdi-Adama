@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StudentRegistration } from '../components/StudentRegistration';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 interface PaymentLog {
   status: boolean;
@@ -16,6 +17,7 @@ export const Finance = () => {
   const navigate = useNavigate();
   const { role, user } = useUser();
   const isAdmin = role === 'super-admin' || role === 'school-admin';
+  const isSuperAdmin = role === 'super-admin';
   const isClerk = role === 'finance-clerk';
   const isFinance = isClerk || isAdmin;
   const [showForm, setShowForm] = useState(false);
@@ -28,7 +30,7 @@ export const Finance = () => {
     '6': [{ status: false, modifiedBy: 'System Initializer', timestamp: '2026-04-01 09:00 AM' }],
   });
 
-  const [activeView, setActiveView] = useState<'main' | 'audit' | 'registration' | 'matrix'>('main');
+  const [activeView, setActiveView] = useState<'main' | 'audit' | 'matrix'>('main');
   const [auditFilter, setAuditFilter] = useState<'In' | 'Out'>('In');
   const [auditCategory, setAuditCategory] = useState<'Fees' | 'Staff'>('Fees');
 
@@ -65,13 +67,16 @@ export const Finance = () => {
 
   return (
     <div className="space-y-8">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
           <div className="relative z-10">
@@ -124,15 +129,6 @@ export const Finance = () => {
                   System Audit Log
                 </button>
               )}
-              {(isClerk || role === 'super-admin') && (
-                <button
-                  onClick={() => setActiveView('registration')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeView === 'registration' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
-                >
-                  <UserPlus size={14} />
-                  Registration
-                </button>
-              )}
               {isFinance && (
                 <button
                   onClick={() => setActiveView('matrix')}
@@ -143,7 +139,7 @@ export const Finance = () => {
                 </button>
               )}
             </div>
-            {isFinance && (
+            {isFinance && !isSuperAdmin && (
               <button
                 onClick={() => setShowForm(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold flex-shrink-0"
@@ -210,8 +206,9 @@ export const Finance = () => {
                         </td>
                         <td className="p-3 border border-slate-200 text-center">
                           <button
-                            className={`p-1.5 rounded ${isBus ? 'text-blue-600 bg-blue-50' : 'text-slate-300'}`}
-                            title="Toggle Bus Service"
+                            disabled={isSuperAdmin}
+                            className={`p-1.5 rounded ${isBus ? 'text-blue-600 bg-blue-50' : 'text-slate-300'} ${isSuperAdmin ? 'cursor-default' : 'hover:bg-slate-50'}`}
+                            title={isSuperAdmin ? 'Bus Service Status' : 'Toggle Bus Service'}
                           >
                             <Bus size={14} />
                           </button>
@@ -234,10 +231,6 @@ export const Finance = () => {
                   })}
                 </tbody>
               </table>
-            </div>
-          ) : activeView === 'registration' ? (
-            <div className="p-4 sm:p-6">
-              <StudentRegistration isAdminView={true} />
             </div>
           ) : activeView === 'audit' ? (
             <div className="space-y-4">
@@ -366,8 +359,8 @@ export const Finance = () => {
                         <div className="flex flex-col items-center gap-1">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => !scholarship && togglePayment(student.id)}
-                              disabled={scholarship}
+                              onClick={() => !scholarship && !isSuperAdmin && togglePayment(student.id)}
+                              disabled={scholarship || isSuperAdmin}
                               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                                 scholarship
                                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-200'

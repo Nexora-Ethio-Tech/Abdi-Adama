@@ -1,10 +1,12 @@
 
-import { Search, Filter, MoreVertical, Download, ChevronRight, History } from 'lucide-react';
+import { Search, Filter, MoreVertical, Download, ChevronRight, History, ArrowLeft } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const Students = () => {
+  const navigate = useNavigate();
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const grades = Array.from(new Set(mockStudents.map(s => s.grade))).sort();
 
@@ -79,6 +81,16 @@ export const Students = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <button className="flex-1 sm:flex-none bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm md:text-base">

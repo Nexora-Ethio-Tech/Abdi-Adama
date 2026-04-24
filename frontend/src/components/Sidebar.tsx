@@ -16,7 +16,8 @@ import {
   X,
   UserCog,
   HeartPulse,
-  FileText
+  FileText,
+  UserPlus
 } from 'lucide-react';
 import logo from '../assets/logo.jpg';
 import { clsx, type ClassValue } from 'clsx';
@@ -35,7 +36,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { role, logout, switchRole, schoolName } = useUser();
-  const { isExamLockedDown } = useStore();
+  const { isExamLockedDown, selectedBranchId } = useStore();
   const navigate = useNavigate();
 
   const displaySchoolName = schoolName.english;
@@ -48,18 +49,27 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const getNavItems = () => {
     switch (role) {
       case 'super-admin':
-        return [
+        const baseItems = [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
           { icon: Building2, label: 'Branches', path: '/branches' },
           { icon: PieChart, label: 'Analytics', path: '/analytics' },
-          { icon: Package, label: 'Inventory', path: '/inventory' },
-          { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: Settings, label: 'Settings', path: '/settings' },
         ];
+
+        // Requirement: Hide specific branch details (Inventory/Finance) until a branch is selected
+        if (selectedBranchId) {
+          baseItems.push(
+            { icon: Package, label: 'Inventory', path: '/inventory' },
+            { icon: Wallet, label: 'Finance', path: '/finance' }
+          );
+        }
+
+        baseItems.push({ icon: Settings, label: 'Settings', path: '/settings' });
+        return baseItems;
       case 'school-admin':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
           { icon: Users, label: 'Students', path: '/students' },
+          { icon: UserPlus, label: 'Registration', path: '/registration' },
           { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
           { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
           { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
@@ -102,6 +112,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       case 'finance-clerk':
         return [
           { icon: LayoutDashboard, label: 'Overview', path: '/' },
+          { icon: UserPlus, label: 'Registration', path: '/registration' },
           { icon: Wallet, label: 'Finance', path: '/finance' },
         ];
       case 'librarian':

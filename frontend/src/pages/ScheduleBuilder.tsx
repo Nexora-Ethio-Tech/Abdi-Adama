@@ -1,7 +1,9 @@
 
-import { Plus, Trash2, Clock, BookOpen, Users, Search, Save, X, Settings2, LayoutGrid } from 'lucide-react';
+import { Plus, Trash2, Clock, BookOpen, Users, Search, Save, X, Settings2, LayoutGrid, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { mockTeachers } from '../data/mockData';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 
 interface CourseFrequency {
@@ -11,6 +13,7 @@ interface CourseFrequency {
 }
 
 export const ScheduleBuilder = () => {
+  const navigate = useNavigate();
   const [numClasses, setNumClasses] = useState(12);
   const [frequencies, setFrequencies] = useState<CourseFrequency[]>([
     { id: '1', subject: 'Mathematics', sessions: '5 sessions/week' }
@@ -50,6 +53,18 @@ export const ScheduleBuilder = () => {
   };
 
   return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
+
     <div className="bg-white dark:bg-slate-900 p-4 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm space-y-10 transition-colors duration-300">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b dark:border-slate-800 pb-8">
         <div>
@@ -279,6 +294,7 @@ export const ScheduleBuilder = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -19,6 +19,7 @@ import { GradeEntry } from './pages/GradeEntry';
 import { ScheduleBuilder } from './pages/ScheduleBuilder';
 import { Inventory } from './pages/Inventory';
 import { Library } from './pages/Library';
+import { Registration } from './pages/Registration';
 import { Attendance } from './pages/Attendance';
 import { Settings } from './pages/Settings';
 import { ExamSession } from './pages/ExamSession';

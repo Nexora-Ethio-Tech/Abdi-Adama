@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useStore } from '../context/useStore';
 import { ArrowLeft } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const Analytics = () => {
   const navigate = useNavigate();
@@ -38,13 +39,16 @@ export const Analytics = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">

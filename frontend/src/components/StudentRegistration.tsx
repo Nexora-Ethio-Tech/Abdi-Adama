@@ -26,6 +26,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
   const [fileName, setFileName] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pendingApps, setPendingApps] = useState(initialPendingApplications);
+  const [viewingTranscript, setViewingTranscript] = useState<any>(null);
 
   const nextStep = () => setRegistrationStep(prev => Math.min(3, prev + 1));
   const prevStep = () => setRegistrationStep(prev => Math.max(1, prev - 1));
@@ -147,6 +148,13 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                   </div>
 
                   <div className="flex items-center gap-2 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-50 dark:border-slate-800">
+                    <button
+                      onClick={() => setViewingTranscript(app)}
+                      className="flex-1 md:flex-none p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/10 rounded-xl transition-colors flex items-center justify-center gap-2 text-xs font-bold"
+                    >
+                      <FileText size={18} />
+                      View Transcript
+                    </button>
                     <button
                       onClick={() => handleAdmissionDecision(app.id, 'Reject')}
                       className="flex-1 md:flex-none p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-colors flex items-center justify-center gap-2 text-xs font-bold"
@@ -486,6 +494,133 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {viewingTranscript && (
+        <div className="fixed inset-0 z-[200] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-950 w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-white/20">
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-600 text-white rounded-2xl">
+                  <FileText size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Transcript Verification</h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Student: {viewingTranscript.name}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewingTranscript(null)}
+                className="p-3 bg-white dark:bg-slate-800 text-slate-500 hover:text-rose-500 rounded-2xl shadow-lg transition-all hover:scale-110 active:scale-95"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 rounded-3xl border-4 border-slate-200 dark:border-slate-800 flex items-center justify-center relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+                  <div className="text-center p-12">
+                    <FileText size={64} className="mx-auto text-slate-300 dark:text-slate-700 mb-4 group-hover:scale-110 transition-transform" />
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Mock Transcript Viewer</p>
+                    <p className="text-[10px] text-slate-500 mt-2">Document ID: {viewingTranscript.id}_TRANSCRIPT_2025.pdf</p>
+                  </div>
+                  {/* Mock content rendering */}
+                  <div className="absolute inset-4 border-2 border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col p-8 bg-white dark:bg-slate-950/50 backdrop-blur-sm shadow-inner">
+                    <div className="flex justify-between mb-8 border-b-2 border-slate-100 dark:border-slate-800 pb-4">
+                       <div className="font-black text-xs">OFFICIAL ACADEMIC RECORD</div>
+                       <div className="font-bold text-[10px] text-slate-400">PAGE 1 OF 1</div>
+                    </div>
+                    <div className="space-y-4 flex-1">
+                       <div className="grid grid-cols-2 gap-4">
+                          {[
+                            {s: 'Mathematics', g: 'A'},
+                            {s: 'Physics', g: 'A-'},
+                            {s: 'English', g: 'B+'},
+                            {s: 'Chemistry', g: 'A'},
+                            {s: 'Biology', g: 'A-'},
+                            {s: 'History', g: 'B+'},
+                            {s: 'Civics', g: 'A'}
+                          ].map((item, i) => (
+                            <div key={i} className="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                               <span className="text-[10px] font-bold text-slate-600 uppercase">{item.s}</span>
+                               <span className="text-xs font-black text-blue-600">{item.g}</span>
+                            </div>
+                          ))}
+                       </div>
+                       <div className="mt-8 p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-xl">
+                          <p className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase mb-1">Cumulative GPA</p>
+                          <p className="text-2xl font-black text-emerald-600">3.85 / 4.00</p>
+                       </div>
+                    </div>
+                    <div className="mt-8 flex justify-between items-end">
+                       <div className="space-y-1">
+                          <div className="w-24 h-0.5 bg-slate-300"></div>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Principal's Signature</p>
+                       </div>
+                       <div className="text-right">
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Verified Academic History</p>
+                          <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">ABDI ADAMA SMART SCHOOL</p>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-4">
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Verification Checklist</h4>
+                  <div className="space-y-3">
+                    {[
+                      'Document Authenticity Check',
+                      'Grade Requirements Met',
+                      'Behavioral Clearance Verified',
+                      'Registration Fee Confirmed'
+                    ].map((check, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-5 h-5 bg-emerald-500 text-white rounded-full flex items-center justify-center">
+                          <Check size={12} />
+                        </div>
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300">{check}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-3xl">
+                   <p className="text-xs font-bold text-blue-900 dark:text-blue-100 mb-2">Academic Counselor Note:</p>
+                   <p className="text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed italic">
+                     "Student shows exceptional performance in STEM subjects. Recommended for Advanced Track in Grade {viewingTranscript.lastGrade}."
+                   </p>
+                </div>
+
+                <div className="pt-4 space-y-3">
+                  <button
+                    onClick={() => {
+                      handleAdmissionDecision(viewingTranscript.id, 'Approve');
+                      setViewingTranscript(null);
+                    }}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black text-sm shadow-xl shadow-emerald-100 dark:shadow-none transition-all flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle size={18} />
+                    Approve Admission
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleAdmissionDecision(viewingTranscript.id, 'Reject');
+                      setViewingTranscript(null);
+                    }}
+                    className="w-full bg-white dark:bg-slate-900 border-2 border-rose-100 dark:border-rose-900/30 text-rose-600 py-4 rounded-2xl font-black text-sm hover:bg-rose-50 transition-all flex items-center justify-center gap-2"
+                  >
+                    <X size={18} />
+                    Decline Request
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@
 import { Building2, MapPin, Users, GraduationCap, ChevronRight, Plus, ArrowLeft } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 interface Branch {
   id: string;
@@ -22,13 +23,16 @@ export const Branches = () => {
 
   return (
     <div className="space-y-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-slate-800">School Branches</h2>

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const StudentProfile = () => {
   const { id } = useParams();
@@ -30,6 +31,7 @@ export const StudentProfile = () => {
   const [showTranscript, setShowTranscript] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedBio, setEditedBio] = useState('');
+  const [selectedHistoryYear, setSelectedHistoryYear] = useState('all');
   const student = mockStudents.find(s => s.id === id) as any;
   const gradeLevel = student?.grade?.replace(/[A-Z]/g, '');
   const gradingMethods = mockGradingConfigs[gradeLevel] || mockGradingConfigs['default'];
@@ -47,16 +49,18 @@ export const StudentProfile = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex items-center gap-4">
-        <Link to="/students" className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-          <ArrowLeft size={20} className="text-slate-600" />
-        </Link>
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800">Student Profile</h2>
-          <p className="text-sm text-slate-500">Detailed overview of academic performance and records.</p>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <div className="flex items-center gap-4">
+          <Link to="/students" className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+            <ArrowLeft size={20} className="text-slate-600" />
+          </Link>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Student Profile</h2>
+            <p className="text-sm text-slate-500">Detailed overview of academic performance and records.</p>
+          </div>
         </div>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 -mx-4 sm:mx-0">
         {/* Profile Card */}
         <div className="lg:col-span-4 space-y-6">
@@ -270,41 +274,58 @@ export const StudentProfile = () => {
           </div>
 
           {/* Academic History */}
-          <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                <FileText size={20} className="text-blue-600" />
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
+                <FileText size={16} className="text-blue-600" />
                 Academic History
               </h4>
+              <div className="flex items-center gap-2">
+                 <span className="text-[10px] font-bold text-slate-400 uppercase whitespace-nowrap">Filter Year:</span>
+                 <select
+                   value={selectedHistoryYear}
+                   onChange={(e) => setSelectedHistoryYear(e.target.value)}
+                   className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                 >
+                   <option value="all">All Academic Years</option>
+                   {Array.from(new Set((student.academicHistory || []).map((h: any) => h.year))).map((y: any) => (
+                      <option key={y} value={y}>EC {y}</option>
+                   ))}
+                 </select>
+              </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="border-b border-slate-100">
-                  <tr>
-                    <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase">Year</th>
-                    <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase">Grade</th>
-                    <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase">Avg Score</th>
-                    <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase text-right">Rank</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {(student.academicHistory || []).map((record: any, i: number) => (
-                    <tr key={i}>
-                      <td className="py-4 text-sm font-medium text-slate-700">EC {record.year}</td>
-                      <td className="py-4 text-sm text-slate-600">Grade {record.grade}</td>
-                      <td className="py-4 text-sm text-slate-600 font-bold">{record.average}</td>
-                      <td className="py-4 text-sm text-slate-600 text-right">{record.rank}</td>
-                    </tr>
-                  ))}
-                  {(!student.academicHistory || student.academicHistory.length === 0) && (
-                    <tr>
-                      <td colSpan={4} className="py-8 text-center text-slate-400 text-sm italic">
-                        No historical records available for this student.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+
+            <div className="grid grid-cols-1 gap-4">
+               {(student.academicHistory || [])
+                 .filter((h: any) => selectedHistoryYear === 'all' || h.year === selectedHistoryYear)
+                 .map((record: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-md transition-all group">
+                     <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-xs shadow-lg shadow-blue-100">
+                           {record.grade}
+                        </div>
+                        <div>
+                           <p className="text-sm font-bold text-slate-800">Grade {record.grade}</p>
+                           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Academic Year EC {record.year}</p>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-8">
+                        <div className="text-center">
+                           <p className="text-[9px] font-bold text-slate-400 uppercase">Avg Score</p>
+                           <p className="text-sm font-black text-blue-600">{record.average}</p>
+                        </div>
+                        <div className="text-right">
+                           <p className="text-[9px] font-bold text-slate-400 uppercase">Rank</p>
+                           <p className="text-sm font-black text-slate-800">{record.rank}</p>
+                        </div>
+                     </div>
+                  </div>
+               ))}
+               {(!student.academicHistory || student.academicHistory.length === 0) && (
+                  <div className="py-12 text-center text-slate-400 text-sm italic border-2 border-dashed border-slate-100 rounded-3xl">
+                    No historical records available for this student.
+                  </div>
+               )}
             </div>
           </div>
 

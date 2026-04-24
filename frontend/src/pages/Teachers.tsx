@@ -1,8 +1,8 @@
 
-import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, User } from 'lucide-react';
+import { UserPlus, Calendar, ShieldCheck, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, User, Mail, Phone, MapPin, Briefcase, GraduationCap, Save, Edit } from 'lucide-react';
 import { mockTeachers, mockSchedules, mockClasses } from '../data/mockData';
 import { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { ArrowLeft } from 'lucide-react';
 
@@ -14,6 +14,8 @@ export const Teachers = () => {
   const [teachers, setTeachers] = useState<any[]>(mockTeachers);
   const [viewingSchedule, setViewingSchedule] = useState<string | null>(null);
   const [promotingTeacher, setPromotingTeacher] = useState<any | null>(null);
+  const [viewingProfile, setViewingProfile] = useState<any | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   if (viewingSchedule) {
     const teacher = mockTeachers.find(t => t.id === viewingSchedule);
@@ -174,7 +176,10 @@ export const Teachers = () => {
                   <div className="flex items-center justify-end gap-2">
                     {(isAdmin || isVP) && (
                       <button
-                        onClick={() => alert(`Full Teacher Profile for ${teacher.name}\nClasses: ${teacher.classes}\nSubjects: ${teacher.subjects.join(', ')}`)}
+                        onClick={() => {
+                          setViewingProfile({ ...teacher });
+                          setIsEditing(false);
+                        }}
                         className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Full Profile"
                       >
                         <User size={18} />
@@ -387,6 +392,188 @@ export const Teachers = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {viewingProfile && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-end animate-in fade-in duration-300">
+          <div className="w-full max-w-2xl h-screen bg-white dark:bg-slate-950 shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 overflow-hidden">
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-purple-200">
+                  {viewingProfile.name.split(' ').map((n: string) => n[0]).join('')}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+                    {isEditing ? 'Edit Profile' : 'Teacher Profile'}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{viewingProfile.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <button
+                    onClick={() => setIsEditing(!isEditing)}
+                    className={`p-3 rounded-2xl transition-all shadow-lg ${
+                      isEditing
+                        ? 'bg-amber-500 text-white shadow-amber-200'
+                        : 'bg-white dark:bg-slate-800 text-slate-500 hover:text-blue-600'
+                    }`}
+                  >
+                    {isEditing ? <X size={24} /> : <Edit size={24} />}
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setViewingProfile(null);
+                    setIsEditing(false);
+                  }}
+                  className="p-3 bg-white dark:bg-slate-800 text-slate-500 hover:text-rose-500 rounded-2xl shadow-lg transition-all"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                    <input
+                      type="text"
+                      readOnly={!isEditing}
+                      value={viewingProfile.name}
+                      onChange={(e) => setViewingProfile({...viewingProfile, name: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-bold outline-none transition-all ${
+                        isEditing ? 'bg-slate-50 dark:bg-slate-900 border-2 border-blue-500' : 'bg-transparent border-transparent cursor-default'
+                      }`}
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Department</label>
+                    <input
+                      type="text"
+                      readOnly={!isEditing}
+                      value={viewingProfile.department}
+                      onChange={(e) => setViewingProfile({...viewingProfile, department: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-bold outline-none transition-all ${
+                        isEditing ? 'bg-slate-50 dark:bg-slate-900 border-2 border-blue-500' : 'bg-transparent border-transparent cursor-default'
+                      }`}
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hire Date</label>
+                    <input
+                      type="date"
+                      readOnly={!isEditing}
+                      value={viewingProfile.hireDate}
+                      onChange={(e) => setViewingProfile({...viewingProfile, hireDate: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-bold outline-none transition-all ${
+                        isEditing ? 'bg-slate-50 dark:bg-slate-900 border-2 border-blue-500' : 'bg-transparent border-transparent cursor-default'
+                      }`}
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Experience</label>
+                    <input
+                      type="text"
+                      readOnly={!isEditing}
+                      value={viewingProfile.experience}
+                      onChange={(e) => setViewingProfile({...viewingProfile, experience: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-bold outline-none transition-all ${
+                        isEditing ? 'bg-slate-50 dark:bg-slate-900 border-2 border-blue-500' : 'bg-transparent border-transparent cursor-default'
+                      }`}
+                    />
+                 </div>
+              </div>
+
+              <div className="space-y-4">
+                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <GraduationCap size={16} />
+                    Academic Specializations
+                 </h4>
+                 <div className="flex flex-wrap gap-2">
+                    {viewingProfile.subjects.map((s: string, i: number) => (
+                       <span key={i} className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-black uppercase tracking-wider border border-blue-100 dark:border-blue-800">
+                          {s}
+                       </span>
+                    ))}
+                    {isEditing && (
+                       <button className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl text-xs font-black uppercase border border-dashed border-slate-300">
+                          + Add Subject
+                       </button>
+                    )}
+                 </div>
+              </div>
+
+              <div className="space-y-4">
+                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Briefcase size={16} />
+                    Professional Summary
+                 </h4>
+                 <textarea
+                   readOnly={!isEditing}
+                   value={viewingProfile.bio}
+                   onChange={(e) => setViewingProfile({...viewingProfile, bio: e.target.value})}
+                   rows={4}
+                   className={`w-full px-6 py-4 rounded-3xl text-sm font-medium leading-relaxed outline-none transition-all ${
+                     isEditing ? 'bg-slate-50 dark:bg-slate-900 border-2 border-blue-500' : 'bg-slate-50 dark:bg-slate-900/50 border-transparent italic text-slate-600'
+                   }`}
+                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl flex items-center gap-4">
+                    <div className="p-2 bg-white dark:bg-slate-800 rounded-xl text-slate-400 shadow-sm">
+                       <Mail size={18} />
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</p>
+                       <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{viewingProfile.id.toLowerCase()}@abdiadama.edu</p>
+                    </div>
+                 </div>
+                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl flex items-center gap-4">
+                    <div className="p-2 bg-white dark:bg-slate-800 rounded-xl text-slate-400 shadow-sm">
+                       <Phone size={18} />
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Phone</p>
+                       <p className="text-xs font-bold text-slate-700 dark:text-slate-200">+251 911 22 33 44</p>
+                    </div>
+                 </div>
+                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl flex items-center gap-4 md:col-span-2">
+                    <div className="p-2 bg-white dark:bg-slate-800 rounded-xl text-slate-400 shadow-sm">
+                       <MapPin size={18} />
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Primary Campus</p>
+                       <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{viewingProfile.branch} Branch - Ethiopia</p>
+                    </div>
+                 </div>
+              </div>
+            </div>
+
+            {isEditing && (
+              <div className="p-8 border-t border-slate-100 dark:border-slate-800 flex gap-4 bg-slate-50/50 dark:bg-slate-800/50">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="flex-1 py-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl font-black text-sm text-slate-500 hover:bg-white transition-all"
+                >
+                  Discard Changes
+                </button>
+                <button
+                  onClick={() => {
+                    setTeachers(prev => prev.map(t => t.id === viewingProfile.id ? viewingProfile : t));
+                    setIsEditing(false);
+                  }}
+                  className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-200 dark:shadow-none transition-all flex items-center justify-center gap-2"
+                >
+                  <Save size={20} />
+                  Save Teacher Profile
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

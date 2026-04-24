@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { mockStudents, mockClasses, mockGradingConfigs } from '../data/mockData';
 import { Save, Lock, ArrowLeft, ChevronRight, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const GradeEntry = () => {
+  const navigate = useNavigate();
   const { gradesLocked } = useUser();
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
@@ -27,12 +29,18 @@ export const GradeEntry = () => {
   if (!selectedClass) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Link to="/" className="text-blue-600 hover:underline flex items-center gap-1">
-            <ArrowLeft size={18} />
-            Back to Portal
-          </Link>
-          <h2 className="text-2xl font-bold text-slate-800">Grade Entry</h2>
+        <div className="flex flex-col gap-1">
+          <Breadcrumbs />
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-blue-600 hover:underline flex items-center gap-1 text-xs font-bold uppercase tracking-widest"
+            >
+              <ArrowLeft size={14} />
+              Back
+            </button>
+            <h2 className="text-2xl font-bold text-slate-800">Grade Entry</h2>
+          </div>
         </div>
 
         <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl">
@@ -79,18 +87,21 @@ export const GradeEntry = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => {
+            setSelectedClass(null);
+            setSelectedSubject(null);
+          }}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back to Class Selection
+        </button>
+      </div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <button
-            onClick={() => {
-              setSelectedClass(null);
-              setSelectedSubject(null);
-            }}
-            className="text-blue-600 hover:underline text-sm font-medium mb-1 flex items-center gap-1"
-          >
-            <ArrowLeft size={14} />
-            Change Class or Subject
-          </button>
           <div className="flex items-center gap-3">
             <h2 className="text-2xl font-bold text-slate-800">{selectedClass}</h2>
             <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase">

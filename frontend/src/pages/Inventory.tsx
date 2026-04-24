@@ -1,10 +1,13 @@
 
-import { Package, Search, Filter, Plus, X, MoreVertical, AlertCircle } from 'lucide-react';
+import { Package, Search, Filter, Plus, X, MoreVertical, AlertCircle, ArrowLeft } from 'lucide-react';
 import { mockInventory } from '../data/mockData';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const Inventory = () => {
+  const navigate = useNavigate();
   const { role } = useUser();
   const [items] = useState(mockInventory);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -17,6 +20,16 @@ export const Inventory = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Inventory & Assets</h2>

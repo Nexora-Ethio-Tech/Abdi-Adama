@@ -554,10 +554,87 @@ export const Settings = () => {
               </div>
             )}
 
-            {activeTab !== 'General' && activeTab !== 'Appearance' && activeTab !== 'Financial Policy' && (
-              <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-                <SettingsIcon size={48} className="mb-4 opacity-20" />
-                <p className="text-sm font-medium">{activeTab} settings are under configuration for the current branch.</p>
+            {activeTab === 'Hardware' && (
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                 <p className="text-xs text-slate-400 font-bold uppercase tracking-widest italic">All hardware integrations are synchronized</p>
+              </div>
+            )}
+
+            {activeTab === 'Security' && (
+              <div className="space-y-6">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl flex items-center gap-4">
+                  <Shield size={24} className="text-blue-600" />
+                  <div>
+                    <h4 className="text-sm font-bold text-blue-900 dark:text-blue-100">Role-Based Access Control (RBAC)</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Strict hierarchical permissions are active across all modules.</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="p-4 border border-slate-100 dark:border-slate-700 rounded-2xl space-y-2">
+                      <p className="text-xs font-bold text-slate-800 dark:text-white">Two-Factor Authentication</p>
+                      <p className="text-[10px] text-slate-500">Enforce OTP for administrative roles.</p>
+                      <div className="w-10 h-5 bg-blue-600 rounded-full relative">
+                         <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div>
+                      </div>
+                   </div>
+                   <div className="p-4 border border-slate-100 dark:border-slate-700 rounded-2xl space-y-2">
+                      <p className="text-xs font-bold text-slate-800 dark:text-white">Audit Log Retention</p>
+                      <p className="text-[10px] text-slate-500">Currently set to 365 days.</p>
+                      <select className="w-full bg-slate-50 dark:bg-slate-800 border-none text-[10px] font-bold">
+                         <option>365 Days</option>
+                         <option>730 Days</option>
+                         <option>Indefinite</option>
+                      </select>
+                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'Notifications' && (
+              <div className="space-y-6">
+                 <div className="space-y-4">
+                    {['SMS Alerts', 'Email Reports', 'Mobile Push', 'Parent Portal Announcements'].map(item => (
+                       <div key={item} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{item}</span>
+                          <div className="w-10 h-5 bg-emerald-500 rounded-full relative">
+                             <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div>
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+            )}
+
+            {activeTab === 'Regional' && (
+              <div className="space-y-6">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                       <label className="text-[10px] font-bold text-slate-500 uppercase">Primary Language</label>
+                       <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold">
+                          <option>English</option>
+                          <option>Afaan Oromoo</option>
+                          <option>Amharic</option>
+                       </select>
+                    </div>
+                    <div className="space-y-1">
+                       <label className="text-[10px] font-bold text-slate-500 uppercase">Timezone</label>
+                       <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold">
+                          <option>East Africa Time (GMT+3)</option>
+                       </select>
+                    </div>
+                 </div>
+              </div>
+            )}
+            {activeTab === 'Grading System' && role === 'super-admin' && (
+               <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-2xl text-amber-700 dark:text-amber-400 text-[10px] font-bold flex items-center gap-2">
+                  <AlertCircle size={14} />
+                  READ-ONLY: Grading configurations are managed at the School Admin level.
+               </div>
+            )}
+            {role !== 'super-admin' && activeTab === 'General' && (
+              <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 text-slate-500 text-[10px] font-bold flex items-center gap-2">
+                 <Lock size={14} />
+                 Some global branding settings are restricted to Super Admins.
               </div>
             )}
 

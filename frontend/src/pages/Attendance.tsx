@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const Attendance = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const Attendance = () => {
   const isAdmin = role === 'school-admin' || role === 'super-admin';
   const isVP = role === 'vice-principal';
   const [selectedGrade, setSelectedGrade] = useState('10A');
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendance, setAttendance] = useState<Record<string, 'present' | 'absent' | 'late'>>({});
   const [showSubModal, setShowSubModal] = useState(false);
   const [absentTeacher, setAbsentTeacher] = useState<any>(null);
@@ -46,13 +48,16 @@ export const Attendance = () => {
 
   return (
     <div className="space-y-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       {isVP && absentReviewQueue.length > 0 && (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-rose-100 dark:border-rose-900/30 overflow-hidden shadow-xl shadow-rose-50 dark:shadow-none">
           <div className="bg-rose-50 dark:bg-rose-900/20 px-6 py-4 border-b border-rose-100 dark:border-rose-900/30 flex items-center justify-between">
@@ -138,6 +143,17 @@ export const Attendance = () => {
               </select>
               <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
+          </div>
+          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 hidden md:block" />
+          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 hidden md:block" />
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Attendance Date</label>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 hidden md:block" />
           <div className="space-y-1">

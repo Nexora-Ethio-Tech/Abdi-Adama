@@ -5,6 +5,7 @@ import { mockStudents } from '../data/mockData';
 import { FileText, Download, ArrowLeft, Search, Filter, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const Transcripts = () => {
   const navigate = useNavigate();
@@ -27,19 +28,18 @@ export const Transcripts = () => {
 
   return (
     <div className="space-y-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <Link to="/" className="text-blue-600 hover:underline text-sm font-medium mb-1 flex items-center gap-1">
-            <ArrowLeft size={14} />
-            Back to Dashboard
-          </Link>
           <h2 className="text-2xl font-bold text-slate-800">Transcript Management</h2>
           <p className="text-slate-500 text-sm">Generate and manage student academic transcripts.</p>
         </div>

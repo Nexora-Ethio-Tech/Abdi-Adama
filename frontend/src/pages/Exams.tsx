@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import {
   ClipboardList,
   Clock,
@@ -30,6 +31,8 @@ const Exams = () => {
   const { role } = useUser();
   const navigate = useNavigate();
   const [exams, setExams] = useState<Exam[]>(mockExams);
+  const [adminAuthModal, setAdminAuthModal] = useState<string | null>(null);
+  const [adminPassword, setAdminPassword] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [creationType, setCreationType] = useState<'Exam' | 'Assignment'>('Exam');
   const [filterCategory, setFilterCategory] = useState<ExamCategory | 'All'>('All');
@@ -43,6 +46,13 @@ const Exams = () => {
 
   const filteredExams = exams.filter(exam => {
     const categoryMatch = filterCategory === 'All' || exam.category === filterCategory;
+
+    // School Admin restriction: Only Mid-term and Final
+    if (isSchoolAdmin) {
+      const isAdminCategory = exam.category === 'Mid-term' || exam.category === 'Final';
+      return categoryMatch && isAdminCategory;
+    }
+
     if (isTeacher) return categoryMatch && exam.teacherId === 't1'; // Mocking teacher ID
     return categoryMatch;
   });
@@ -58,15 +68,28 @@ const Exams = () => {
     />;
   }
 
+  const handleAdminStart = (examId: string) => {
+    if (adminPassword === 'principal123') { // Mock principal password
+      navigate(`/exam/${examId}`);
+      setAdminAuthModal(null);
+      setAdminPassword('');
+    } else {
+      alert('Invalid Principal Password');
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+      <div className="flex flex-col gap-1">
+        <Breadcrumbs />
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      </div>
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Exams & Assignments</h1>
@@ -133,8 +156,19 @@ const Exams = () => {
                 {cat}s
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {exams.filter(e => e.category === cat).map(exam => (
-                  <ExamCard key={exam.id} exam={exam} role={role} onStart={() => navigate(`/exam/${exam.id}`)} />
+                {filteredExams.filter(e => e.category === cat).map(exam => (
+                  <ExamCard
+                    key={exam.id}
+                    exam={exam}
+                    role={role}
+                    onStart={() => {
+                      if (isSchoolAdmin) {
+                        setAdminAuthModal(exam.id);
+                      } else {
+                        navigate(`/exam/${exam.id}`);
+                      }
+                    }}
+                  />
                 ))}
               </div>
             </div>
@@ -143,8 +177,58 @@ const Exams = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredExams.map(exam => (
-            <ExamCard key={exam.id} exam={exam} role={role} onStart={() => navigate(`/exam/${exam.id}`)} />
+            <ExamCard
+              key={exam.id}
+              exam={exam}
+              role={role}
+              onStart={() => {
+                if (isSchoolAdmin) {
+                  setAdminAuthModal(exam.id);
+                } else {
+                  navigate(`/exam/${exam.id}`);
+                }
+              }}
+            />
           ))}
+        </div>
+      )}
+
+      {adminAuthModal && (
+        <div className="fixed inset-0 z-[150] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl shadow-2xl p-8 border-4 border-blue-500 animate-in zoom-in duration-300">
+            <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShieldCheck size={40} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white text-center mb-2 uppercase tracking-tighter">Principal Authorization</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium">
+              You are accessing an official examination as a School Admin. Please enter the Principal-set password to proceed.
+            </p>
+            <div className="space-y-4">
+               <input
+                 type="password"
+                 placeholder="Enter Principal Password"
+                 autoFocus
+                 className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:border-blue-500 transition-all text-center font-bold tracking-widest dark:text-white"
+                 value={adminPassword}
+                 onChange={(e) => setAdminPassword(e.target.value)}
+                 onKeyDown={(e) => e.key === 'Enter' && handleAdminStart(adminAuthModal)}
+               />
+               <div className="flex gap-3">
+                  <button
+                    onClick={() => { setAdminAuthModal(null); setAdminPassword(''); }}
+                    className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-2xl font-black transition-all hover:bg-slate-200"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    onClick={() => handleAdminStart(adminAuthModal)}
+                    className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black shadow-lg shadow-blue-200 dark:shadow-none transition-all"
+                  >
+                    AUTHORIZE
+                  </button>
+               </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
