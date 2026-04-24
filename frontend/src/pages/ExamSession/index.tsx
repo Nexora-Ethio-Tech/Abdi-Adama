@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Send, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, AlertTriangle, ShieldCheck, Lock } from 'lucide-react';
 import { ExamTimer } from './components/ExamTimer';
 import { QuestionCard } from './components/QuestionCard';
 import { QuestionPalette } from './components/QuestionPalette';

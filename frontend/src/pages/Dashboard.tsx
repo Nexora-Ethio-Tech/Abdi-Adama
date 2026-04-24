@@ -23,7 +23,7 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 );
 
 export const Dashboard = () => {
-  const { role, user, gradesLocked, setGradesLocked } = useUser();
+  const { role, gradesLocked, setGradesLocked } = useUser();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
   const [watchlistExpanded, setWatchlistExpanded] = useState(true);
   const [notices] = useState([
@@ -207,7 +207,9 @@ export const Dashboard = () => {
               >
                 <ShieldAlert size={20} className="text-rose-600" />
                 Priority Watchlist
-                <ChevronRight size={18} className={`transition-transform duration-300 ${watchlistExpanded ? 'rotate-90' : ''}`} />
+                <div className={`transition-transform duration-300 ${watchlistExpanded ? 'rotate-90' : ''}`}>
+                   <ArrowRight size={18} className="text-slate-400" />
+                </div>
               </button>
               <Link to="/analytics" className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest">
                 Full Report

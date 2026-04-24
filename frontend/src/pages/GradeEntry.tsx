@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { mockStudents, mockClasses, mockGradingConfigs } from '../data/mockData';
 import { Save, Lock, ArrowLeft, ChevronRight, Users } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const GradeEntry = () => {

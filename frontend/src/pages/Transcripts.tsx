@@ -4,7 +4,6 @@ import { useUser } from '../context/UserContext';
 import { mockStudents } from '../data/mockData';
 import { FileText, Download, ArrowLeft, Search, Filter, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const Transcripts = () => {

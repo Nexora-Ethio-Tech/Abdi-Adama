@@ -1,5 +1,5 @@
 
-import { Settings as SettingsIcon, Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio, GraduationCap, Plus, Trash2, AlertCircle, Lock, Unlock, Package, Users } from 'lucide-react';
+import { Building, Bell, Shield, Palette, Globe, Save, HelpCircle, CreditCard, Cpu, CheckCircle, Wifi, Smartphone, Radio, GraduationCap, Plus, Trash2, AlertCircle, Lock, Unlock, Package, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useAppearance, type UIStyle } from '../context/AppearanceContext';
 import { mockGradingConfigs } from '../data/mockData';

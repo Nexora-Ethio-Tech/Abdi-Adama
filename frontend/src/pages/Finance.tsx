@@ -1,10 +1,9 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, UserPlus, Filter, ChevronDown, Bus, ArrowLeft } from 'lucide-react';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, Filter, ChevronDown, Bus, ArrowLeft } from 'lucide-react';
 import { mockFinances, mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StudentRegistration } from '../components/StudentRegistration';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 
 interface PaymentLog {

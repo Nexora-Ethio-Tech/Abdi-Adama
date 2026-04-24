@@ -170,6 +170,12 @@ function App() {
               </ProtectedRoute>
             } />
 
+            <Route path="registration" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin', 'finance-clerk']}>
+                <Registration />
+              </ProtectedRoute>
+            } />
+
             <Route path="finance" element={<Finance />} />
             <Route path="exams" element={<Exams />} />
             <Route path="settings" element={<Settings />} />

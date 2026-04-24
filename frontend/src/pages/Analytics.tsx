@@ -14,8 +14,7 @@ import {
   MapPin
 } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../context/useStore';
 import { ArrowLeft } from 'lucide-react';
 import { Breadcrumbs } from '../components/Breadcrumbs';

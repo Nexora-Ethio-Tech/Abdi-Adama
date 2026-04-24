@@ -25,7 +25,7 @@ import {
 import { useUser } from '../context/UserContext';
 import { mockExams } from '../data/examData';
 import type { Exam, ExamCategory } from '../data/examData';
-import { useStore } from '../context/useStore';
+import { ArrowLeft, ShieldCheck } from 'lucide-react';
 
 const Exams = () => {
   const { role } = useUser();
