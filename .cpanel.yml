@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/abdiadam/public_html/
+    - cd frontend
+    - npm ci
+    - npm run build
+    - /bin/cp -R dist/. "$DEPLOYPATH"
