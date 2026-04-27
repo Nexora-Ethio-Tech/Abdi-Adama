@@ -111,7 +111,7 @@ export const LandingPage = () => {
           
           <div className="flex items-center gap-6">
             <div className="hidden lg:flex items-center gap-8">
-              {['Home', 'About', 'Programs', 'Branches'].map((item) => (
+              {['Home', 'About', 'Programs', 'Media', 'Branches'].map((item) => (
                 <a key={item} href={`#${item.toLowerCase()}`} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-school-primary transition-colors">{item}</a>
               ))}
             </div>
@@ -314,6 +314,64 @@ export const LandingPage = () => {
                 <p className="text-slate-400 text-sm leading-relaxed">{val.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Media & Life Section */}
+      <section id="media" className="py-24 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="section-header">
+            <span className="section-subtitle">Life at Abdi Adama</span>
+            <h2 className="section-title">Experience Our Community</h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Culture Day Video */}
+            <div className="group relative rounded-[2.5rem] overflow-hidden bg-slate-900 aspect-video shadow-2xl border-4 border-white dark:border-slate-800">
+              <iframe 
+                className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"
+                src="https://www.youtube.com/embed/DMtKs79RUmA" 
+                title="Abdi Adama Culture Day"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              ></iframe>
+              <div className="absolute bottom-6 left-6 right-6 pointer-events-none transition-all duration-500 group-hover:translate-y-2 group-hover:opacity-0">
+                <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20">
+                  <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">Culture Day Celebration</h4>
+                  <p className="text-white/70 text-[10px] font-medium">Watch our community celebrate Ethiopian culture through dance and music.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* School Intro Video */}
+            <div className="flex flex-col justify-center space-y-8">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-school-primary/10 rounded-full text-school-primary">
+                  <Video size={18} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Introductory Video</span>
+                </div>
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                  A place where learning <br /> meets <span className="text-gradient">excellence!</span>
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                  At Abdi Adama School, we are committed to nurturing young minds and helping every student reach their full potential. Our experienced teachers provide a supportive and engaging environment, combining quality education with values that shape responsible and confident individuals.
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed">
+                  Whether in academics, arts, or sports, our students are encouraged to explore their talents and develop skills that prepare them for future success.
+                </p>
+              </div>
+
+              <a 
+                href="https://drive.google.com/file/d/1dGwyS7pClTRLflLSDkj8a332nTsS8lNw/view" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 active:scale-95 transition-all w-fit"
+              >
+                Watch Full Presentation
+                <ArrowRight size={18} />
+              </a>
+            </div>
           </div>
         </div>
       </section>
