@@ -2,7 +2,6 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/abdiadam/public_html/
-    - cd frontend
-    - npm ci
-    - npm run build
-    - /bin/cp -R dist/. "$DEPLOYPATH"
+    # Delete default cPanel and Sitejet junk files
+    - /bin/rm -f $DEPLOYPATH/default.php $DEPLOYPATH/default.html $DEPLOYPATH/index.php
+    - /bin/cp -R frontend/* $DEPLOYPATH

@@ -5,14 +5,34 @@
 -- ============================================================
 
 -- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- Extension removed
+-- Extension removed
+
+-- ============================================================
+-- CLEANUP (Allows re-running the script safely)
+-- ============================================================
+DROP TABLE IF EXISTS 
+    branches, school_config, users, students, emergency_contacts, teachers, 
+    parents, parent_student, classes, courses, schedules, student_attendance, 
+    attendance_history, absence_queue, academic_history, academic_history_courses, 
+    grading_configs, grades, exams, exam_questions, exam_question_options, 
+    exam_access, exam_submissions, exam_violations, exam_lockdown, 
+    finance_transactions, finance_summaries, payment_status_logs, audit_log, 
+    enrollment_queue, pending_applications, registration_exam_config, 
+    communication_logs, weekly_plans, clinic_visits, clinic_chat_messages, 
+    logistics_notices, notices, events, inventory, library_books, library_loans, 
+    financial_policies CASCADE;
+
+DROP TYPE IF EXISTS 
+    user_role, risk_level, attendance_status, absence_status, exam_category, 
+    exam_status, violation_type, finance_direction, audit_category, audit_direction, 
+    app_status, plan_status, visit_status, chat_sender_role CASCADE;
 
 -- ============================================================
 -- 1. BRANCHES
 -- ============================================================
 CREATE TABLE branches (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        VARCHAR(100) NOT NULL UNIQUE,
     location    VARCHAR(255) NOT NULL,
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
@@ -23,7 +43,7 @@ CREATE TABLE branches (
 -- 2. SCHOOL CONFIG (multilingual branding)
 -- ============================================================
 CREATE TABLE school_config (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     key             VARCHAR(50)  NOT NULL UNIQUE,  -- 'school_name', 'school_motto'
     value_oromic    TEXT NOT NULL DEFAULT '',
     value_amharic   TEXT NOT NULL DEFAULT '',
@@ -41,7 +61,7 @@ CREATE TYPE user_role AS ENUM (
 );
 
 CREATE TABLE users (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     digital_id  VARCHAR(20)  UNIQUE,
     name        VARCHAR(150) NOT NULL,
     email       VARCHAR(255) NOT NULL UNIQUE,
@@ -63,7 +83,7 @@ CREATE INDEX idx_users_digital   ON users(digital_id);
 CREATE TYPE risk_level AS ENUM ('Low','Medium','High');
 
 CREATE TABLE students (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     grade               VARCHAR(10)  NOT NULL,
     status              VARCHAR(20)  NOT NULL DEFAULT 'Active',
@@ -98,7 +118,7 @@ CREATE INDEX idx_students_status ON students(status);
 -- 5. EMERGENCY CONTACTS
 -- ============================================================
 CREATE TABLE emergency_contacts (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id  UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     name        VARCHAR(150) NOT NULL,
     relation    VARCHAR(50)  NOT NULL,
@@ -110,7 +130,7 @@ CREATE TABLE emergency_contacts (
 -- 6. TEACHERS
 -- ============================================================
 CREATE TABLE teachers (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     subjects            TEXT[]       NOT NULL DEFAULT '{}',
     branch              VARCHAR(100),
@@ -132,7 +152,7 @@ CREATE TABLE teachers (
 -- 7. PARENTS
 -- ============================================================
 CREATE TABLE parents (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     family_id   VARCHAR(20),
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
@@ -148,7 +168,7 @@ CREATE TABLE parent_student (
 -- 8. CLASSES
 -- ============================================================
 CREATE TABLE classes (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name            VARCHAR(50) NOT NULL,
     teacher_id      UUID        REFERENCES teachers(id) ON DELETE SET NULL,
     student_count   INT         NOT NULL DEFAULT 0,
@@ -160,7 +180,7 @@ CREATE TABLE classes (
 -- 9. COURSES
 -- ============================================================
 CREATE TABLE courses (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        VARCHAR(100) NOT NULL,
     code        VARCHAR(30)  NOT NULL UNIQUE,
     teacher_id  UUID         REFERENCES teachers(id) ON DELETE SET NULL,
@@ -173,7 +193,7 @@ CREATE TABLE courses (
 -- 10. SCHEDULES
 -- ============================================================
 CREATE TABLE schedules (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     teacher_id  UUID        NOT NULL REFERENCES teachers(id) ON DELETE CASCADE,
     day         VARCHAR(15) NOT NULL,
     time_slot   VARCHAR(50) NOT NULL,
@@ -188,7 +208,7 @@ CREATE TABLE schedules (
 CREATE TYPE attendance_status AS ENUM ('present','absent','late','excused');
 
 CREATE TABLE student_attendance (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id  UUID              NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     date        DATE              NOT NULL,
     status      attendance_status NOT NULL DEFAULT 'present',
@@ -201,7 +221,7 @@ CREATE TABLE student_attendance (
 -- 12. ATTENDANCE HISTORY (monthly aggregate)
 -- ============================================================
 CREATE TABLE attendance_history (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id  UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     month       VARCHAR(10)  NOT NULL,
     year        INT          NOT NULL,
@@ -215,7 +235,7 @@ CREATE TABLE attendance_history (
 CREATE TYPE absence_status AS ENUM ('pending','excused','notified');
 
 CREATE TABLE absence_queue (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id      UUID          NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     student_name    VARCHAR(150)  NOT NULL,
     grade           VARCHAR(10)   NOT NULL,
@@ -233,7 +253,7 @@ CREATE TABLE absence_queue (
 -- 14. ACADEMIC HISTORY
 -- ============================================================
 CREATE TABLE academic_history (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id  UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     year        VARCHAR(20)  NOT NULL,
     semester    VARCHAR(30),
@@ -245,7 +265,7 @@ CREATE TABLE academic_history (
 );
 
 CREATE TABLE academic_history_courses (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     history_id      UUID         NOT NULL REFERENCES academic_history(id) ON DELETE CASCADE,
     course_name     VARCHAR(100) NOT NULL,
     grade           VARCHAR(5),
@@ -256,7 +276,7 @@ CREATE TABLE academic_history_courses (
 -- 15. GRADING CONFIGURATION
 -- ============================================================
 CREATE TABLE grading_configs (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     grade_level VARCHAR(20)  NOT NULL,
     method_id   VARCHAR(30)  NOT NULL,
     label       VARCHAR(50)  NOT NULL,
@@ -269,7 +289,7 @@ CREATE TABLE grading_configs (
 -- 16. GRADES
 -- ============================================================
 CREATE TABLE grades (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id  UUID          NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     course_id   UUID          NOT NULL REFERENCES courses(id)  ON DELETE CASCADE,
     type        VARCHAR(30)   NOT NULL,
@@ -286,7 +306,7 @@ CREATE TYPE exam_category AS ENUM ('Mid-term','Final','Quiz','Assignment');
 CREATE TYPE exam_status   AS ENUM ('available','completed','draft');
 
 CREATE TABLE exams (
-    id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title                   VARCHAR(200) NOT NULL,
     course_id               UUID         REFERENCES courses(id) ON DELETE SET NULL,
     course_name             VARCHAR(100),
@@ -309,7 +329,7 @@ CREATE TABLE exams (
 -- 18. EXAM QUESTIONS & OPTIONS
 -- ============================================================
 CREATE TABLE exam_questions (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     exam_id         UUID NOT NULL REFERENCES exams(id) ON DELETE CASCADE,
     question_text   TEXT NOT NULL,
     correct_option_id VARCHAR(10),
@@ -318,7 +338,7 @@ CREATE TABLE exam_questions (
 );
 
 CREATE TABLE exam_question_options (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     question_id UUID         NOT NULL REFERENCES exam_questions(id) ON DELETE CASCADE,
     option_key  VARCHAR(10)  NOT NULL,
     option_text TEXT         NOT NULL,
@@ -329,7 +349,7 @@ CREATE TABLE exam_question_options (
 -- 19. EXAM ACCESS CONTROL
 -- ============================================================
 CREATE TABLE exam_access (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     exam_id     UUID NOT NULL REFERENCES exams(id) ON DELETE CASCADE,
     user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(exam_id, user_id)
@@ -339,7 +359,7 @@ CREATE TABLE exam_access (
 -- 20. EXAM SUBMISSIONS (Answer Payloads)
 -- ============================================================
 CREATE TABLE exam_submissions (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     exam_id         UUID         NOT NULL REFERENCES exams(id) ON DELETE CASCADE,
     student_id      UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     answers         JSONB        NOT NULL DEFAULT '{}',
@@ -357,7 +377,7 @@ CREATE TABLE exam_submissions (
 CREATE TYPE violation_type AS ENUM ('fullscreen-exit','visibility-change','blur');
 
 CREATE TABLE exam_violations (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     submission_id   UUID           NOT NULL REFERENCES exam_submissions(id) ON DELETE CASCADE,
     violation_type  violation_type NOT NULL,
     occurred_at     TIMESTAMPTZ    NOT NULL DEFAULT NOW()
@@ -367,7 +387,7 @@ CREATE TABLE exam_violations (
 -- 22. EXAM LOCKDOWN STATE
 -- ============================================================
 CREATE TABLE exam_lockdown (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     branch_id           UUID    REFERENCES branches(id),
     is_locked_down      BOOLEAN NOT NULL DEFAULT FALSE,
     lockdown_password   VARCHAR(100),
@@ -378,7 +398,7 @@ CREATE TABLE exam_lockdown (
 -- 23. FINANCE — TRANSACTIONS
 -- ============================================================
 CREATE TABLE finance_transactions (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id      UUID          REFERENCES students(id) ON DELETE SET NULL,
     student_name    VARCHAR(150),
     amount          NUMERIC(14,2) NOT NULL,
@@ -395,7 +415,7 @@ CREATE TABLE finance_transactions (
 CREATE TYPE finance_direction AS ENUM ('Income','Expense');
 
 CREATE TABLE finance_summaries (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     category        VARCHAR(100)     NOT NULL,
     description     TEXT,
     amount          NUMERIC(14,2)    NOT NULL,
@@ -411,7 +431,7 @@ CREATE TABLE finance_summaries (
 -- 25. FINANCE — PAYMENT STATUS LOGS
 -- ============================================================
 CREATE TABLE payment_status_logs (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id      UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     status          BOOLEAN      NOT NULL,
     modified_by     VARCHAR(150) NOT NULL,
@@ -426,7 +446,7 @@ CREATE TYPE audit_category  AS ENUM ('Fees','Staff');
 CREATE TYPE audit_direction AS ENUM ('In','Out');
 
 CREATE TABLE audit_log (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id      UUID            REFERENCES students(id) ON DELETE SET NULL,
     student_name    VARCHAR(150),
     section         VARCHAR(50),
@@ -447,7 +467,7 @@ CREATE INDEX idx_audit_timestamp ON audit_log(timestamp);
 -- 27. FINANCE — ENROLLMENT QUEUE
 -- ============================================================
 CREATE TABLE enrollment_queue (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        VARCHAR(150) NOT NULL,
     grade       VARCHAR(10)  NOT NULL,
     amount      NUMERIC(12,2) NOT NULL,
@@ -467,7 +487,7 @@ CREATE TYPE app_status AS ENUM (
 );
 
 CREATE TABLE pending_applications (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name            VARCHAR(150) NOT NULL,
     dob             DATE         NOT NULL,
     parent_name     VARCHAR(150) NOT NULL,
@@ -486,7 +506,7 @@ CREATE TABLE pending_applications (
 -- 29. REGISTRATION — EXAM CONFIG
 -- ============================================================
 CREATE TABLE registration_exam_config (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     application_id  UUID         NOT NULL REFERENCES pending_applications(id) ON DELETE CASCADE,
     exam_date       DATE         NOT NULL,
     exam_time       VARCHAR(20)  NOT NULL,
@@ -500,7 +520,7 @@ CREATE TABLE registration_exam_config (
 -- 30. COMMUNICATION LOGS (weekly comm book)
 -- ============================================================
 CREATE TABLE communication_logs (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id      UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     teacher_id      UUID         REFERENCES teachers(id) ON DELETE SET NULL,
     week_ending     DATE         NOT NULL,
@@ -523,7 +543,7 @@ CREATE TABLE communication_logs (
 CREATE TYPE plan_status AS ENUM ('Draft','Pending','Approved','Revision Required');
 
 CREATE TABLE weekly_plans (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     teacher_id          UUID        NOT NULL REFERENCES teachers(id) ON DELETE CASCADE,
     date                DATE        NOT NULL,
     content             TEXT        NOT NULL,
@@ -549,7 +569,7 @@ CREATE TABLE weekly_plans (
 CREATE TYPE visit_status AS ENUM ('pending-approval','sent','rejected');
 
 CREATE TABLE clinic_visits (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id      UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     student_name    VARCHAR(150) NOT NULL,
     date            DATE         NOT NULL,
@@ -568,7 +588,7 @@ CREATE TABLE clinic_visits (
 CREATE TYPE chat_sender_role AS ENUM ('parent','clinic');
 
 CREATE TABLE clinic_chat_messages (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     sender_id       UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     sender_role     chat_sender_role NOT NULL,
     student_name    VARCHAR(150)   NOT NULL,
@@ -582,7 +602,7 @@ CREATE TABLE clinic_chat_messages (
 -- 34. LOGISTICS — DRIVER NOTICES
 -- ============================================================
 CREATE TABLE logistics_notices (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title           VARCHAR(200) NOT NULL,
     content         TEXT         NOT NULL,
     stations        TEXT,
@@ -596,7 +616,7 @@ CREATE TABLE logistics_notices (
 -- 35. NOTICE BOARD
 -- ============================================================
 CREATE TABLE notices (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title       VARCHAR(200) NOT NULL,
     content     TEXT         NOT NULL,
     priority    VARCHAR(20)  NOT NULL DEFAULT 'Medium',
@@ -609,7 +629,7 @@ CREATE TABLE notices (
 -- 36. EVENTS / CALENDAR
 -- ============================================================
 CREATE TABLE events (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title       VARCHAR(200) NOT NULL,
     date        DATE         NOT NULL,
     type        VARCHAR(50)  NOT NULL,
@@ -622,7 +642,7 @@ CREATE TABLE events (
 -- 37. INVENTORY
 -- ============================================================
 CREATE TABLE inventory (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        VARCHAR(200) NOT NULL,
     category    VARCHAR(100) NOT NULL,
     quantity    INT          NOT NULL DEFAULT 0,
@@ -637,7 +657,7 @@ CREATE TABLE inventory (
 -- 38. LIBRARY — BOOKS
 -- ============================================================
 CREATE TABLE library_books (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title       VARCHAR(300) NOT NULL,
     author      VARCHAR(200) NOT NULL,
     isbn        VARCHAR(30)  UNIQUE,
@@ -653,7 +673,7 @@ CREATE TABLE library_books (
 -- 39. LIBRARY — LOANS
 -- ============================================================
 CREATE TABLE library_loans (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     book_id         UUID NOT NULL REFERENCES library_books(id) ON DELETE CASCADE,
     student_id      UUID NOT NULL REFERENCES students(id)      ON DELETE CASCADE,
     borrowed_at     DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -667,7 +687,7 @@ CREATE TABLE library_loans (
 -- 40. FINANCIAL TARGETS & POLICIES (Settings page)
 -- ============================================================
 CREATE TABLE financial_policies (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     grade_level         VARCHAR(20),
     monthly_tuition     NUMERIC(12,2) NOT NULL DEFAULT 0,
     registration_fee    NUMERIC(12,2) NOT NULL DEFAULT 0,
