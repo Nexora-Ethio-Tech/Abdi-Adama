@@ -5,7 +5,7 @@ import { Chatbot } from '../components/Chatbot';
 import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
 import classroomImg from '../assets/students_classroom.png';
-import founderImg from '../assets/founder.png';
+import founderImg from '../assets/founder.jpg';
 import { useUser } from '../context/UserContext';
 import { useStore } from '../context/useStore';
 import {
