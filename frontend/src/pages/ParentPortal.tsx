@@ -1,10 +1,12 @@
 
-import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronLeft, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react';
+import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockCommunicationLogs, commFields, ratingLabels } from '../data/mockData';
+import { useTranslation } from 'react-i18next';
 
 export const ParentPortal = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [showHistory, setShowHistory] = useState(false);
@@ -78,7 +80,7 @@ export const ParentPortal = () => {
           <div className="bg-slate-50 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <ClipboardList className="text-slate-400" size={32} />
           </div>
-          <p className="text-slate-500">No communication logs found for this student.</p>
+          <p className="text-slate-500">{t('parentPortal.noLogs')}</p>
         </div>
       );
     }
@@ -89,20 +91,20 @@ export const ParentPortal = () => {
           <div>
             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
               <Star className="text-amber-500" size={24} />
-              Weekly Communication Book
+              {t('parentPortal.communicationBook')}
             </h3>
-            <p className="text-xs text-slate-500 font-medium mt-1">Reviewing your child's weekly behavioral and readiness markers.</p>
+            <p className="text-xs text-slate-500 font-medium mt-1">{t('parentPortal.subtitle')}</p>
           </div>
           <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-800 p-2 rounded-xl self-start md:self-auto shadow-inner">
             <button
-              disabled={currentLogIndex === studentLogs.length - 1}
-              onClick={() => setCurrentLogIndex(prev => prev + 1)}
+              disabled={currentLogIndex === 0}
+              onClick={() => setCurrentLogIndex(prev => prev - 1)}
               className="p-1 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all disabled:opacity-30"
             >
-              <ChevronLeft size={20} />
+              <ChevronRight size={20} />
             </button>
             <div className="flex flex-col items-center min-w-[120px]">
-               <span className="text-[10px] uppercase font-black text-slate-400">Week Ending</span>
+               <span className="text-[10px] uppercase font-black text-slate-400">{t('parentPortal.weekEnding')}</span>
                <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{currentLog.weekEnding}</span>
             </div>
             <button
@@ -139,7 +141,7 @@ export const ParentPortal = () => {
           <div className="lg:col-span-2 bg-blue-50 dark:bg-blue-900/10 p-8 rounded-[2rem] border border-blue-100 dark:border-blue-900/20 relative overflow-hidden group">
             <h4 className="text-sm font-bold text-blue-900 dark:text-blue-400 mb-3 flex items-center gap-2">
               <ClipboardList size={18} />
-              Teacher's Observation
+              {t('parentPortal.teacherObservation')}
             </h4>
             <p className="text-base text-blue-800 dark:text-blue-300 leading-relaxed italic font-medium relative z-10">
               "{currentLog.teacherNote || "Student has shown consistent engagement this week. Maintain current focus on home assignments for continued progress."}"
@@ -150,13 +152,13 @@ export const ParentPortal = () => {
           <div className="bg-slate-900 rounded-[2rem] p-8 text-white flex flex-col justify-between shadow-2xl shadow-slate-200 dark:shadow-none">
             <div>
               <TrendingUp className="text-blue-400 mb-4" size={32} />
-              <h4 className="text-xl font-bold mb-2">Progress Insight</h4>
+              <h4 className="text-xl font-bold mb-2">{t('parentPortal.progressInsight')}</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Consistent "Excellent" ratings in Participation often correlate with higher academic performance in final exams.
               </p>
             </div>
             <button className="mt-8 w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl font-bold text-xs transition-all">
-              Download Performance Report
+              {t('parentPortal.downloadReport')}
             </button>
           </div>
         </div>
@@ -176,7 +178,7 @@ export const ParentPortal = () => {
             }}
             className="text-blue-600 hover:underline flex items-center gap-2 font-medium"
           >
-            ← Back to Children List
+            ← {t('parentPortal.backToChildren')}
           </button>
 
           <div className="flex gap-2">
@@ -186,7 +188,7 @@ export const ParentPortal = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium text-sm"
               >
                 <History size={18} />
-                {showHistory ? 'View Active Courses' : 'Academic History'}
+                {showHistory ? t('parentPortal.activeCourses') : t('parentPortal.academicHistory')}
               </button>
             )}
           </div>
@@ -198,14 +200,14 @@ export const ParentPortal = () => {
               onClick={() => setActivePortalTab('academic')}
               className={`pb-4 px-2 text-sm font-bold transition-all relative ${activePortalTab === 'academic' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              Academic Profile
+              {t('parentPortal.academicProfile')}
               {activePortalTab === 'academic' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full" />}
             </button>
             <button
               onClick={() => setActivePortalTab('communication')}
               className={`pb-4 px-2 text-sm font-bold transition-all relative ${activePortalTab === 'communication' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              Communication Book
+              {t('parentPortal.communicationBook')}
               {activePortalTab === 'communication' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full" />}
             </button>
           </div>
@@ -227,21 +229,21 @@ export const ParentPortal = () => {
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-2 md:gap-3 text-slate-500 dark:text-slate-400 mb-2">
                     <Calendar size={18} />
-                    <span className="text-xs md:text-sm font-medium">Attendance</span>
+                    <span className="text-xs md:text-sm font-medium">{t('parentPortal.attendance')}</span>
                   </div>
                   <p className="text-xl md:text-2xl font-bold text-emerald-600">{selectedChild.attendance}</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
                     <BookOpen size={18} />
-                    <span className="text-sm font-medium">Active Courses</span>
+                    <span className="text-sm font-medium">{t('parentPortal.activeCourses')}</span>
                   </div>
                   <p className="text-2xl font-bold text-blue-600">{selectedChild.courses.length}</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
                     <Award size={18} />
-                    <span className="text-sm font-medium">Performance</span>
+                    <span className="text-sm font-medium">{t('parentPortal.academicRank')}</span>
                   </div>
                   <p className="text-2xl font-bold text-purple-600">{selectedChild.performance}</p>
                 </div>
@@ -289,7 +291,7 @@ export const ParentPortal = () => {
               </>
             ) : (
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">Academic History</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{t('parentPortal.academicHistory')}</h3>
                 <div className="flex gap-4">
                   {academicYears.map(year => (
                     <button
@@ -337,14 +339,14 @@ export const ParentPortal = () => {
                   </div>
                 ) : selectedYear ? (
                   <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
-                    <p className="text-slate-500">No records found for EC {selectedYear}</p>
+                    <p className="text-slate-500">{t('parentPortal.noRecords', { year: selectedYear })}</p>
                   </div>
                 ) : (
                   <div className="p-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
                     <div className="bg-slate-50 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                       <History className="text-slate-400" size={32} />
                     </div>
-                    <p className="text-slate-500">Select an academic year to view historical performance.</p>
+                    <p className="text-slate-500">{t('parentPortal.selectYear')}</p>
                   </div>
                 )}
               </div>
@@ -364,13 +366,13 @@ export const ParentPortal = () => {
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
           <div className="space-y-4 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-[10px] font-black uppercase tracking-[0.2em]">
-              Family Dashboard
+              {t('parentPortal.title')}
             </div>
             <h2 className="text-5xl md:text-6xl font-black tracking-tight leading-none">
-              Hello, <span className="text-blue-400">Mr. Bikila</span>
+              {t('parentPortal.greeting', { name: 'Mr. Bikila' })}
             </h2>
             <p className="text-slate-300 text-lg max-w-lg leading-relaxed font-medium">
-              Your central hub for tracking educational milestones, health updates, and school announcements.
+              {t('parentPortal.subtitle')}
             </p>
           </div>
 
@@ -379,10 +381,10 @@ export const ParentPortal = () => {
               <User size={40} />
             </div>
             <div>
-              <p className="text-lg font-black text-white">Family ID: #8824</p>
+              <p className="text-lg font-black text-white">{t('parentPortal.familyId')}: #8824</p>
               <div className="flex items-center gap-2 mt-1">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                <p className="text-xs text-blue-300 font-bold uppercase tracking-widest">Verified Account</p>
+                <p className="text-xs text-blue-300 font-bold uppercase tracking-widest">{t('parentPortal.verified')}</p>
               </div>
             </div>
           </div>
@@ -400,10 +402,10 @@ export const ParentPortal = () => {
             <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
                <Award size={24} />
             </div>
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">My Children</h3>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('parentPortal.myChildren')}</h3>
           </div>
           <span className="bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl text-xs font-black text-slate-500 uppercase tracking-widest">
-            {children.length} Enrolled
+            {children.length} {t('parentPortal.enrolled')}
           </span>
         </div>
 
@@ -436,17 +438,17 @@ export const ParentPortal = () => {
 
                 <div className="grid grid-cols-2 gap-6 mb-4">
                   <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-[2rem] border border-slate-100 dark:border-slate-700/50">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Attendance</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('parentPortal.attendance')}</p>
                     <p className="text-2xl font-black text-emerald-600">{child.attendance}</p>
                   </div>
                   <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-[2rem] border border-slate-100 dark:border-slate-700/50">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Academic Rank</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('parentPortal.academicRank')}</p>
                     <p className="text-2xl font-black text-blue-600">{child.performance}</p>
                   </div>
                 </div>
 
                 <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-4 group-hover:text-blue-600 transition-colors">
-                  Click to view full academic profile & comm. book
+                  {t('parentPortal.clickToView')}
                 </p>
               </div>
             </div>
@@ -459,7 +461,7 @@ export const ParentPortal = () => {
         <div className="lg:col-span-8 space-y-6">
           <div className="flex items-center gap-3 px-2">
             <Megaphone className="text-blue-600 dark:text-blue-400" size={24} />
-            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">School Announcements</h3>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('parentPortal.announcements')}</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {notices.map(notice => (
@@ -492,14 +494,14 @@ export const ParentPortal = () => {
                 <div className="w-16 h-16 bg-blue-600 rounded-[1.5rem] flex items-center justify-center mb-8 shadow-xl shadow-blue-900/50 group-hover:scale-110 transition-transform">
                   <HeartPulse size={32} />
                 </div>
-                <h3 className="text-3xl font-black mb-4 leading-tight">Clinic<br />Support</h3>
+                <h3 className="text-3xl font-black mb-4 leading-tight">{t('parentPortal.clinicSupport').split(' ')[0]}<br />{t('parentPortal.clinicSupport').split(' ')[1]}</h3>
                 <p className="text-slate-400 text-sm font-medium leading-relaxed">
-                  Direct encrypted line to our medical staff. Real-time updates on your child's health and well-being.
+                  {t('parentPortal.clinicDesc')}
                 </p>
               </div>
               <div className="mt-12">
                 <button className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">
-                   Open Medical Chat
+                   {t('parentPortal.openMedicalChat')}
                 </button>
               </div>
             </div>

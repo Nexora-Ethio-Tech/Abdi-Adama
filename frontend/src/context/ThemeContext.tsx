@@ -15,10 +15,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const saved = localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') return saved;
 
-    // Check system preference if no saved theme
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
+    // Force default to light (logo colors) instead of checking system preference
     return 'light';
   });
 

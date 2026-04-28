@@ -34,6 +34,7 @@ const Exams = lazy(() => import('./pages/Exams'));
 const Clinic = lazy(() => import('./pages/Clinic').then((m) => ({ default: m.Clinic })));
 const ParentClinicChat = lazy(() => import('./pages/ParentClinicChat').then((m) => ({ default: m.ParentClinicChat })));
 const DriverPortal = lazy(() => import('./pages/DriverPortal').then((m) => ({ default: m.DriverPortal })));
+const WebsitePosts = lazy(() => import('./pages/WebsitePosts').then((m) => ({ default: m.WebsitePosts })));
 
 const PageLoader = () => (
   <div className="min-h-[40vh] flex items-center justify-center">
@@ -142,6 +143,12 @@ function App() {
             <Route path="library" element={
               <ProtectedRoute allowedRoles={['librarian', 'super-admin']}>
                 <Library />
+              </ProtectedRoute>
+            } />
+
+            <Route path="website-posts" element={
+              <ProtectedRoute allowedRoles={['super-admin']}>
+                <WebsitePosts />
               </ProtectedRoute>
             } />
 

@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --primary: #0064a5;
-  --secondary: #bf6a82;
+  --primary: #2c6399;
+  --secondary: #c86a79;
   --accent: #4db3e3;
   --app-radius: 1rem;
   --app-spacing: 1.5rem;
@@ -43,7 +43,7 @@
   --app-font-size: 1rem;
   --app-shadow: none;
   --app-font-weight: 400;
-  --primary: #0064a5;
+  --primary: #2c6399;
 }
 
 @layer base {
@@ -195,5 +195,12 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
   }
 }

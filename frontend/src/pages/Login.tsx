@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LogIn, Fingerprint, Lock, AlertCircle, Mail, Key, CheckCircle } from 'lucide-react';
 import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
@@ -9,8 +10,16 @@ import logo from '../assets/logo.jpg';
 export const Login = () => {
   const { login, schoolName } = useUser();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
-  const displaySchoolName = schoolName.english;
+  const getLocalizedSchoolName = () => {
+    switch (i18n.language) {
+      case 'am': return schoolName.amharic;
+      case 'om': return schoolName.oromic;
+      default: return schoolName.english;
+    }
+  };
+  const displaySchoolName = getLocalizedSchoolName();
   const [digitalIdOrEmail, setDigitalIdOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
@@ -76,8 +85,8 @@ export const Login = () => {
               <img src={logo} alt="Abdi Adama School Logo" className="w-24 h-24 rounded-2xl object-cover" />
             </div>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white">Sign In</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">Access the {displaySchoolName} Ecosystem</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white">{t('login.title')}</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">{t('login.accessEcosystem')} {displaySchoolName}</p>
         </div>
 
         <div className="card p-8">
@@ -87,13 +96,13 @@ export const Login = () => {
                 onClick={() => setLoginMode('password')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${loginMode === 'password' ? 'bg-white dark:bg-slate-700 text-school-primary shadow-sm' : 'text-slate-500'}`}
               >
-                Password
+                {t('login.password')}
               </button>
               <button
                 onClick={() => setLoginMode('otp')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${loginMode === 'otp' ? 'bg-white dark:bg-slate-700 text-school-primary shadow-sm' : 'text-slate-500'}`}
               >
-                OTP Login
+                {t('login.otpLogin')}
               </button>
             </div>
           )}
@@ -113,7 +122,7 @@ export const Login = () => {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Digital ID or Email</label>
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">{t('login.idLabel')}</label>
               <div className="relative">
                 {digitalIdOrEmail.includes('@') ? (
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
@@ -125,7 +134,7 @@ export const Login = () => {
                   required
                   value={digitalIdOrEmail}
                   onChange={(e) => setDigitalIdOrEmail(e.target.value)}
-                  placeholder="Enter Digital ID or Email"
+                  placeholder={t('login.idPlaceholder')}
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-school-primary focus:ring-4 focus:ring-school-primary/10 transition-all outline-none"
                 />
               </div>
@@ -133,7 +142,7 @@ export const Login = () => {
 
             {isForgotPassword || loginMode === 'otp' ? (
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">OTP Code (6 Digits)</label>
+                <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">{t('login.otpCode')}</label>
                 <div className="relative">
                   <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                   <input
@@ -146,20 +155,17 @@ export const Login = () => {
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-school-primary focus:ring-4 focus:ring-school-primary/10 transition-all outline-none"
                   />
                 </div>
-                {isForgotPassword && !success && (
-                  <p className="text-[10px] text-slate-500 font-medium px-1">We will send a 6-digit code to verify your identity.</p>
-                )}
               </div>
             ) : (
               <div className="space-y-2">
                 <div className="flex justify-between items-center px-1">
-                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Password</label>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300">{t('login.password')}</label>
                   <button
                     type="button"
                     onClick={() => setIsForgotPassword(true)}
                     className="text-xs font-bold text-school-primary hover:underline"
                   >
-                    Forgot?
+                    {t('login.forgot')}
                   </button>
                 </div>
                 <div className="relative">
@@ -186,7 +192,7 @@ export const Login = () => {
               ) : (
                 <>
                   <LogIn size={20} />
-                  {isForgotPassword ? (success ? 'Verify & Continue' : 'Send OTP') : 'Sign In'}
+                  {isForgotPassword ? (success ? t('login.verifyContinue') : t('login.sendOtp')) : t('login.signInBtn')}
                 </>
               )}
             </button>
@@ -201,16 +207,16 @@ export const Login = () => {
                 }}
                 className="w-full text-sm font-bold text-slate-500 hover:text-slate-700 py-2"
               >
-                Back to Login
+                {t('login.backToLogin')}
               </button>
             )}
           </form>
 
           <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
             <p className="text-slate-500 dark:text-slate-400">
-              New to {displaySchoolName}?{' '}
+              {t('login.newToSchool')} {displaySchoolName}?{' '}
               <Link to="/register" className="text-school-primary font-bold hover:underline">
-                Create an Account
+                {t('login.createAccount')}
               </Link>
             </p>
           </div>
@@ -218,7 +224,7 @@ export const Login = () => {
 
         <div className="mt-8 text-center">
           <Link to="/" className="text-slate-400 hover:text-school-primary text-sm font-medium transition-colors">
-            ← Back to Homepage
+            {t('login.backToHome')}
           </Link>
         </div>
       </div>

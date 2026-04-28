@@ -1,10 +1,11 @@
 
-import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight, ArrowLeft, Trash2 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 import { mockStudents } from '../data/mockData';
 import { Link } from 'react-router-dom';
 import { useStore } from '../context/useStore';
+import { useTranslation } from 'react-i18next';
 
 const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
   <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors duration-300">
@@ -25,15 +26,11 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 
 export const Dashboard = () => {
   const { role, gradesLocked, setGradesLocked, branches, setSelectedBranch } = useUser();
-  const { selectedBranchId, setSelectedBranchId } = useStore();
+  const { selectedBranchId, setSelectedBranchId, notices, addNotice, deleteNotice } = useStore();
+  const { t } = useTranslation();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
   const [watchlistExpanded, setWatchlistExpanded] = useState(true);
   const isSuperAdmin = role === 'super-admin';
-  const [notices] = useState([
-    { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago', expiresAt: '2024-06-30', category: 'Academic' as const, audience: ['school-admin','vice-principal','teacher','student','parent'] as string[] },
-    { id: 2, title: 'Bus #4 — 15 min delay', content: 'Heavy traffic near Meskel Square. Route B running behind schedule.', priority: 'Medium', time: '30 mins ago', expiresAt: '2024-05-15', category: 'Logistics' as const, driverName: 'Ato Bekele', audience: ['school-admin','vice-principal','parent','student'] as string[] },
-    { id: 3, title: 'Fee deadline extended', content: 'April fee payment deadline extended to May 5th for all branches.', priority: 'High', time: 'Yesterday', expiresAt: '2024-05-05', category: 'Finance' as const, audience: ['school-admin','finance-clerk','parent'] as string[] },
-  ]);
 
   const isAdmin = role === 'super-admin' || role === 'school-admin';
   const isVP = role === 'vice-principal';
@@ -57,16 +54,16 @@ export const Dashboard = () => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.24),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.2),_transparent_28%)]" />
             <div className="relative flex flex-col lg:flex-row lg:items-end justify-between gap-6">
               <div className="space-y-3 max-w-3xl">
-                <p className="text-[10px] font-black uppercase tracking-[0.35em] text-blue-300">Network Overview</p>
-                <h1 className="text-3xl md:text-5xl font-black tracking-tighter">Aggregate control across all branches</h1>
+                <p className="text-[10px] font-black uppercase tracking-[0.35em] text-blue-300">{t('dashboard.networkOverview')}</p>
+                <h1 className="text-3xl md:text-5xl font-black tracking-tighter">{t('dashboard.aggregateTitle')}</h1>
                 <p className="text-slate-300 max-w-2xl text-sm md:text-base">
-                  This view is intentionally network-wide: no school notices, no local watchlist, and no branch clutter. It is the command surface for the entire school group.
+                  {t('dashboard.aggregateDesc')}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="px-4 py-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-sm">
-                  <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Selected Branch</p>
-                  <p className="font-black text-white text-sm">None</p>
+                   <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">{t('dashboard.selectedBranch')}</p>
+                   <p className="font-black text-white text-sm">{t('dashboard.none')}</p>
                 </div>
                 <button
                   onClick={() => {
@@ -75,38 +72,38 @@ export const Dashboard = () => {
                   }}
                   className="px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-colors"
                 >
-                  Drill into a branch
+                  {t('dashboard.drillBranch')}
                 </button>
               </div>
             </div>
           </section>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            <StatCard icon={Users} label="Total Students" value="1,388" trend="+4.3%" color="bg-blue-600" />
-            <StatCard icon={GraduationCap} label="Total Teachers" value="104" color="bg-purple-600" />
-            <StatCard icon={Clock} label="Network Attendance" value="94.6%" trend="+1.1%" color="bg-orange-500" />
-            <StatCard icon={TrendingUp} label="Monthly Revenue" value="1.8M ETB" color="bg-emerald-600" />
+            <StatCard icon={Users} label={t('dashboard.totalStudents')} value="1,388" trend="+4.3%" color="bg-blue-600" />
+            <StatCard icon={GraduationCap} label={t('dashboard.totalTeachers')} value="104" color="bg-purple-600" />
+            <StatCard icon={Clock} label={t('dashboard.networkAttendance')} value="94.6%" trend="+1.1%" color="bg-orange-500" />
+            <StatCard icon={TrendingUp} label={t('dashboard.monthlyRevenue')} value="1.8M ETB" color="bg-emerald-600" />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div className="xl:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Branch Health Matrix</h3>
-                  <p className="text-sm text-slate-500">Aggregate snapshot across the network</p>
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t('dashboard.branchHealth')}</h3>
+                  <p className="text-sm text-slate-500">{t('dashboard.aggregateSnapshot')}</p>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Aggregate only</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded-full">{t('dashboard.aggregateOnly')}</span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left min-w-[780px]">
                   <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
                     <tr>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Branch</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">Students</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">Teachers</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">Attendance</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">Finance</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-right">Status</th>
+                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">{t('dashboard.branch')}</th>
+                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">{t('dashboard.students')}</th>
+                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">{t('dashboard.teachers')}</th>
+                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">{t('dashboard.attendance')}</th>
+                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">{t('dashboard.finance')}</th>
+                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-right">{t('dashboard.status')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -155,15 +152,15 @@ export const Dashboard = () => {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.24),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.2),_transparent_28%)]" />
           <div className="relative flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
-              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-blue-300">Branch Control Center</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-blue-300">{t('dashboard.branchControl')}</p>
               <h1 className="text-3xl md:text-5xl font-black tracking-tighter">{selectedBranch.name}</h1>
               <p className="text-slate-300 max-w-2xl text-sm md:text-base">
-                High-level health check for this campus. Only what matters in 5 seconds.
+                {t('dashboard.branchDesc')}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <div className="px-4 py-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-sm">
-                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Current Branch</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">{t('dashboard.currentBranch')}</p>
                 <p className="font-black text-white text-sm">{selectedBranch.location}</p>
               </div>
               <button
@@ -174,7 +171,7 @@ export const Dashboard = () => {
                 className="px-4 py-3 rounded-2xl bg-white text-slate-950 hover:bg-slate-100 font-black text-sm transition-colors flex items-center gap-2"
               >
                 <ArrowLeft size={16} />
-                Back to Network
+                {t('dashboard.backNetwork')}
               </button>
             </div>
           </div>
@@ -185,7 +182,7 @@ export const Dashboard = () => {
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition-all">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-blue-100 text-blue-600 rounded-xl"><Users size={20} /></div>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Students</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('dashboard.students')}</span>
             </div>
             <p className="text-3xl font-black text-slate-800 dark:text-slate-100">318</p>
             <p className="text-xs text-emerald-600 font-bold mt-1">+2.1% this term</p>
@@ -193,7 +190,7 @@ export const Dashboard = () => {
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition-all">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-purple-100 text-purple-600 rounded-xl"><GraduationCap size={20} /></div>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Teachers</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('dashboard.teachers')}</span>
             </div>
             <p className="text-3xl font-black text-slate-800 dark:text-slate-100">24</p>
             <p className="text-xs text-slate-500 font-bold mt-1">6 on exam duty</p>
@@ -201,7 +198,7 @@ export const Dashboard = () => {
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition-all">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-orange-100 text-orange-600 rounded-xl"><Clock size={20} /></div>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Attendance</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('dashboard.attendance')}</span>
             </div>
             <p className="text-3xl font-black text-slate-800 dark:text-slate-100">93.8%</p>
             <p className="text-xs text-emerald-600 font-bold mt-1">+0.7% vs last week</p>
@@ -213,10 +210,10 @@ export const Dashboard = () => {
           <div className="xl:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Pending Actions</h3>
-                <p className="text-xs text-slate-500">Items requiring your attention</p>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t('dashboard.pendingActions')}</h3>
+                <p className="text-xs text-slate-500">{t('dashboard.attentionItems')}</p>
               </div>
-              <span className="px-3 py-1.5 bg-rose-100 text-rose-700 rounded-full text-[10px] font-black">5 ITEMS</span>
+              <span className="px-3 py-1.5 bg-rose-100 text-rose-700 rounded-full text-[10px] font-black">5 {t('dashboard.items')}</span>
             </div>
             <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {[
@@ -242,7 +239,7 @@ export const Dashboard = () => {
 
           {/* Performance Snapshot with Traffic Lights */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 space-y-5">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Health Check</h3>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t('dashboard.healthCheck')}</h3>
             {[
               { label: 'Finance', value: 'On Track', status: 'green' },
               { label: 'Attendance', value: '93.8%', status: 'green' },
@@ -439,8 +436,19 @@ export const Dashboard = () => {
                     {notice.priority}
                   </span>
                 </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+                    {isAdmin && (
+                      <button 
+                        onClick={() => deleteNotice(notice.id)}
+                        className="text-slate-400 hover:text-rose-600 p-1 rounded-lg transition-colors"
+                        title="Delete Notice"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
                   {notice.expiresAt && <span className="text-[10px] text-rose-400 italic font-medium">Expires: {notice.expiresAt}</span>}
                 </div>
               </div>
@@ -544,26 +552,48 @@ export const Dashboard = () => {
                 <X size={20} />
               </button>
             </div>
-            <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setShowNoticeModal(false); }}>
+            <form className="p-6 space-y-4" onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              addNotice({
+                title: formData.get('title') as string,
+                content: formData.get('content') as string,
+                priority: formData.get('priority') as any,
+                category: formData.get('category') as any,
+                expiresAt: formData.get('expiresAt') as string,
+                audience: ['super-admin', 'school-admin', 'vice-principal', 'teacher', 'student', 'parent']
+              });
+              setShowNoticeModal(false);
+            }}>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Notice Title</label>
-                <input required type="text" placeholder="e.g. Public Holiday Announcement" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <input name="title" required type="text" placeholder="e.g. Public Holiday Announcement" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Priority Level</label>
-                <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                  <option value="Normal">Normal</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High Priority</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Category</label>
+                  <select name="category" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Academic">Academic</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="Finance">Finance</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Priority</label>
+                  <select name="priority" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Normal">Normal</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Content</label>
-                <textarea required rows={4} placeholder="Write the details of the notice here..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <textarea name="content" required rows={4} placeholder="Write the details of the notice here..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Expiry Date</label>
-                <input type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <input name="expiresAt" type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
               <div className="pt-4">
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">
