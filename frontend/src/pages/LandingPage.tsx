@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useScroll, useTransform, useSpring, motion } from 'framer-motion';
 import { StudentRegistration } from '../components/StudentRegistration';
 import { Chatbot } from '../components/Chatbot';
-import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
 import classroomImg from '../assets/students_classroom.png';
 import founderImg from '../assets/founder.jpg';
@@ -27,7 +27,8 @@ import {
   Star,
   Zap,
   Globe,
-  Quote
+  Quote,
+  GraduationCap
 } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,20 @@ export const LandingPage = () => {
   const { schoolName, schoolMotto } = useUser();
   const { publicPosts } = useStore();
   const [showAdmission, setShowAdmission] = useState(false);
+
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+  const rotateX = useTransform(scrollY, [0, 1000], [0, 45]);
+  const rotateY = useTransform(scrollY, [0, 1000], [0, 25]);
+  const scale = useTransform(scrollY, [0, 300], [1, 0.9]);
+  
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
+  const smoothY1 = useSpring(y1, springConfig);
+  const smoothY2 = useSpring(y2, springConfig);
+  const smoothRotateX = useSpring(rotateX, springConfig);
+  const smoothRotateY = useSpring(rotateY, springConfig);
+
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -128,10 +143,48 @@ export const LandingPage = () => {
 
       {/* Hero Section */}
       <section id="home" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-50 dark:bg-slate-950">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-school-primary/5 to-transparent" />
-          <div className="absolute bottom-0 left-0 w-1/2 h-full bg-gradient-to-r from-school-secondary/5 to-transparent" />
-          <ShootingStars />
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.1),_transparent_50%)]" />
+          <div className="absolute bottom-0 left-0 w-1/2 h-full bg-[radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.1),_transparent_50%)]" />
+          
+          {/* Floating 3D Elements */}
+          <motion.div 
+            style={{ y: smoothY1, rotateX: smoothRotateX, rotateY: smoothRotateY }}
+            className="absolute top-[15%] left-[5%] w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-3xl rounded-[2rem] border border-white/20 shadow-2xl flex items-center justify-center preserve-3d"
+          >
+            <BookOpen size={40} className="text-blue-500/30" />
+          </motion.div>
+
+          <motion.div 
+            style={{ y: smoothY2, rotateX: smoothRotateY, rotateY: smoothRotateX }}
+            className="absolute top-[60%] right-[10%] w-48 h-48 bg-gradient-to-tr from-emerald-500/10 to-blue-500/10 backdrop-blur-3xl rounded-full border border-white/20 shadow-2xl flex items-center justify-center preserve-3d"
+          >
+            <GraduationCap size={60} className="text-emerald-500/30" />
+          </motion.div>
+
+          <motion.div 
+            style={{ y: smoothY1, rotateZ: smoothRotateX }}
+            className="absolute top-[40%] left-[80%] w-24 h-24 bg-rose-500/10 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-xl flex items-center justify-center rotate-12 preserve-3d"
+          >
+            <Music2 size={30} className="text-rose-500/30" />
+          </motion.div>
+
+          <motion.div 
+            animate={{ 
+              y: [0, -20, 0],
+              rotate: [0, 10, 0]
+            }}
+            transition={{ 
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute top-[25%] right-[20%] w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center"
+          >
+            <Star size={24} className="text-amber-500/40" />
+          </motion.div>
+
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] dark:opacity-[0.05]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
@@ -175,8 +228,11 @@ export const LandingPage = () => {
               </div>
             </div>
 
-            <div className="relative hidden lg:block">
-              <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white dark:border-slate-900 aspect-[4/5] group">
+            <motion.div 
+              style={{ rotateX: smoothRotateX, rotateY: smoothRotateY, scale }}
+              className="relative hidden lg:block perspective-1000"
+            >
+              <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white dark:border-slate-900 aspect-[4/5] group preserve-3d">
                 <img src={classroomImg} alt="Students" className="w-full h-full object-cover slow-zoom" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-10 left-10 right-10 text-white">
@@ -187,9 +243,9 @@ export const LandingPage = () => {
                   <p className="text-xs font-black uppercase tracking-widest text-school-primary mt-2">— Firdos Musa, Top Scorer</p>
                 </div>
               </div>
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-school-secondary/10 rounded-full blur-3xl" />
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-school-primary/10 rounded-full blur-3xl" />
-            </div>
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-school-secondary/20 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-school-primary/20 rounded-full blur-3xl animate-pulse delay-700" />
+            </motion.div>
           </div>
         </div>
       </section>
