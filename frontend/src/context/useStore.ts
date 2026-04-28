@@ -34,6 +34,7 @@ export interface SchoolNotice {
   category: 'Academic' | 'Logistics' | 'Finance';
   audience: string[];
   driverName?: string;
+  stations?: string;
 }
 
 export interface ExamControl {
@@ -72,6 +73,9 @@ interface AppState {
   setPrincipalPassword: (examId: string, password: string) => void;
 
   // Public Landing Page Posts
+  publicPosts: PublicPost[];
+  addPublicPost: (post: Omit<PublicPost, 'id' | 'timestamp'>) => void;
+  updatePublicPost: (id: string, updates: Partial<PublicPost>) => void;
   deletePublicPost: (id: string) => void;
 
   // School Notices

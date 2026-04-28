@@ -3,6 +3,7 @@ import { Megaphone, MapPin, Plus, X, Send, Bus, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
+import { useStore } from '../context/useStore';
 
 interface LogisticsNotice {
   id: string;
@@ -17,43 +18,25 @@ interface LogisticsNotice {
 export const DriverPortal = () => {
   const { t } = useTranslation();
   const { user } = useUser();
+  const { notices, addNotice } = useStore();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [stations, setStations] = useState('');
-  const [notices, setNotices] = useState<LogisticsNotice[]>([
-    {
-      id: 'LN1',
-      title: 'Bus #4 running 15 mins late',
-      content: 'Heavy traffic near Meskel Square. Expect a 15-minute delay on Route B.',
-      stations: 'Meskel Square, Bole Medhanialem, Megenagna',
-      driverName: user?.name || t('driverPortal.defaultName'),
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
-      category: 'Logistics',
-    },
-    {
-      id: 'LN2',
-      title: 'Route change — construction on Adama Road',
-      content: 'Detour via Ring Road due to road construction. Students at Kality stop, please wait at the alternate point.',
-      stations: 'Kality, Akaki, Dukem, Adama',
-      driverName: user?.name || t('driverPortal.defaultName'),
-      timestamp: new Date(Date.now() - 86400000).toISOString(),
-      category: 'Logistics',
-    },
-  ]);
+
+  const driverNotices = notices.filter(n => n.category === 'Logistics');
 
   const handlePost = (e: React.FormEvent) => {
     e.preventDefault();
-    const newNotice: LogisticsNotice = {
-      id: `LN${Date.now()}`,
+    addNotice({
       title,
       content,
       stations,
       driverName: user?.name || t('driverPortal.defaultName'),
-      timestamp: new Date().toISOString(),
       category: 'Logistics',
-    };
-    setNotices((prev) => [newNotice, ...prev]);
+      priority: 'Normal',
+      audience: ['super-admin', 'school-admin', 'vice-principal', 'parent', 'student']
+    });
     setTitle('');
     setContent('');
     setStations('');
@@ -100,10 +83,12 @@ export const DriverPortal = () => {
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
+              <Megaphone size={18} />
             </div>
           </div>
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('driverPortal.noticesPosted')}</p>
-          <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1">{notices.length}</p>
+          <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1">{driverNotices.length}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
@@ -129,9 +114,9 @@ export const DriverPortal = () => {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">{t('driverPortal.recentNotices')}</h3>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{notices.length} {t('driverPortal.total')}</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{driverNotices.length} {t('driverPortal.total')}</span>
         </div>
-        {notices.map((notice, i) => (
+        {driverNotices.map((notice, i) => (
           <div
             key={notice.id}
             className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-sm hover:shadow-md transition-all group"
@@ -144,7 +129,7 @@ export const DriverPortal = () => {
                 </span>
                 <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1">
                   <Clock size={10} />
-                  {formatTime(notice.timestamp)}
+                  {notice.time === 'Just now' ? t('driverPortal.justNow') : notice.time}
                 </span>
               </div>
             </div>
