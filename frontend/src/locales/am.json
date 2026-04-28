@@ -220,10 +220,10 @@
   },
   "registration": {
     "title": "የተማሪዎች ምዝገባ",
-    "subtitle": "መግቢያዎችን፣ የትራንስክሪፕት ማፅደቆችን እና የተማሪዎችን ድጋሚ ምዝገባ ያስተዳድሩ።",
+    "subtitle": "መግቢያዎችን፣ የትራንስክሪፕት ማፅደቆችን እና የተማሪዎችን ደረጃ ማሳደግ ያስተዳድሩ።",
     "back": "ተመለስ",
     "newAdmissions": "የመግቢያ ጥያቄዎች",
-    "reEnrollment": "ማስተዋወቅ እና ድጋሚ ምዝገባ",
+    "reEnrollment": "ደረጃ ማሳደግ",
     "searchPlaceholder": "በስም ወይም በዲጂታል መታወቂያ ይፈልጉ...",
     "registrationStep": "የምዝገባ ደረጃ",
     "personalInfo": "የግል መረጃ",

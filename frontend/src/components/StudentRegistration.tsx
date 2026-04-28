@@ -117,7 +117,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
   };
 
   const handlePromote = () => {
-    setSuccessMessage(`${selectedStudent.name} has been promoted/re-admitted!`);
+    setSuccessMessage(`${selectedStudent.name} has been promoted!`);
     setSelectedStudent(null);
     setSearchQuery('');
     setTimeout(() => setSuccessMessage(null), 3000);
@@ -222,16 +222,18 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
           >
             {t('registration.newAdmissions')}
           </button>
-          <button
-            onClick={() => setActiveTab('existing')}
-            className={`px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-              activeTab === 'existing'
-                ? 'bg-white dark:bg-slate-900 text-blue-600 shadow-xl shadow-slate-200/50 dark:shadow-none'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
-          >
-            {t('registration.reEnrollment')}
-          </button>
+          {(!isFinance ? false : true) && (
+            <button
+              onClick={() => setActiveTab('existing')}
+              className={`px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                activeTab === 'existing'
+                  ? 'bg-white dark:bg-slate-900 text-blue-600 shadow-xl shadow-slate-200/50 dark:shadow-none'
+                  : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              {t('registration.reEnrollment')}
+            </button>
+          )}
         </div>
       )}
 
@@ -674,7 +676,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
                 <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <RefreshCw size={20} className="text-blue-600" />
-                  Promotion & Re-admission
+                  Promotion
                 </h3>
                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                   selectedStudent.id === '1' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'

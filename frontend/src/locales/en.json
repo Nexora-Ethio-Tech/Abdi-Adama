@@ -220,10 +220,10 @@
   },
   "registration": {
     "title": "Student Registration",
-    "subtitle": "Manage admissions, transcript approvals, and student re-enrollment.",
+    "subtitle": "Manage admissions, transcript approvals, and student promotion.",
     "back": "Back",
     "newAdmissions": "Admission Requests",
-    "reEnrollment": "Promotion & Re-admission",
+    "reEnrollment": "Promotion Only",
     "searchPlaceholder": "Search by name or Digital ID...",
     "registrationStep": "Registration Step",
     "personalInfo": "Personal Information",

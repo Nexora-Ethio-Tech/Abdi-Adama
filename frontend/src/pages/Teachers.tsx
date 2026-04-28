@@ -1,5 +1,5 @@
 
-import { UserPlus, Calendar, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, Mail, Phone, MapPin, Briefcase, GraduationCap } from 'lucide-react';
+import { UserPlus, Calendar, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, Mail, Phone, MapPin, Briefcase, GraduationCap, BookOpen } from 'lucide-react';
 import { mockTeachers, mockSchedules, mockClasses } from '../data/mockData';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -401,6 +401,101 @@ export const Teachers = () => {
                     </div>
                   )}
                 </div>
+
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Teaching Load</p>
+                      <p className="text-[10px] text-slate-500">Assign specific grades, sections, and subjects</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = promotingTeacher.teachingLoads || [];
+                        setPromotingTeacher({ ...promotingTeacher, teachingLoads: [...current, { grade: '', section: '', subject: '' }] });
+                      }}
+                      className="p-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all"
+                    >
+                      <UserPlus size={16} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {(promotingTeacher.teachingLoads || []).map((load: any, index: number) => (
+                      <div key={index} className="grid grid-cols-3 gap-2 p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 animate-in slide-in-from-top-2">
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black text-slate-400 uppercase">Grade</label>
+                          <select
+                            required
+                            value={load.grade}
+                            onChange={(e) => {
+                              const next = [...promotingTeacher.teachingLoads];
+                              next[index].grade = e.target.value;
+                              setPromotingTeacher({ ...promotingTeacher, teachingLoads: next });
+                            }}
+                            className="w-full px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold outline-none"
+                          >
+                            <option value="">Grade...</option>
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(g => (
+                              <option key={g} value={`Grade ${g}`}>Grade {g}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black text-slate-400 uppercase">Section</label>
+                          <select
+                            required
+                            value={load.section}
+                            onChange={(e) => {
+                              const next = [...promotingTeacher.teachingLoads];
+                              next[index].section = e.target.value;
+                              setPromotingTeacher({ ...promotingTeacher, teachingLoads: next });
+                            }}
+                            className="w-full px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold outline-none"
+                          >
+                            <option value="">Sec...</option>
+                            {['A', 'B', 'C', 'D'].map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-1 relative">
+                          <label className="text-[8px] font-black text-slate-400 uppercase">Subject</label>
+                          <div className="flex items-center gap-1">
+                            <select
+                              required
+                              value={load.subject}
+                              onChange={(e) => {
+                                const next = [...promotingTeacher.teachingLoads];
+                                next[index].subject = e.target.value;
+                                setPromotingTeacher({ ...promotingTeacher, teachingLoads: next });
+                              }}
+                              className="w-full px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold outline-none"
+                            >
+                              <option value="">Subj...</option>
+                              {promotingTeacher.subjects.map((s: string) => (
+                                <option key={s} value={s}>{s}</option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const next = promotingTeacher.teachingLoads.filter((_: any, i: number) => i !== index);
+                                setPromotingTeacher({ ...promotingTeacher, teachingLoads: next });
+                              }}
+                              className="p-1 text-rose-500 hover:bg-rose-50 rounded"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(promotingTeacher.teachingLoads || []).length === 0 && (
+                      <p className="text-[10px] text-slate-400 italic text-center py-2">No teaching loads assigned yet.</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4 flex gap-3">
@@ -500,8 +595,31 @@ export const Teachers = () => {
                           {s}
                        </span>
                     ))}
-
                  </div>
+              </div>
+
+              <div className="space-y-4">
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                     <BookOpen size={16} />
+                     Current Teaching Load
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                     {(viewingProfile.teachingLoads || []).length > 0 ? (
+                        viewingProfile.teachingLoads.map((load: any, i: number) => (
+                           <div key={i} className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                              <div>
+                                 <p className="text-[10px] font-black text-school-primary uppercase tracking-widest">{load.grade} - Section {load.section}</p>
+                                 <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{load.subject}</p>
+                              </div>
+                              <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 shadow-sm">
+                                 <GraduationCap size={14} />
+                              </div>
+                           </div>
+                        ))
+                     ) : (
+                        <p className="text-xs text-slate-500 italic">No teaching loads assigned.</p>
+                     )}
+                  </div>
               </div>
 
               <div className="space-y-4">
