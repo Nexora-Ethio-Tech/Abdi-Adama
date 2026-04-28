@@ -64,7 +64,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           );
         }
 
-        baseItems.push({ icon: Settings, label: 'Settings', path: '/settings' });
+        baseItems.push(
+          { icon: Megaphone, label: 'Website Posts', path: '/website-posts' },
+          { icon: Settings, label: 'Settings', path: '/settings' }
+        );
         return baseItems;
       case 'school-admin':
         return [

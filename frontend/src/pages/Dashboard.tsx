@@ -25,9 +25,8 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 
 export const Dashboard = () => {
   const { role, gradesLocked, setGradesLocked, branches, setSelectedBranch } = useUser();
-  const { selectedBranchId, setSelectedBranchId, publicPosts, addPublicPost, deletePublicPost } = useStore();
+  const { selectedBranchId, setSelectedBranchId } = useStore();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
-  const [showPostModal, setShowPostModal] = useState(false);
   const [watchlistExpanded, setWatchlistExpanded] = useState(true);
   const isSuperAdmin = role === 'super-admin';
   const [notices] = useState([
@@ -457,58 +456,6 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {isSuperAdmin && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="p-4 md:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg">
-                <Megaphone size={20} />
-              </div>
-              <h3 className="font-bold text-slate-800 dark:text-slate-100">Public Website Posts</h3>
-            </div>
-            <button
-              onClick={() => setShowPostModal(true)}
-              className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-1.5 rounded-lg transition-colors flex items-center gap-1 text-[10px] md:text-xs font-bold"
-            >
-              <Plus size={14} className="md:w-4 md:h-4" />
-              <span className="hidden xs:inline">Add Post</span>
-              <span className="xs:hidden">Add</span>
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
-            {publicPosts.length === 0 ? (
-              <div className="p-6 text-slate-500 text-sm">No public posts yet. Add one to show on the landing page!</div>
-            ) : (
-              publicPosts.map((post) => (
-                <div key={post.id} className="p-4 md:p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700">
-                      {post.type}
-                    </span>
-                    <button 
-                      onClick={() => deletePublicPost(post.id)}
-                      className="text-rose-500 hover:text-rose-600 text-xs font-bold uppercase"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                  <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 overflow-hidden">
-                    {post.type === 'image' ? (
-                      <img src={post.mediaUrl} alt="Post media" className="w-full h-full object-cover" />
-                    ) : (
-                      <iframe src={post.mediaUrl} className="w-full h-full pointer-events-none" />
-                    )}
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed truncate">
-                    {post.description}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
         {isAdmin && (
@@ -622,51 +569,6 @@ export const Dashboard = () => {
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">
                   <Bell size={18} />
                   <span>Publish Notice</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {showPostModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-              <h3 className="font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm">Add Public Post</h3>
-              <button onClick={() => setShowPostModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-            <form className="p-6 space-y-4" onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              addPublicPost({
-                type: formData.get('type') as 'image' | 'video',
-                mediaUrl: formData.get('mediaUrl') as string,
-                description: formData.get('description') as string,
-              });
-              setShowPostModal(false);
-            }}>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Media Type</label>
-                <select name="type" required className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all">
-                  <option value="image">Image (URL)</option>
-                  <option value="video">Video (YouTube Embed URL)</option>
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Media URL</label>
-                <input name="mediaUrl" required type="url" placeholder="https://example.com/image.jpg" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Description</label>
-                <textarea name="description" required rows={3} placeholder="Write something about this post..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
-              </div>
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-200 dark:shadow-none flex items-center justify-center gap-2">
-                  <Megaphone size={18} />
-                  <span>Publish to Website</span>
                 </button>
               </div>
             </form>
