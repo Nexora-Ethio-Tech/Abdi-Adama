@@ -16,6 +16,14 @@ export interface AbsenceQueueItem {
   status: 'pending' | 'excused' | 'notified';
 }
 
+export interface PublicPost {
+  id: string;
+  type: 'image' | 'video';
+  mediaUrl: string;
+  description: string;
+  timestamp: string;
+}
+
 export interface ExamControl {
   isHidden: boolean;
   isLocked: boolean;
@@ -50,6 +58,12 @@ interface AppState {
   lockExam: (examId: string, ownerId: string, password: string) => void;
   unlockExam: (examId: string, ownerId: string, password: string) => boolean;
   setPrincipalPassword: (examId: string, password: string) => void;
+
+  // Public Landing Page Posts
+  publicPosts: PublicPost[];
+  addPublicPost: (post: Omit<PublicPost, 'id' | 'timestamp'>) => void;
+  updatePublicPost: (id: string, updates: Partial<PublicPost>) => void;
+  deletePublicPost: (id: string) => void;
 }
 
 const defaultExamControl = (): ExamControl => ({
@@ -145,6 +159,24 @@ export const useStore = create<AppState>()(persist((set, get) => ({
       }
     }
   })),
+
+  publicPosts: [],
+  addPublicPost: (post) => set((state) => ({
+    publicPosts: [
+      {
+        ...post,
+        id: crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+      },
+      ...state.publicPosts
+    ]
+  })),
+  updatePublicPost: (id, updates) => set((state) => ({
+    publicPosts: state.publicPosts.map(p => p.id === id ? { ...p, ...updates } : p)
+  })),
+  deletePublicPost: (id) => set((state) => ({
+    publicPosts: state.publicPosts.filter(p => p.id !== id)
+  })),
 }), {
   name: 'abdi-adama-front-store',
   partialize: (state) => ({
@@ -152,5 +184,6 @@ export const useStore = create<AppState>()(persist((set, get) => ({
     absenceQueue: state.absenceQueue,
     examinerTeacherIds: state.examinerTeacherIds,
     examControls: state.examControls,
+    publicPosts: state.publicPosts,
   })
 }));

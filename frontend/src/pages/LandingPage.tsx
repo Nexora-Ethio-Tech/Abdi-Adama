@@ -6,11 +6,13 @@ import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
 import classroomImg from '../assets/students_classroom.png';
 import { useUser } from '../context/UserContext';
+import { useStore } from '../context/useStore';
 import {
   ArrowRight,
   ChevronDown,
   LogIn,
   ShieldAlert,
+  ArrowLeft,
   Send,
   Video,
   Camera,
@@ -30,6 +32,7 @@ import {
 export const LandingPage = () => {
   const navigate = useNavigate();
   const { schoolName, schoolMotto } = useUser();
+  const { publicPosts } = useStore();
   const [showAdmission, setShowAdmission] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -317,6 +320,55 @@ export const LandingPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Updates / Posts Section */}
+      {publicPosts.length > 0 && (
+        <section id="updates" className="py-24 bg-slate-50 dark:bg-slate-900">
+          <div className="max-w-7xl mx-auto px-6 mb-12">
+            <div className="section-header !text-left !mb-0 flex items-center justify-between">
+              <div>
+                <span className="section-subtitle">Stay Informed</span>
+                <h2 className="section-title">Latest Updates</h2>
+              </div>
+              <div className="hidden sm:flex gap-2">
+                <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400">
+                  <ArrowLeft size={20} />
+                </div>
+                <div className="w-10 h-10 rounded-full bg-school-primary text-white flex items-center justify-center shadow-lg">
+                  <ArrowRight size={20} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="pl-6 md:pl-[calc(50vw-40rem+1.5rem)] pb-8 overflow-x-auto flex snap-x snap-mandatory hide-scrollbar gap-6 pr-6">
+            {publicPosts.map((post) => (
+              <div key={post.id} className="snap-start shrink-0 w-[85vw] sm:w-[400px] bg-white dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 flex flex-col">
+                <div className="relative aspect-[4/3] bg-slate-100 dark:bg-slate-900 overflow-hidden">
+                  {post.type === 'image' ? (
+                    <img src={post.mediaUrl} alt="Update" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ) : (
+                    <iframe src={post.mediaUrl} className="w-full h-full pointer-events-none" />
+                  )}
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur text-[10px] font-black uppercase tracking-widest rounded-full text-school-primary shadow-sm">
+                      {new Date(post.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6 flex-1 flex flex-col">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium line-clamp-3">
+                    {post.description}
+                  </p>
+                  <div className="mt-auto pt-6 flex items-center gap-2 text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest group-hover:text-school-primary transition-colors cursor-pointer w-fit">
+                    Read More <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Media & Life Section */}
       <section id="media" className="py-24 bg-white dark:bg-slate-950">
