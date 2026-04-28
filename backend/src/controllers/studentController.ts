@@ -14,11 +14,11 @@ export const createStudent = async (req: Request, res: Response) => {
   try {
     await client.query('BEGIN');
 
-    // 1. Create User
+    // 1. Create User (Provisioned students are auto-approved)
     const hashedPassword = await bcrypt.hash(password || 'AbdiAdama123', 10);
     const userResult = await client.query(
-      `INSERT INTO users (name, email, password_hash, role, branch_id, digital_id) 
-       VALUES ($1, $2, $3, 'student', $4, $5) RETURNING id`,
+      `INSERT INTO users (name, email, password_hash, role, branch_id, digital_id, status) 
+       VALUES ($1, $2, $3, 'student', $4, $5, 'Approved') RETURNING id`,
       [name, email, hashedPassword, branch_id, digital_id]
     );
     const userId = userResult.rows[0].id;
@@ -52,18 +52,23 @@ export const createStudent = async (req: Request, res: Response) => {
     client.release();
   }
 };
-
+export const getStudents = async (req: Request, res: Response) => {
   const { branch_id, grade } = req.query;
+  const user = (req as any).user;
   
   let query = `
-    SELECT s.*, u.name, u.email, u.digital_id, u.role, u.is_active 
+    SELECT s.*, u.name, u.email, u.digital_id, u.role, u.status as user_status
     FROM students s
     JOIN users u ON s.user_id = u.id
     WHERE 1=1
   `;
   const params: any[] = [];
 
-  if (branch_id) {
+  // Multi-tenant enforcement: Non-super-admins only see their branch
+  if (user.role !== 'super-admin') {
+    params.push(user.branch_id);
+    query += ` AND s.branch_id = $${params.length}`;
+  } else if (branch_id) {
     params.push(branch_id);
     query += ` AND s.branch_id = $${params.length}`;
   }

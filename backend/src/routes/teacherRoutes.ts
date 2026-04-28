@@ -6,7 +6,7 @@ const router = Router();
 
 router.use(authenticateToken);
 
-router.get('/', getTeachers);
+router.get('/', authorizeRoles('super-admin', 'school-admin', 'vice-principal'), getTeachers);
 router.post('/', authorizeRoles('super-admin', 'school-admin'), createTeacher);
 
 export default router;

@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS
 DROP TYPE IF EXISTS 
     user_role, risk_level, attendance_status, absence_status, exam_category, 
     exam_status, violation_type, finance_direction, audit_category, audit_direction, 
-    app_status, plan_status, visit_status, chat_sender_role CASCADE;
+    app_status, plan_status, visit_status, chat_sender_role, user_status CASCADE;
 
 -- ============================================================
 -- 1. BRANCHES
@@ -54,6 +54,8 @@ CREATE TABLE school_config (
 -- ============================================================
 -- 3. USERS (all roles)
 -- ============================================================
+CREATE TYPE user_status AS ENUM ('Pending', 'Approved', 'Revoked');
+
 CREATE TYPE user_role AS ENUM (
     'super-admin','school-admin','vice-principal',
     'teacher','student','parent',
@@ -68,6 +70,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     role        user_role    NOT NULL,
     branch_id   UUID         REFERENCES branches(id) ON DELETE SET NULL,
+    status      user_status  NOT NULL DEFAULT 'Pending',
     is_active   BOOLEAN      NOT NULL DEFAULT TRUE,
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
@@ -85,6 +88,7 @@ CREATE TYPE risk_level AS ENUM ('Low','Medium','High');
 CREATE TABLE students (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    branch_id           UUID         REFERENCES branches(id) ON DELETE SET NULL,
     grade               VARCHAR(10)  NOT NULL,
     status              VARCHAR(20)  NOT NULL DEFAULT 'Active',
     parent_name         VARCHAR(150),
@@ -132,6 +136,7 @@ CREATE TABLE emergency_contacts (
 CREATE TABLE teachers (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    branch_id           UUID         REFERENCES branches(id) ON DELETE SET NULL,
     subjects            TEXT[]       NOT NULL DEFAULT '{}',
     branch              VARCHAR(100),
     classes_count       INT          NOT NULL DEFAULT 0,
@@ -154,6 +159,7 @@ CREATE TABLE teachers (
 CREATE TABLE parents (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    branch_id   UUID         REFERENCES branches(id) ON DELETE SET NULL,
     family_id   VARCHAR(20),
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );

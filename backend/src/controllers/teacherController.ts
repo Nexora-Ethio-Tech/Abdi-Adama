@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 export const getTeachers = async (req: Request, res: Response) => {
   try {
     const result = await pool.query(`
-      SELECT t.*, u.name, u.email, u.digital_id, u.role, u.is_active 
+      SELECT t.*, u.name, u.email, u.digital_id, u.role, u.status as user_status
       FROM teachers t
       JOIN users u ON t.user_id = u.id
       ORDER BY u.name ASC
@@ -30,16 +30,16 @@ export const createTeacher = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password || 'Teacher@Abdi', 10);
     const userResult = await client.query(
-      `INSERT INTO users (name, email, password_hash, role, branch_id, digital_id) 
-       VALUES ($1, $2, $3, 'teacher', $4, $5) RETURNING id`,
+      `INSERT INTO users (name, email, password_hash, role, branch_id, digital_id, status) 
+       VALUES ($1, $2, $3, 'teacher', $4, $5, 'Approved') RETURNING id`,
       [name, email, hashedPassword, branch_id, digital_id]
     );
     const userId = userResult.rows[0].id;
 
     await client.query(
-      `INSERT INTO teachers (user_id, subjects, department, experience, bio) 
-       VALUES ($1, $2, $3, $4, $5)`,
-      [userId, subjects || [], department, experience, bio]
+      `INSERT INTO teachers (user_id, branch_id, subjects, department, experience, bio) 
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [userId, branch_id, subjects || [], department, experience, bio]
     );
 
     await client.query('COMMIT');
