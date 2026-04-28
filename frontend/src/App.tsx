@@ -42,6 +42,22 @@ const PageLoader = () => (
   </div>
 );
 
+const getDashboardRoute = (role: string | null) => {
+  switch (role) {
+    case 'super-admin': return '/dashboard/super-admin';
+    case 'school-admin': return '/dashboard/school-admin';
+    case 'teacher': return '/dashboard/teacher';
+    case 'student': return '/dashboard/student';
+    case 'parent': return '/dashboard/parent';
+    case 'finance-clerk': return '/dashboard/finance';
+    case 'vice-principal': return '/dashboard/vice-principal';
+    case 'driver': return '/dashboard/driver';
+    case 'librarian': return '/dashboard/librarian';
+    case 'clinic-admin': return '/dashboard/clinic-admin';
+    default: return '/login';
+  }
+};
+
 const ProtectedRoute = ({
   children,
   allowedRoles
@@ -57,7 +73,8 @@ const ProtectedRoute = ({
   }
 
   if (allowedRoles && !allowedRoles.includes(role as UserRole)) {
-    return <Navigate to="/" replace />;
+    // Kick them back to their own dashboard instead of the generic root
+    return <Navigate to={getDashboardRoute(role)} replace />;
   }
 
   return children;
@@ -81,14 +98,19 @@ function App() {
           </>
         ) : (
           <Route path="/" element={<Layout />}>
-            <Route index element={
-              role === 'student' ? <StudentPortal /> :
-              role === 'parent' ? <ParentPortal /> :
-              role === 'teacher' ? <TeacherPortal /> :
-              role === 'librarian' ? <Dashboard /> :
-              role === 'driver' ? <DriverPortal /> :
-              <Dashboard />
-            } />
+            <Route index element={<Navigate to={getDashboardRoute(role)} replace />} />
+
+            {/* Explicit Dashboard Routes */}
+            <Route path="dashboard/super-admin" element={<ProtectedRoute allowedRoles={['super-admin']}><Dashboard /></ProtectedRoute>} />
+            <Route path="dashboard/school-admin" element={<ProtectedRoute allowedRoles={['school-admin']}><Dashboard /></ProtectedRoute>} />
+            <Route path="dashboard/teacher" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherPortal /></ProtectedRoute>} />
+            <Route path="dashboard/student" element={<ProtectedRoute allowedRoles={['student']}><StudentPortal /></ProtectedRoute>} />
+            <Route path="dashboard/parent" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
+            <Route path="dashboard/driver" element={<ProtectedRoute allowedRoles={['driver']}><DriverPortal /></ProtectedRoute>} />
+            <Route path="dashboard/finance" element={<ProtectedRoute allowedRoles={['finance-clerk']}><Dashboard /></ProtectedRoute>} />
+            <Route path="dashboard/vice-principal" element={<ProtectedRoute allowedRoles={['vice-principal']}><Dashboard /></ProtectedRoute>} />
+            <Route path="dashboard/librarian" element={<ProtectedRoute allowedRoles={['librarian']}><Dashboard /></ProtectedRoute>} />
+            <Route path="dashboard/clinic-admin" element={<ProtectedRoute allowedRoles={['clinic-admin']}><Dashboard /></ProtectedRoute>} />
 
             {/* Role specific routes */}
             <Route path="branches" element={

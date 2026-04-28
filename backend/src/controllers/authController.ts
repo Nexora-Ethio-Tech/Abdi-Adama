@@ -107,6 +107,33 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Server error during login' });
   }
 };
+export const verify = async (req: Request, res: Response) => {
+  // If the request made it here, authenticateToken middleware passed
+  const user = (req as any).user;
+  
+  try {
+    // Fetch latest user info from DB to ensure they aren't revoked/deleted since token issuance
+    const result = await pool.query(
+      'SELECT id, name, email, role, branch_id, status, digital_id FROM users WHERE id = $1',
+      [user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'User no longer exists' });
+    }
+
+    const dbUser = result.rows[0];
+
+    if (dbUser.status === 'Pending' || dbUser.status === 'Revoked') {
+      return res.status(403).json({ error: `Account is ${dbUser.status}` });
+    }
+
+    res.json({ user: dbUser });
+  } catch (err) {
+    console.error('Error in verify endpoint:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 export const updateStatus = async (req: Request, res: Response) => {
   const { userId, status } = req.body;
@@ -114,12 +141,18 @@ export const updateStatus = async (req: Request, res: Response) => {
 
   try {
     // Fetch user to be updated
-    const userResult = await pool.query('SELECT role FROM users WHERE id = $1', [userId]);
+    const userResult = await pool.query('SELECT role, email FROM users WHERE id = $1', [userId]);
     if (userResult.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     const targetUserRole = userResult.rows[0].role;
+    const targetUserEmail = userResult.rows[0].email;
+
+    // Prevent anyone from modifying the root Super Admin
+    if (targetUserEmail === 'abdiadamaschooloffice@gmail.com' && status !== 'Approved') {
+       return res.status(403).json({ error: 'Cannot revoke root Super Admin' });
+    }
 
     // Authorization logic
     if (adminRole === 'super-admin') {

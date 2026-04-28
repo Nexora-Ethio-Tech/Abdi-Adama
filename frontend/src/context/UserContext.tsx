@@ -99,10 +99,37 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
+    const verifyToken = async () => {
+      const token = localStorage.getItem('abdi_adama_token');
+      if (!token) return;
+
+      try {
+        const res = await fetch('http://localhost:5000/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        } else {
+          // Token invalid or expired
+          logout();
+        }
+      } catch (err) {
+        console.error('Failed to verify token:', err);
+      }
+    };
+    verifyToken();
+  }, []);
+
+  useEffect(() => {
     if (user) {
       localStorage.setItem('abdi_adama_user', JSON.stringify(user));
     } else {
       localStorage.removeItem('abdi_adama_user');
+      localStorage.removeItem('abdi_adama_token');
     }
   }, [user]);
 
@@ -124,62 +151,34 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = async (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => {
-    // Mock login logic
-    const id = credentials.digitalIdOrEmail.toUpperCase();
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: credentials.digitalIdOrEmail,
+          password: credentials.password
+        })
+      });
 
-    // If OTP is provided, check if it's 6 digits
-    if (credentials.otp && !/^\d{6}$/.test(credentials.otp)) {
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('abdi_adama_token', data.token);
+        setUser(data.user);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Login error:', err);
       return false;
     }
-
-    let mockUser: User = {
-      id: '1',
-      name: 'User',
-      email: credentials.digitalIdOrEmail.includes('@') ? credentials.digitalIdOrEmail : 'user@abdiadama.edu',
-      role: 'student',
-      digitalId: credentials.digitalIdOrEmail.includes('@') ? undefined : credentials.digitalIdOrEmail
-    };
-
-    if (id.startsWith('SA')) {
-      mockUser.role = 'super-admin';
-      mockUser.name = 'Super Admin';
-    } else if (id.startsWith('AD')) {
-      mockUser.role = 'school-admin';
-      mockUser.name = 'Admin';
-    } else if (id.startsWith('VP')) {
-      mockUser.role = 'vice-principal';
-      mockUser.name = 'Vice Principal';
-    } else if (id.startsWith('TR')) {
-      mockUser.role = 'teacher';
-      mockUser.name = 'Teacher';
-    } else if (id.startsWith('LB')) {
-      mockUser.role = 'librarian';
-      mockUser.name = 'Librarian';
-    } else if (id.startsWith('FC')) {
-      mockUser.role = 'finance-clerk';
-      mockUser.name = 'Finance Clerk';
-    } else if (id.startsWith('PR')) {
-      mockUser.role = 'parent';
-      mockUser.name = 'Parent';
-    } else if (id.startsWith('CL')) {
-      mockUser.role = 'clinic-admin';
-      mockUser.name = 'Clinic Administrator';
-    } else if (id.startsWith('DR')) {
-      mockUser.role = 'driver';
-      mockUser.name = 'Driver';
-    } else {
-      mockUser.role = 'student';
-      mockUser.name = 'Student';
-    }
-
-    setUser(mockUser);
-    return true;
   };
 
   const logout = () => {
     setUser(null);
     setSelectedBranch(null);
     localStorage.removeItem('abdi_adama_user');
+    localStorage.removeItem('abdi_adama_token');
   };
 
   return (

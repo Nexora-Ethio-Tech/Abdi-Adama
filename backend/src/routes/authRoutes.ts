@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { login, register, getPendingUsers, updateStatus } from '../controllers/authController.js';
+import { login, register, getPendingUsers, updateStatus, verify } from '../controllers/authController.js';
 import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
 router.post('/register', register);
 router.post('/login', login);
+router.get('/verify', authenticateToken, verify);
 
 // Admin-only routes for approval workflow
 router.get('/pending-users', authenticateToken, authorizeRoles('super-admin', 'school-admin'), getPendingUsers);
