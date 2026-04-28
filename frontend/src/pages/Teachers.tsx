@@ -91,6 +91,8 @@ export const Teachers = () => {
       isRoomTeacher: false,
       isExaminer: false,
       isDeptHead: false,
+      classes: 0,
+      isDean: false,
     };
 
     setTeachers(prev => [newTeacher, ...prev]);

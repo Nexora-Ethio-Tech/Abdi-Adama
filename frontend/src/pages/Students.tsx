@@ -41,7 +41,28 @@ export const Students = () => {
       parentPhone,
       status: 'Active' as const,
       attendance: '100%',
-      gpa: 'N/A'
+      gpa: 'N/A',
+      riskLevel: 'Low',
+      riskFactor: 'Initial registration.',
+
+      isScholarship: false,
+      isBusUser: false,
+      penaltyFee: 0,
+      monthlyFee: 5000,
+      busFee: 0,
+      dob: '2010-01-01',
+      gender: 'Other',
+      address: 'Not provided',
+      bloodGroup: 'N/A',
+      allergies: 'None',
+      medications: 'None',
+      chronicConditions: 'None',
+      vaccinationStatus: 'Unknown',
+      homeMedications: 'None',
+      bio: 'New student.',
+      attendanceHistory: [],
+      academicHistory: [],
+      emergencyContact: { name: parentName, relation: 'Parent', phone: parentPhone }
     };
 
     setAllStudents(prev => [newStudent, ...prev]);
