@@ -5,15 +5,7 @@ import { useUser } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../context/useStore';
 
-interface LogisticsNotice {
-  id: string;
-  title: string;
-  content: string;
-  stations: string;
-  driverName: string;
-  timestamp: string;
-  category: 'Logistics';
-}
+
 
 export const DriverPortal = () => {
   const { t } = useTranslation();
@@ -43,17 +35,7 @@ export const DriverPortal = () => {
     setShowForm(false);
   };
 
-  const formatTime = (iso: string) => {
-    const d = new Date(iso);
-    const now = new Date();
-    const diffMs = now.getTime() - d.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return t('driverPortal.justNow');
-    if (diffMins < 60) return t('driverPortal.minsAgo', { count: diffMins });
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return t('driverPortal.hoursAgo', { count: diffHours });
-    return t('driverPortal.daysAgo', { count: Math.floor(diffHours / 24) });
-  };
+
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">

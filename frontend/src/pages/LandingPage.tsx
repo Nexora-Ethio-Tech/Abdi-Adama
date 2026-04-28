@@ -83,25 +83,7 @@ export const LandingPage = () => {
     { label: 'Clubs & Activities', value: '15+', icon: Zap, color: 'text-amber-500' },
   ];
 
-  const values = [
-    { title: 'Integrity', desc: 'Doing what is right — always. We encourage honesty and responsibility.', icon: ShieldAlert },
-    { title: 'Leadership', desc: 'Teamwork and projects that build confidence and empathy.', icon: Zap },
-    { title: 'Growth', desc: 'Setting goals, working hard, and learning from every challenge.', icon: TrendingUpIcon },
-    { title: 'Lifelong Learning', desc: 'Encouraging curiosity and creativity beyond the classroom.', icon: BookOpen },
-  ];
 
-  const programs = [
-    { title: 'Kindergarten', desc: 'Playful activities to build basic literacy, numeracy, and social skills.', level: 'Ages 3-5' },
-    { title: 'Elementary School', desc: 'Core subjects with a focus on computer literacy and digital skills.', level: 'Grades 1-8' },
-    { title: 'High School', desc: 'College-prep courses in science, math, and humanities.', level: 'Grades 9-12' },
-  ];
-
-  const branches = [
-    { name: 'Adama Kebele 10', desc: 'Our central learning hub and foundational campus.', location: 'Main Branch' },
-    { name: 'Mogoro Hete Haroreti', desc: 'Modern campus serving growing educational needs.', location: 'Adama' },
-    { name: '180 Village', desc: 'Accessible campus with strong community ties.', location: 'Adama' },
-    { name: 'Awash', desc: 'Serene environment focused on intellectual curiosity.', location: 'Awash' },
-  ];
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden">
@@ -576,9 +558,4 @@ export const LandingPage = () => {
   );
 };
 
-const TrendingUpIcon = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-    <polyline points="17 6 23 6 23 12"></polyline>
-  </svg>
-);
+

@@ -419,7 +419,7 @@ export const Dashboard = () => {
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
-          {notices.filter(n => !role || role === 'super-admin' || !n.audience || n.audience.includes(role)).map((notice) => (
+          {notices.filter(n => !role || !n.audience || n.audience.includes(role)).map((notice) => (
             <div key={notice.id} className="p-4 md:p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">

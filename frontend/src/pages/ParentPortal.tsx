@@ -1,5 +1,5 @@
 
-import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronLeft, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react';
+import { Calendar, BookOpen, Award, User, History, Megaphone, HeartPulse, Star, ChevronRight, ClipboardList, TrendingUp } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockCommunicationLogs, commFields, ratingLabels } from '../data/mockData';

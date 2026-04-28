@@ -17,6 +17,7 @@ export const Teachers = () => {
   const [viewingSchedule, setViewingSchedule] = useState<string | null>(null);
   const [promotingTeacher, setPromotingTeacher] = useState<any | null>(null);
   const [viewingProfile, setViewingProfile] = useState<any | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
 
 
   if (viewingSchedule) {
@@ -62,11 +63,38 @@ export const Teachers = () => {
 
   const handlePromote = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!promotingTeacher) return;
     setTeacherExaminerStatus(promotingTeacher.id, Boolean(promotingTeacher.isExaminer));
     setTeachers(prev => prev.map(t =>
       t.id === promotingTeacher.id ? promotingTeacher : t
     ));
     setPromotingTeacher(null);
+  };
+
+  const handleAddTeacher = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const name = formData.get('name') as string;
+    const branch = formData.get('branch') as string;
+    const subjects = (formData.get('subjects') as string).split(',').map(s => s.trim());
+    
+    const newTeacher = {
+      id: `TR${Date.now()}`,
+      name,
+      branch,
+      subjects,
+      department: subjects[0] || 'General',
+      hireDate: new Date().toISOString().split('T')[0],
+      experience: 'New Joiner',
+      bio: `New teacher at ${branch} branch.`,
+      isInClass: false,
+      isRoomTeacher: false,
+      isExaminer: false,
+      isDeptHead: false,
+    };
+
+    setTeachers(prev => [newTeacher, ...prev]);
+    setShowAddModal(false);
   };
 
   return (
@@ -79,9 +107,12 @@ export const Teachers = () => {
         Back
       </button>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors w-full md:w-fit text-sm md:text-base">
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 w-full md:w-fit text-sm md:text-base shadow-lg shadow-blue-200 dark:shadow-none"
+        >
           <UserPlus size={20} />
-          <span>Approve New Teacher</span>
+          <span>Register New Teacher</span>
         </button>
 
         <div className="flex items-center gap-3">
@@ -516,6 +547,53 @@ export const Teachers = () => {
             </div>
 
 
+          </div>
+        </div>
+      )}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+                  <UserPlus size={20} />
+                </div>
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm uppercase tracking-wider">Register New Teacher</h3>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <form className="p-6 space-y-4" onSubmit={handleAddTeacher}>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
+                <input name="name" required type="text" placeholder="e.g. Ato Bekele" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Branch</label>
+                <select name="branch" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                  <option value="Main">Main Branch</option>
+                  <option value="Bole">Bole Branch</option>
+                  <option value="Megenagna">Megenagna Branch</option>
+                  <option value="Adama">Adama Branch</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Subjects (comma separated)</label>
+                <input name="subjects" required type="text" placeholder="e.g. Mathematics, Physics" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+              </div>
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50">
+                <p className="text-[10px] text-blue-700 dark:text-blue-400 font-medium leading-relaxed">
+                  <strong>Account Notice:</strong> Upon registration, the teacher will be assigned a Digital ID (e.g., TR1714...). They can use this ID to log in for the first time.
+                </p>
+              </div>
+              <div className="pt-4">
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">
+                  <Check size={18} />
+                  <span>Register Teacher</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
