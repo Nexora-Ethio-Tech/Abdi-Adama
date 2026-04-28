@@ -5,6 +5,7 @@ import { useStore } from '../context/useStore';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar } from '../pages/Calendar';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -23,7 +24,13 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
   const { isExamLockedDown } = useStore();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [showCalendar, setShowCalendar] = useState(false);
+
+  const handleLanguageChange = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('abdi_adama_language', lng);
+  };
 
   const handleLogout = () => {
     logout();
@@ -54,11 +61,22 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t('header.search')}
             disabled={isExamLockedDown}
             className="pl-9 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 dark:text-slate-100 border-none rounded-full text-xs focus:ring-2 focus:ring-blue-500 outline-none w-32 md:w-48 xl:w-64"
           />
         </div>
+
+        <select
+          value={i18n.language}
+          onChange={(e) => handleLanguageChange(e.target.value)}
+          disabled={isExamLockedDown}
+          className={cn("bg-transparent text-xs font-bold text-slate-600 dark:text-slate-300 outline-none cursor-pointer hover:text-school-primary transition-colors", isExamLockedDown && "opacity-50 cursor-not-allowed")}
+        >
+          <option value="en">EN</option>
+          <option value="am">AM</option>
+          <option value="om">OM</option>
+        </select>
 
         <button
           onClick={toggleTheme}
@@ -89,7 +107,7 @@ export const Header = ({ title, onMenuClick }: HeaderProps) => {
         <div className="flex items-center gap-1 md:gap-3 md:pl-6 md:border-l border-slate-200 dark:border-slate-800 relative">
           <div className="flex items-center gap-1 md:gap-4 p-1">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-slate-900 dark:text-white leading-tight">{user?.name || 'Guest'}</p>
+              <p className="text-sm font-black text-slate-900 dark:text-white leading-tight">{user?.name || t('header.guest')}</p>
               <p className="text-[10px] font-bold text-school-primary uppercase tracking-widest">{role?.replace('-', ' ')}</p>
             </div>
             <div className="w-10 h-10 bg-gradient-to-br from-school-primary to-school-accent rounded-xl flex items-center justify-center text-white shadow-lg shadow-school-primary/20">

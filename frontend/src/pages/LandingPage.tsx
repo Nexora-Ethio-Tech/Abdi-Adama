@@ -30,8 +30,11 @@ import {
   Quote
 } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { schoolName, schoolMotto } = useUser();
   const { publicPosts } = useStore();
   const [showAdmission, setShowAdmission] = useState(false);
@@ -115,15 +118,27 @@ export const LandingPage = () => {
           
           <div className="flex items-center gap-6">
             <div className="hidden lg:flex items-center gap-8">
-              {['Home', 'About', 'Programs', 'Media', 'Branches'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-school-primary transition-colors">{item}</a>
+              {['home', 'about', 'programs', 'media', 'branches'].map((item) => (
+                <a key={item} href={`#${item}`} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-school-primary transition-colors">{t(`nav.${item}`)}</a>
               ))}
             </div>
+            <select
+              value={i18n.language}
+              onChange={(e) => {
+                i18n.changeLanguage(e.target.value);
+                localStorage.setItem('abdi_adama_language', e.target.value);
+              }}
+              className="bg-transparent text-xs font-bold text-slate-500 dark:text-slate-400 outline-none cursor-pointer hover:text-school-primary transition-colors"
+            >
+              <option value="en">EN</option>
+              <option value="am">AM</option>
+              <option value="om">OM</option>
+            </select>
             <button 
               onClick={() => navigate('/login')}
               className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
             >
-              Sign In
+              {t('nav.signIn')}
             </button>
           </div>
         </div>
@@ -143,11 +158,11 @@ export const LandingPage = () => {
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full text-[10px] font-black uppercase tracking-widest text-school-primary shadow-sm">
                   <Globe size={14} className="animate-spin-slow" />
-                  International Standards • Ethiopian Values
+                  {t('landing.heroSubtitle')}
                 </div>
                 <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-[0.9]">
-                  Planting Seeds of <br />
-                  <span className="text-gradient">Excellence</span> Today.
+                  {t('landing.heroTitle')} <br />
+                  <span className="text-gradient">{t('landing.heroHighlight')}</span> {t('landing.heroEnd')}
                 </h1>
                 <div className="flex flex-col gap-1 text-slate-500 dark:text-slate-400 font-medium italic border-l-4 border-school-primary pl-4 py-2">
                   <p>{schoolMotto.oromic}</p>
@@ -157,7 +172,7 @@ export const LandingPage = () => {
               </div>
 
               <p className="text-lg text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
-                Empowering confident thinkers and future leaders through modern education rooted in Ethiopian culture. A thriving international community of passionate educators.
+                {t('landing.heroDesc')}
               </p>
 
               <div className="flex flex-wrap gap-4">
@@ -165,14 +180,14 @@ export const LandingPage = () => {
                   onClick={() => setShowAdmission(true)}
                   className="px-10 py-5 bg-school-primary hover:bg-school-primary/90 text-white rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl shadow-school-primary/30 flex items-center gap-3 group shine"
                 >
-                  Apply for Admission
+                  {t('landing.applyBtn')}
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button
                   onClick={() => navigate('/login')}
                   className="px-10 py-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-3"
                 >
-                  Student Portal
+                  {t('landing.portalBtn')}
                   <LogIn size={18} />
                 </button>
               </div>
@@ -220,8 +235,8 @@ export const LandingPage = () => {
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div className="order-2 lg:order-1">
               <div className="section-header !text-left">
-                <span className="section-subtitle">A Legacy of Excellence</span>
-                <h2 className="section-title">Message from the <br /> Founders</h2>
+                <span className="section-subtitle">{t('landing.founder.subtitle')}</span>
+                <h2 className="section-title">{t('landing.founder.title')}</h2>
               </div>
               
               <div className="space-y-8">
@@ -229,13 +244,13 @@ export const LandingPage = () => {
                   <Quote className="absolute top-6 right-6 text-slate-100 dark:text-slate-800" size={80} />
                   <div className="relative z-10 space-y-6">
                     <p className="text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed italic">
-                      "Abdi Adama School was established in 1998 E.C. (2005/2006 G.C.) with a dream to create a place where children feel seen, supported, and encouraged to discover their full potential. To build the future of our children, we must plant the seeds of excellence today."
+                      {t('landing.founder.quote')}
                     </p>
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 bg-school-primary/20 rounded-full flex items-center justify-center text-school-primary font-black">GL</div>
                       <div>
-                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">Ato Girma Lemi</h4>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Founder & Owner</p>
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('landing.founder.name')}</h4>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('landing.founder.role')}</p>
                       </div>
                     </div>
                   </div>
@@ -243,7 +258,7 @@ export const LandingPage = () => {
 
                 <div className="p-8 bg-white/50 dark:bg-slate-900/30 rounded-3xl border border-slate-100 dark:border-slate-800">
                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                     Our vision is to inspire each student to think boldly, act responsibly, and dream fearlessly. We proudly honor Ethiopian culture, identity, and tradition while delivering international quality education.
+                     {t('landing.founder.vision')}
                    </p>
                 </div>
               </div>
@@ -256,13 +271,13 @@ export const LandingPage = () => {
                 </div>
                 <div className="bg-school-primary p-6 rounded-3xl text-white shadow-xl">
                   <h4 className="font-black text-2xl">20+</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest">Years of Academic Leadership</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">{t('landing.yearsLeadership')}</p>
                 </div>
               </div>
               <div className="space-y-4">
                 <div className="bg-school-secondary p-6 rounded-3xl text-white shadow-xl">
                    <Heart className="mb-4" />
-                   <p className="text-sm font-bold leading-tight">Nurturing bright minds with care and purpose since 2005.</p>
+                   <p className="text-sm font-bold leading-tight">{t('landing.nurturingMinds')}</p>
                 </div>
                 <div className="h-64 rounded-3xl overflow-hidden shadow-lg border-2 border-white dark:border-slate-800">
                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop" alt="Campus Life" className="w-full h-full object-cover" />
@@ -277,12 +292,16 @@ export const LandingPage = () => {
       <section id="programs" className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="section-header">
-            <span className="section-subtitle">Academic Excellence</span>
-            <h2 className="section-title">Educational Programs</h2>
+            <span className="section-subtitle">{t('landing.programs.subtitle')}</span>
+            <h2 className="section-title">{t('landing.programs.title')}</h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {programs.map((prog, i) => (
+            {[
+              { level: t('landing.programs.kindergartenLevel'), title: t('landing.programs.kindergarten'), desc: t('landing.programs.kindergartenDesc') },
+              { level: t('landing.programs.elementaryLevel'), title: t('landing.programs.elementary'), desc: t('landing.programs.elementaryDesc') },
+              { level: t('landing.programs.highSchoolLevel'), title: t('landing.programs.highSchool'), desc: t('landing.programs.highSchoolDesc') }
+            ].map((prog, i) => (
               <div key={i} className="group p-10 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-school-primary mb-8 group-hover:bg-school-primary group-hover:text-white transition-all duration-500">
                   <BookOpen size={32} />
@@ -291,7 +310,7 @@ export const LandingPage = () => {
                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{prog.title}</h3>
                 <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm mb-8">{prog.desc}</p>
                 <button className="mt-auto flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest hover:text-school-primary transition-colors">
-                  Explore Curriculum
+                  {t('landing.programs.explore')}
                   <ChevronDown size={16} />
                 </button>
               </div>
@@ -305,12 +324,17 @@ export const LandingPage = () => {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" style={{ opacity: 0.1 }} />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="section-header">
-            <span className="section-subtitle !text-school-accent">Our Foundations</span>
-            <h2 className="section-title !text-white">Core Values</h2>
+            <span className="section-subtitle !text-school-accent">{t('landing.valuesSubtitle')}</span>
+            <h2 className="section-title !text-white">{t('landing.values.title')}</h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12">
-            {values.map((val, i) => (
+            {[
+              { icon: ShieldAlert, title: t('landing.values.integrity'), desc: t('landing.values.integrityDesc') },
+              { icon: Users, title: t('landing.values.leadership'), desc: t('landing.values.leadershipDesc') },
+              { icon: Zap, title: t('landing.values.growth'), desc: t('landing.values.growthDesc') },
+              { icon: Globe, title: t('landing.values.lifelong'), desc: t('landing.values.lifelongDesc') }
+            ].map((val, i) => (
               <div key={i} className="space-y-4">
                 <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-school-accent border border-white/10">
                   <val.icon size={28} />
@@ -329,8 +353,8 @@ export const LandingPage = () => {
           <div className="max-w-7xl mx-auto px-6 mb-12">
             <div className="section-header !text-left !mb-0 flex items-center justify-between">
               <div>
-                <span className="section-subtitle">Stay Informed</span>
-                <h2 className="section-title">Latest Updates</h2>
+                <span className="section-subtitle">{t('landing.stayInformed')}</span>
+                <h2 className="section-title">{t('landing.updates.title')}</h2>
               </div>
               <div className="hidden sm:flex gap-2">
                 <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400">
@@ -363,7 +387,7 @@ export const LandingPage = () => {
                     {post.description}
                   </p>
                   <div className="mt-auto pt-6 flex items-center gap-2 text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest group-hover:text-school-primary transition-colors cursor-pointer w-fit">
-                    Read More <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    {t('landing.readMore')} <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
@@ -376,8 +400,8 @@ export const LandingPage = () => {
       <section id="media" className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="section-header">
-            <span className="section-subtitle">Life at Abdi Adama</span>
-            <h2 className="section-title">Experience Our Community</h2>
+            <span className="section-subtitle">{t('landing.communitySubtitle')}</span>
+            <h2 className="section-title">{t('landing.communityTitle')}</h2>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
@@ -392,8 +416,8 @@ export const LandingPage = () => {
               ></iframe>
               <div className="absolute bottom-6 left-6 right-6 pointer-events-none transition-all duration-500 group-hover:translate-y-2 group-hover:opacity-0">
                 <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20">
-                  <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">Culture Day Celebration</h4>
-                  <p className="text-white/70 text-[10px] font-medium">Watch our community celebrate Ethiopian culture through dance and music.</p>
+                  <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">{t('landing.media.cultureDay')}</h4>
+                  <p className="text-white/70 text-[10px] font-medium">{t('landing.media.cultureDesc')}</p>
                 </div>
               </div>
             </div>
@@ -403,16 +427,17 @@ export const LandingPage = () => {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 px-4 py-2 bg-school-primary/10 rounded-full text-school-primary">
                   <Video size={18} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Introductory Video</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('landing.media.introVideo')}</span>
                 </div>
                 <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                  A place where learning <br /> meets <span className="text-gradient">excellence!</span>
+                  {t('landing.media.introTitle')} <br />
+                  meets <span className="text-gradient">{t('landing.media.introHighlight')}</span>
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                  At Abdi Adama School, we are committed to nurturing young minds and helping every student reach their full potential. Our experienced teachers provide a supportive and engaging environment, combining quality education with values that shape responsible and confident individuals.
+                  {t('landing.media.introDesc1')}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed">
-                  Whether in academics, arts, or sports, our students are encouraged to explore their talents and develop skills that prepare them for future success.
+                  {t('landing.media.introDesc2')}
                 </p>
               </div>
 
@@ -422,7 +447,7 @@ export const LandingPage = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 active:scale-95 transition-all w-fit"
               >
-                Watch Full Presentation
+                {t('landing.media.watchFull')}
                 <ArrowRight size={18} />
               </a>
             </div>
@@ -434,18 +459,23 @@ export const LandingPage = () => {
       <section id="branches" className="py-24 bg-slate-50 dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="section-header">
-            <span className="section-subtitle">Visit Us</span>
-            <h2 className="section-title">Our School Branches</h2>
+            <span className="section-subtitle">{t('landing.branches.subtitle')}</span>
+            <h2 className="section-title">{t('landing.branches.title')}</h2>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {branches.map((branch, i) => (
+            {[
+              { name: t('landing.branches.kebele10'), location: t('landing.branches.adama'), desc: t('landing.branches.kebele10Desc') },
+              { name: t('landing.branches.mogoro'), location: t('landing.branches.adama'), desc: t('landing.branches.mogoroDesc') },
+              { name: t('landing.branches.village180'), location: t('landing.branches.adama'), desc: t('landing.branches.village180Desc') },
+              { name: t('landing.branches.awash'), location: t('landing.branches.awash'), desc: t('landing.branches.awashDesc') }
+            ].map((branch, i) => (
               <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-lg hover:shadow-xl transition-all">
                 <MapPin className="text-school-primary mb-6" size={24} />
                 <h4 className="text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">{branch.name}</h4>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">{branch.location}</p>
+                <p className="text-[10px] font-black text-school-primary uppercase tracking-widest mb-4">{branch.location}</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6">{branch.desc}</p>
-                <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.name + ' ' + branch.location)}`} target="_blank" rel="noopener noreferrer" className="inline-block text-[10px] font-black text-school-primary uppercase tracking-widest hover:underline">View on Map</a>
+                <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.name + ' ' + branch.location)}`} target="_blank" rel="noopener noreferrer" className="inline-block text-[10px] font-black text-school-primary uppercase tracking-widest hover:underline">{t('landing.branches.viewMap')}</a>
               </div>
             ))}
           </div>
@@ -456,24 +486,24 @@ export const LandingPage = () => {
       <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 text-center space-y-10 relative z-10">
           <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-            Ready to shape your <br /> child's <span className="text-gradient">bright future?</span>
+            {t('landing.cta.title')} <br /> {t('landing.cta.highlight')}
           </h2>
           <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-            Join thousands of families who trust Abdi Adama School for a high-quality, modern, and value-based education.
+            {t('landing.cta.desc')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
              <button
                onClick={() => setShowAdmission(true)}
                className="px-12 py-6 bg-school-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-school-primary/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shine"
              >
-               Start Online Admission
+               {t('landing.cta.startAdmission')}
                <CheckCircle2 size={20} />
              </button>
              <button
                onClick={() => navigate('/login')}
                className="px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all"
              >
-               Parent Login
+               {t('landing.cta.parentLogin')}
              </button>
           </div>
         </div>
@@ -494,21 +524,21 @@ export const LandingPage = () => {
                 </div>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                Founded in 2005, Abdi Adama School is a premier educational institution in Ethiopia dedicated to producing competent and patriotic citizens.
+                {t('landing.footer.founded')}
               </p>
             </div>
 
             <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">Quick Links</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">{t('landing.footer.quickLinks')}</h4>
               <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
-                {['About Us', 'Admissions', 'Curriculum', 'School Life', 'Careers'].map(item => (
-                  <li key={item}><a href="#" className="hover:text-school-primary transition-colors font-bold uppercase tracking-widest text-[10px]">{item}</a></li>
+                {Object.entries(t('landing.footer.links', { returnObjects: true }) as any).map(([key, label]) => (
+                  <li key={key}><a href="#" className="hover:text-school-primary transition-colors font-bold uppercase tracking-widest text-[10px]">{label as string}</a></li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">Connect</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">{t('landing.footer.connect')}</h4>
               <div className="flex gap-4">
                 {[
                   { icon: Send, url: 'https://t.me/abdiadamaschool', color: 'hover:text-blue-500' },
@@ -524,19 +554,19 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">Staff Access</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">{t('landing.footer.staffAccess')}</h4>
               <button 
                 onClick={() => navigate('/login')}
                 className="flex items-center gap-3 px-6 py-3 bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-school-primary rounded-xl text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-school-primary/20 transition-all w-full"
               >
                 <ShieldAlert size={16} />
-                Official Staff Portal
+                {t('landing.footer.staffPortal')}
               </button>
             </div>
           </div>
 
           <div className="pt-12 border-t border-slate-100 dark:border-slate-800 text-center space-y-4">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">© 2026 ABDI ADAMA SCHOOL • MADE IN ADAMA</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">{t('landing.footer.rights')}</p>
           </div>
         </div>
       </footer>

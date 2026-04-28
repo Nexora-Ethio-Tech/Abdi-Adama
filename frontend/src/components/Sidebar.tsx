@@ -25,6 +25,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useUser } from '../context/UserContext';
 import { useStore } from '../context/useStore';
+import { useTranslation } from 'react-i18next';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,8 +40,16 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { role, logout, switchRole, schoolName } = useUser();
   const { isExamLockedDown, selectedBranchId } = useStore();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
-  const displaySchoolName = schoolName.english;
+  const getLocalizedSchoolName = () => {
+    switch (i18n.language) {
+      case 'am': return schoolName.amharic;
+      case 'om': return schoolName.oromic;
+      default: return schoolName.english;
+    }
+  };
+  const displaySchoolName = getLocalizedSchoolName();
 
   const handleLogout = () => {
     logout();
@@ -51,88 +60,88 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     switch (role) {
       case 'super-admin':
         const baseItems = [
-          { icon: LayoutDashboard, label: 'Overview', path: '/' },
-          { icon: Building2, label: 'Branches', path: '/branches' },
-          { icon: PieChart, label: 'Analytics', path: '/analytics' },
+          { icon: LayoutDashboard, label: t('nav.overview'), path: '/' },
+          { icon: Building2, label: t('nav.branches'), path: '/branches' },
+          { icon: PieChart, label: t('nav.analytics'), path: '/analytics' },
         ];
 
         // Requirement: Hide specific branch details (Inventory/Finance) until a branch is selected
         if (selectedBranchId) {
           baseItems.push(
-            { icon: Package, label: 'Inventory', path: '/inventory' },
-            { icon: Wallet, label: 'Finance', path: '/finance' }
+            { icon: Package, label: t('nav.inventory'), path: '/inventory' },
+            { icon: Wallet, label: t('nav.finance'), path: '/finance' }
           );
         }
 
         baseItems.push(
-          { icon: Megaphone, label: 'Website Posts', path: '/website-posts' },
-          { icon: Settings, label: 'Settings', path: '/settings' }
+          { icon: Megaphone, label: t('nav.websitePosts'), path: '/website-posts' },
+          { icon: Settings, label: t('nav.settings'), path: '/settings' }
         );
         return baseItems;
       case 'school-admin':
         return [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-          { icon: Users, label: 'Students', path: '/students' },
-          { icon: UserPlus, label: 'Registration', path: '/registration' },
-          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
-          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-          { icon: BookOpen, label: 'Schedule Builder', path: '/schedule-builder' },
-          { icon: Package, label: 'Inventory', path: '/inventory' },
-          { icon: Wallet, label: 'Finance', path: '/finance' },
-          { icon: Settings, label: 'Settings', path: '/settings' },
+          { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/' },
+          { icon: Users, label: t('nav.students'), path: '/students' },
+          { icon: UserPlus, label: t('nav.registration'), path: '/registration' },
+          { icon: UserSquare2, label: t('nav.teachers'), path: '/teachers' },
+          { icon: CalendarCheck, label: t('nav.attendance'), path: '/attendance' },
+          { icon: BookOpen, label: t('nav.scheduleBuilder'), path: '/schedule-builder' },
+          { icon: Package, label: t('nav.inventory'), path: '/inventory' },
+          { icon: Wallet, label: t('nav.finance'), path: '/finance' },
+          { icon: Settings, label: t('nav.settings'), path: '/settings' },
         ];
       case 'vice-principal':
         return [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-          { icon: Users, label: 'Students', path: '/students' },
-          { icon: UserSquare2, label: 'Teachers', path: '/teachers' },
-          { icon: FileText, label: 'Transcripts', path: '/transcripts' },
-          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
+          { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/' },
+          { icon: Users, label: t('nav.students'), path: '/students' },
+          { icon: UserSquare2, label: t('nav.teachers'), path: '/teachers' },
+          { icon: FileText, label: t('nav.transcripts'), path: '/transcripts' },
+          { icon: CalendarCheck, label: t('nav.attendance'), path: '/attendance' },
+          { icon: ClipboardList, label: t('nav.exams'), path: '/exams' },
         ];
       case 'teacher':
         return [
-          { icon: LayoutDashboard, label: 'Teacher Portal', path: '/' },
-          { icon: BookOpen, label: 'Weekly Plans', path: '/?tab=plans' },
-          { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-          { icon: BookOpen, label: 'My Schedule', path: '/schedule' },
-          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
+          { icon: LayoutDashboard, label: t('nav.teacherPortal'), path: '/' },
+          { icon: BookOpen, label: t('nav.weeklyPlans'), path: '/?tab=plans' },
+          { icon: CalendarCheck, label: t('nav.attendance'), path: '/attendance' },
+          { icon: BookOpen, label: t('nav.mySchedule'), path: '/schedule' },
+          { icon: ClipboardList, label: t('nav.exams'), path: '/exams' },
         ];
       case 'student':
         return [
-          { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
-          { icon: BookOpen, label: 'Grades & Courses', path: '/courses' },
-          { icon: CalendarCheck, label: 'Academic History', path: '/attendance' },
-          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
+          { icon: LayoutDashboard, label: t('nav.myDashboard'), path: '/' },
+          { icon: BookOpen, label: t('nav.gradesCourses'), path: '/courses' },
+          { icon: CalendarCheck, label: t('nav.academicHistory'), path: '/attendance' },
+          { icon: ClipboardList, label: t('nav.exams'), path: '/exams' },
         ];
       case 'parent':
         return [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-          { icon: Users, label: 'My Children', path: '/students' },
-          { icon: HeartPulse, label: 'Clinic Support', path: '/clinic-chat' },
-          { icon: ClipboardList, label: 'Official Examinations', path: '/exams' },
+          { icon: LayoutDashboard, label: t('nav.myDashboard'), path: '/' },
+          { icon: Users, label: t('nav.myChildren'), path: '/students' },
+          { icon: HeartPulse, label: t('nav.clinicSupport'), path: '/clinic-chat' },
+          { icon: ClipboardList, label: t('nav.exams'), path: '/exams' },
         ];
       case 'finance-clerk':
         return [
-          { icon: LayoutDashboard, label: 'Overview', path: '/' },
-          { icon: UserPlus, label: 'Registration', path: '/registration' },
-          { icon: Wallet, label: 'Finance', path: '/finance' },
+          { icon: LayoutDashboard, label: t('nav.overview'), path: '/' },
+          { icon: UserPlus, label: t('nav.registration'), path: '/registration' },
+          { icon: Wallet, label: t('nav.finance'), path: '/finance' },
         ];
       case 'librarian':
         return [
-          { icon: LayoutDashboard, label: 'Librarian Portal', path: '/' },
-          { icon: BookOpen, label: 'Library', path: '/library' },
+          { icon: LayoutDashboard, label: t('nav.librarianPortal'), path: '/' },
+          { icon: BookOpen, label: t('nav.library'), path: '/library' },
         ];
       case 'clinic-admin':
         return [
-          { icon: LayoutDashboard, label: 'Clinic Dashboard', path: '/' },
-          { icon: HeartPulse, label: 'Clinic Management', path: '/clinic' },
-          { icon: ClipboardList, label: 'Chats', path: '/clinic?tab=chat' },
+          { icon: LayoutDashboard, label: t('nav.clinicDashboard'), path: '/' },
+          { icon: HeartPulse, label: t('nav.clinicManagement'), path: '/clinic' },
+          { icon: ClipboardList, label: t('nav.chats'), path: '/clinic?tab=chat' },
         ];
       case 'driver':
         return [
-          { icon: LayoutDashboard, label: 'My Dashboard', path: '/' },
-          { icon: Megaphone, label: 'Post Notice', path: '/' },
+          { icon: LayoutDashboard, label: t('nav.myDashboard'), path: '/' },
+          { icon: Megaphone, label: t('nav.postNotice'), path: '/' },
         ];
       default:
         return [];
@@ -222,12 +231,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             >
               {roles.map(r => (
                 <option key={r.id} value={r.id || ''} className="bg-slate-900 text-white">
-                  {r.label}
+                  {t(`roles.${r.id}`)}
                 </option>
               ))}
             </select>
           </div>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider ml-5 mt-2">Active Role</p>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider ml-5 mt-2">{t('sidebar.activeRole')}</p>
         </div>
 
         <button
@@ -239,7 +248,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           )}
         >
           <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-bold text-sm tracking-wide">Logout Session</span>
+          <span className="font-bold text-sm tracking-wide">{t('sidebar.logout')}</span>
         </button>
       </div>
     </aside>

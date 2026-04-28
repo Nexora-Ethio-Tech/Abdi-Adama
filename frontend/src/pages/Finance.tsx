@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { exportToCSV } from '../utils/exportUtils';
+import { useTranslation } from 'react-i18next';
 
 interface PaymentLog {
   status: boolean;
@@ -57,6 +58,7 @@ const toInputDateTimeValue = (date: Date) => {
 
 export const Finance = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { role, user } = useUser();
   const isAdmin = role === 'super-admin' || role === 'school-admin';
   const isSuperAdmin = role === 'super-admin';
@@ -248,17 +250,17 @@ export const Finance = () => {
           className="flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold uppercase tracking-widest"
         >
           <ArrowLeft size={14} />
-          Back
+          {t('finance.back')}
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-900/20 relative overflow-hidden group hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
           <div className="relative z-10">
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Revenue</p>
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{t('finance.totalRevenue')}</p>
             <h3 className="text-4xl font-black tracking-tight">{mockFinances.totalRevenue.toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
             <div className="mt-8 flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-widest bg-white/5 w-fit px-3 py-1 rounded-full">
               <ArrowUpRight size={14} />
-              <span>+12% Trend</span>
+              <span>+12% {t('finance.trend')}</span>
             </div>
           </div>
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
@@ -267,20 +269,20 @@ export const Finance = () => {
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-800 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
-          <p className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Pending Fees</p>
+          <p className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{t('finance.pendingFees')}</p>
           <h3 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">{mockFinances.pendingFees.toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
           <div className="mt-8 flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-widest bg-amber-50 dark:bg-amber-900/20 w-fit px-3 py-1 rounded-full">
             <ArrowDownRight size={14} />
-            <span>5.2% Attention</span>
+            <span>5.2% {t('finance.attention')}</span>
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-800 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
-          <p className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Registration Fees</p>
+          <p className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{t('finance.registrationFees')}</p>
           <h3 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">45,000 <span className="text-sm font-bold text-slate-400">ETB</span></h3>
           <div className="mt-8 flex items-center gap-2 text-blue-500 text-[10px] font-black uppercase tracking-widest bg-blue-50 dark:bg-blue-900/20 w-fit px-3 py-1 rounded-full">
             <ArrowUpRight size={14} />
-            <span>Monthly Target</span>
+            <span>{t('finance.monthlyTarget')}</span>
           </div>
         </div>
       </div>
@@ -293,14 +295,14 @@ export const Finance = () => {
                 onClick={() => setActiveView('main')}
                 className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeView === 'main' ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xl' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
               >
-                {isAdmin ? 'Summaries' : 'Transactions'}
+                {isAdmin ? t('finance.summaries') : t('finance.transactions')}
               </button>
               {isAdmin && (
                 <button
                   onClick={() => setActiveView('audit')}
                   className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeView === 'audit' ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xl' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
                 >
-                  System Audit
+                  {t('finance.systemAudit')}
                 </button>
               )}
             </div>
@@ -319,7 +321,7 @@ export const Finance = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
               <input
                 type="text"
-                placeholder="Search ledger..."
+                placeholder={t('finance.searchLedger')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-12 pr-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest outline-none w-full sm:w-64 transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500"
@@ -330,14 +332,14 @@ export const Finance = () => {
               className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest hover:underline flex items-center gap-2 whitespace-nowrap bg-blue-50 dark:bg-blue-900/20 px-4 py-3 rounded-2xl border border-blue-100 dark:border-blue-800"
             >
               <FileText size={16} />
-              <span>Export</span>
+              <span>{t('finance.export')}</span>
             </button>
           </div>
         </div>
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">From</label>
+              <label className="text-[10px] font-bold text-slate-500 uppercase">{t('finance.from')}</label>
               <input
                 type="datetime-local"
                 value={fromDateTime}
@@ -395,7 +397,7 @@ export const Finance = () => {
                   {/* Row 1: Direction + Category */}
                   <div className="flex flex-wrap items-end gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Direction</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('finance.direction')}</label>
                       <div className="flex bg-slate-50 dark:bg-slate-800 p-1 rounded-xl border border-slate-100 dark:border-slate-700">
                         <button
                           onClick={() => { setAuditFilter('In'); setAuditPage(0); }}
@@ -413,7 +415,7 @@ export const Finance = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('finance.category')}</label>
                       <div className="flex bg-slate-50 dark:bg-slate-800 p-1 rounded-xl border border-slate-100 dark:border-slate-700">
                         <button
                           onClick={() => { setAuditCategory('Fees'); setAuditPage(0); }}
@@ -441,7 +443,7 @@ export const Finance = () => {
                           onChange={(e) => { setAuditSection(e.target.value); setAuditPage(0); }}
                           className="appearance-none pl-3 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all cursor-pointer"
                         >
-                          <option value="all">All Sections</option>
+                          <option value="all">{t('finance.all')} Sections</option>
                           {sectionOptions.map((section) => (
                             <option key={section} value={section}>{section}</option>
                           ))}
@@ -519,10 +521,10 @@ export const Finance = () => {
               <table className="w-full text-left text-sm min-w-[800px]">
                 <thead className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                   <tr>
-                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Transaction Target</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">Action Taken</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Processed By</th>
-                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">Timestamp</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('finance.transactionTarget')}</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">{t('finance.actionTaken')}</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('finance.processedBy')}</th>
+                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t('finance.timestamp')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserPlus, RefreshCw, Upload, Search, CheckCircle, AlertCircle, FileText, Info, Check, X, HeartPulse, Mail, Clock, MapPin, BookOpen, Shield } from 'lucide-react';
 import { mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 type RegistrationTab = 'new' | 'existing';
 type PipelineFilter = 'pending' | 'exam-queue' | 'awaiting-finance' | 'completed';
@@ -28,6 +29,7 @@ const initialPendingApplications: PendingApp[] = [
 
 export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { role } = useUser();
   const isFinance = role === 'finance-clerk';
   
@@ -218,7 +220,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                 : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
           >
-            Admission Requests
+            {t('registration.newAdmissions')}
           </button>
           <button
             onClick={() => setActiveTab('existing')}
@@ -228,7 +230,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                 : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
           >
-            Promotion & Re-admission
+            {t('registration.reEnrollment')}
           </button>
         </div>
       )}
