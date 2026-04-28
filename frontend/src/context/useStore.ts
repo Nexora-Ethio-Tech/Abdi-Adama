@@ -160,7 +160,29 @@ export const useStore = create<AppState>()(persist((set, get) => ({
     }
   })),
 
-  publicPosts: [],
+  publicPosts: [
+    {
+      id: 'post-1',
+      type: 'image',
+      mediaUrl: 'https://images.unsplash.com/photo-1523050853063-913ec3673c2e?q=80&w=800&auto=format&fit=crop',
+      description: 'Celebrating our Class of 2024! A beautiful graduation ceremony marking the end of one journey and the beginning of another. Congratulations to all our outstanding students.',
+      timestamp: '2024-06-15T10:00:00Z'
+    },
+    {
+      id: 'post-2',
+      type: 'image',
+      mediaUrl: 'https://images.unsplash.com/photo-1544333346-64e4fe18204b?q=80&w=800&auto=format&fit=crop',
+      description: 'New sports facilities now open! Our commitment to physical education continues with the inauguration of our modern sports complex. Building champions on and off the field.',
+      timestamp: '2024-05-20T14:30:00Z'
+    },
+    {
+      id: 'post-3',
+      type: 'image',
+      mediaUrl: 'https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?q=80&w=800&auto=format&fit=crop',
+      description: 'Annual Science Fair Highlights: Our young scientists showcased incredible innovative projects this week. From robotics to sustainable energy solutions, the future looks bright!',
+      timestamp: '2024-04-10T09:00:00Z'
+    }
+  ],
   addPublicPost: (post) => set((state) => ({
     publicPosts: [
       {

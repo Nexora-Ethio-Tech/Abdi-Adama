@@ -1,8 +1,10 @@
 import { useStore } from '../context/useStore';
 import { useState } from 'react';
 import { Megaphone, Plus, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const WebsitePosts = () => {
+  const { t } = useTranslation();
   const { publicPosts, addPublicPost, deletePublicPost } = useStore();
   const [showPostModal, setShowPostModal] = useState(false);
 
@@ -15,8 +17,8 @@ export const WebsitePosts = () => {
               <Megaphone size={20} />
             </div>
             <div>
-              <h3 className="font-bold text-slate-800 dark:text-slate-100">Public Website Posts</h3>
-              <p className="text-xs text-slate-500">Manage updates shown on the school landing page.</p>
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">{t('websitePosts.title')}</h3>
+              <p className="text-xs text-slate-500">{t('websitePosts.subtitle')}</p>
             </div>
           </div>
           <button
@@ -24,14 +26,14 @@ export const WebsitePosts = () => {
             className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-xs font-bold"
           >
             <Plus size={16} />
-            <span className="hidden xs:inline">Add Post</span>
+            <span className="hidden xs:inline">{t('websitePosts.addPost')}</span>
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
           {publicPosts.length === 0 ? (
             <div className="p-12 col-span-full text-center text-slate-500 text-sm">
               <Megaphone size={40} className="mx-auto text-slate-300 mb-4" />
-              No public posts yet. Add one to show on the landing page!
+              {t('websitePosts.noPosts')}
             </div>
           ) : (
             publicPosts.map((post) => (
@@ -44,7 +46,7 @@ export const WebsitePosts = () => {
                     onClick={() => deletePublicPost(post.id)}
                     className="text-rose-500 hover:text-rose-600 text-xs font-bold uppercase"
                   >
-                    Delete
+                    {t('websitePosts.delete')}
                   </button>
                 </div>
                 <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl mb-4 overflow-hidden shadow-inner">
@@ -72,7 +74,7 @@ export const WebsitePosts = () => {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-              <h3 className="font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm">Add Public Post</h3>
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm">{t('websitePosts.addModalTitle')}</h3>
               <button onClick={() => setShowPostModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                 <X size={20} />
               </button>
@@ -88,24 +90,24 @@ export const WebsitePosts = () => {
               setShowPostModal(false);
             }}>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Media Type</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase">{t('websitePosts.mediaType')}</label>
                 <select name="type" required className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all">
-                  <option value="image">Image (URL)</option>
-                  <option value="video">Video (YouTube Embed URL)</option>
+                  <option value="image">{t('websitePosts.imageType')}</option>
+                  <option value="video">{t('websitePosts.videoType')}</option>
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Media URL</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase">{t('websitePosts.mediaUrl')}</label>
                 <input name="mediaUrl" required type="url" placeholder="https://example.com/image.jpg" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Description</label>
-                <textarea name="description" required rows={3} placeholder="Write something about this post..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+                <label className="text-[10px] font-bold text-slate-500 uppercase">{t('websitePosts.description')}</label>
+                <textarea name="description" required rows={3} placeholder={t('websitePosts.placeholderDesc')} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
               </div>
               <div className="pt-4">
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-200 dark:shadow-none flex items-center justify-center gap-2">
                   <Megaphone size={18} />
-                  <span>Publish to Website</span>
+                  <span>{t('websitePosts.publish')}</span>
                 </button>
               </div>
             </form>
