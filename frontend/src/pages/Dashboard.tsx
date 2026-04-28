@@ -1,5 +1,5 @@
 
-import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Users, GraduationCap, Clock, TrendingUp, Lock, Unlock, Megaphone, Plus, X, Bell, Book, BookOpen, AlertTriangle, ShieldAlert, ArrowRight, ArrowLeft, Trash2 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 import { mockStudents } from '../data/mockData';
@@ -26,16 +26,11 @@ const StatCard = ({ icon: Icon, label, value, trend, color }: any) => (
 
 export const Dashboard = () => {
   const { role, gradesLocked, setGradesLocked, branches, setSelectedBranch } = useUser();
-  const { selectedBranchId, setSelectedBranchId } = useStore();
+  const { selectedBranchId, setSelectedBranchId, notices, addNotice, deleteNotice } = useStore();
   const { t } = useTranslation();
   const [showNoticeModal, setShowNoticeModal] = useState(false);
   const [watchlistExpanded, setWatchlistExpanded] = useState(true);
   const isSuperAdmin = role === 'super-admin';
-  const [notices] = useState([
-    { id: 1, title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago', expiresAt: '2024-06-30', category: 'Academic' as const, audience: ['school-admin','vice-principal','teacher','student','parent'] as string[] },
-    { id: 2, title: 'Bus #4 — 15 min delay', content: 'Heavy traffic near Meskel Square. Route B running behind schedule.', priority: 'Medium', time: '30 mins ago', expiresAt: '2024-05-15', category: 'Logistics' as const, driverName: 'Ato Bekele', audience: ['school-admin','vice-principal','parent','student'] as string[] },
-    { id: 3, title: 'Fee deadline extended', content: 'April fee payment deadline extended to May 5th for all branches.', priority: 'High', time: 'Yesterday', expiresAt: '2024-05-05', category: 'Finance' as const, audience: ['school-admin','finance-clerk','parent'] as string[] },
-  ]);
 
   const isAdmin = role === 'super-admin' || role === 'school-admin';
   const isVP = role === 'vice-principal';
@@ -441,8 +436,19 @@ export const Dashboard = () => {
                     {notice.priority}
                   </span>
                 </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-medium">{notice.time}</span>
+                    {isAdmin && (
+                      <button 
+                        onClick={() => deleteNotice(notice.id)}
+                        className="text-slate-400 hover:text-rose-600 p-1 rounded-lg transition-colors"
+                        title="Delete Notice"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
                   {notice.expiresAt && <span className="text-[10px] text-rose-400 italic font-medium">Expires: {notice.expiresAt}</span>}
                 </div>
               </div>
@@ -546,26 +552,48 @@ export const Dashboard = () => {
                 <X size={20} />
               </button>
             </div>
-            <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setShowNoticeModal(false); }}>
+            <form className="p-6 space-y-4" onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              addNotice({
+                title: formData.get('title') as string,
+                content: formData.get('content') as string,
+                priority: formData.get('priority') as any,
+                category: formData.get('category') as any,
+                expiresAt: formData.get('expiresAt') as string,
+                audience: ['school-admin', 'vice-principal', 'teacher', 'student', 'parent']
+              });
+              setShowNoticeModal(false);
+            }}>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Notice Title</label>
-                <input required type="text" placeholder="e.g. Public Holiday Announcement" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <input name="title" required type="text" placeholder="e.g. Public Holiday Announcement" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Priority Level</label>
-                <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                  <option value="Normal">Normal</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High Priority</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Category</label>
+                  <select name="category" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Academic">Academic</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="Finance">Finance</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Priority</label>
+                  <select name="priority" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Normal">Normal</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Content</label>
-                <textarea required rows={4} placeholder="Write the details of the notice here..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <textarea name="content" required rows={4} placeholder="Write the details of the notice here..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Expiry Date</label>
-                <input type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <input name="expiresAt" type="date" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
               <div className="pt-4">
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">

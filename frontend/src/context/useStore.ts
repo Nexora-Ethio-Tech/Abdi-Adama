@@ -24,6 +24,18 @@ export interface PublicPost {
   timestamp: string;
 }
 
+export interface SchoolNotice {
+  id: string;
+  title: string;
+  content: string;
+  priority: 'Normal' | 'Medium' | 'High';
+  time: string;
+  expiresAt?: string;
+  category: 'Academic' | 'Logistics' | 'Finance';
+  audience: string[];
+  driverName?: string;
+}
+
 export interface ExamControl {
   isHidden: boolean;
   isLocked: boolean;
@@ -60,10 +72,12 @@ interface AppState {
   setPrincipalPassword: (examId: string, password: string) => void;
 
   // Public Landing Page Posts
-  publicPosts: PublicPost[];
-  addPublicPost: (post: Omit<PublicPost, 'id' | 'timestamp'>) => void;
-  updatePublicPost: (id: string, updates: Partial<PublicPost>) => void;
   deletePublicPost: (id: string) => void;
+
+  // School Notices
+  notices: SchoolNotice[];
+  addNotice: (notice: Omit<SchoolNotice, 'id' | 'time'>) => void;
+  deleteNotice: (id: string) => void;
 }
 
 const defaultExamControl = (): ExamControl => ({
@@ -199,6 +213,25 @@ export const useStore = create<AppState>()(persist((set, get) => ({
   deletePublicPost: (id) => set((state) => ({
     publicPosts: state.publicPosts.filter(p => p.id !== id)
   })),
+
+  notices: [
+    { id: '1', title: 'Term 3 Exams Schedule', content: 'The final schedule for Term 3 exams has been posted in the academic office.', priority: 'High', time: '1 hour ago', expiresAt: '2024-06-30', category: 'Academic', audience: ['school-admin','vice-principal','teacher','student','parent'] },
+    { id: '2', title: 'Bus #4 — 15 min delay', content: 'Heavy traffic near Meskel Square. Route B running behind schedule.', priority: 'Medium', time: '30 mins ago', expiresAt: '2024-05-15', category: 'Logistics', driverName: 'Ato Bekele', audience: ['school-admin','vice-principal','parent','student'] },
+    { id: '3', title: 'Fee deadline extended', content: 'April fee payment deadline extended to May 5th for all branches.', priority: 'High', time: 'Yesterday', expiresAt: '2024-05-05', category: 'Finance', audience: ['school-admin','finance-clerk','parent'] },
+  ],
+  addNotice: (notice) => set((state) => ({
+    notices: [
+      {
+        ...notice,
+        id: crypto.randomUUID(),
+        time: 'Just now',
+      },
+      ...state.notices
+    ]
+  })),
+  deleteNotice: (id) => set((state) => ({
+    notices: state.notices.filter(n => n.id !== id)
+  })),
 }), {
   name: 'abdi-adama-front-store',
   partialize: (state) => ({
@@ -207,5 +240,6 @@ export const useStore = create<AppState>()(persist((set, get) => ({
     examinerTeacherIds: state.examinerTeacherIds,
     examControls: state.examControls,
     publicPosts: state.publicPosts,
+    notices: state.notices,
   })
 }));
