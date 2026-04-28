@@ -5,6 +5,7 @@ import { Chatbot } from '../components/Chatbot';
 import { ShootingStars } from '../components/Effects';
 import logo from '../assets/logo.jpg';
 import classroomImg from '../assets/students_classroom.png';
+import founderImg from '../assets/founder.png';
 import { useUser } from '../context/UserContext';
 import { useStore } from '../context/useStore';
 import {
@@ -250,7 +251,7 @@ export const LandingPage = () => {
             <div className="order-1 lg:order-2 grid grid-cols-2 gap-4">
               <div className="space-y-4 pt-12">
                 <div className="h-64 rounded-3xl overflow-hidden shadow-lg border-2 border-white dark:border-slate-800">
-                  <img src="https://images.unsplash.com/photo-1577891729319-f28b3c14a533?q=80&w=2070&auto=format&fit=crop" alt="Founder 1" className="w-full h-full object-cover" />
+                  <img src={founderImg} alt="Ato Girma Lemi - Founder" className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="bg-school-primary p-6 rounded-3xl text-white shadow-xl">
                   <h4 className="font-black text-2xl">20+</h4>
