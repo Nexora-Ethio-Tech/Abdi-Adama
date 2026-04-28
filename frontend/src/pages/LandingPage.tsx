@@ -255,30 +255,46 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, i) => (
-              <div key={i} className="text-center space-y-2 group">
-                <div className={`mx-auto w-12 h-12 ${stat.color} bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                  <stat.icon size={24} />
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 50, rotateX: -45 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, delay: i * 0.1, ease: "easeOut" }}
+                className="text-center space-y-2 group perspective-1000"
+              >
+                <div className={`mx-auto w-16 h-16 ${stat.color} bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 border border-slate-100 dark:border-slate-800 preserve-3d`}>
+                  <stat.icon size={28} />
                 </div>
-                <h4 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{stat.value}</h4>
+                <h4 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight mt-4">{stat.value}</h4>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Founder's Message */}
-      <section id="about" className="py-24 bg-slate-50 dark:bg-slate-900/50">
+      <section id="about" className="py-24 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="order-2 lg:order-1">
+            <motion.div 
+              initial={{ opacity: 0, x: -100, rotateY: 30 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="order-2 lg:order-1 perspective-1000"
+            >
               <div className="section-header !text-left">
                 <span className="section-subtitle">{t('landing.founder.subtitle')}</span>
                 <h2 className="section-title">{t('landing.founder.title')}</h2>
               </div>
               
               <div className="space-y-8">
-                <div className="relative p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl">
+                <motion.div 
+                  whileHover={{ rotateY: -5, rotateX: 5 }}
+                  className="relative p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-2xl preserve-3d transition-all duration-500"
+                >
                   <Quote className="absolute top-6 right-6 text-slate-100 dark:text-slate-800" size={80} />
                   <div className="relative z-10 space-y-6">
                     <p className="text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed italic">
@@ -292,66 +308,85 @@ export const LandingPage = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="p-8 bg-white/50 dark:bg-slate-900/30 rounded-3xl border border-slate-100 dark:border-slate-800">
+                <div className="p-8 bg-white/50 dark:bg-slate-900/30 rounded-3xl border border-slate-100 dark:border-slate-800 backdrop-blur-sm">
                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                      {t('landing.founder.vision')}
                    </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="order-1 lg:order-2 grid grid-cols-2 gap-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
+              whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="order-1 lg:order-2 grid grid-cols-2 gap-4 perspective-1000"
+            >
               <div className="space-y-4 pt-12">
-                <div className="h-64 rounded-3xl overflow-hidden shadow-lg border-2 border-white dark:border-slate-800">
-                  <img src={founderImg} alt="Ato Girma Lemi - Founder" className="w-full h-full object-cover object-top" />
+                <div className="h-64 rounded-3xl overflow-hidden shadow-2xl border-2 border-white dark:border-slate-800 group">
+                  <img src={founderImg} alt="Ato Girma Lemi - Founder" className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700" />
                 </div>
-                <div className="bg-school-primary p-6 rounded-3xl text-white shadow-xl">
-                  <h4 className="font-black text-2xl">20+</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest">{t('landing.yearsLeadership')}</p>
+                <div className="bg-school-primary p-8 rounded-3xl text-white shadow-2xl transform hover:-translate-y-2 transition-all">
+                  <h4 className="font-black text-4xl">20+</h4>
+                  <p className="text-[10px] font-black uppercase tracking-widest mt-2">{t('landing.yearsLeadership')}</p>
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="bg-school-secondary p-6 rounded-3xl text-white shadow-xl">
-                   <Heart className="mb-4" />
-                   <p className="text-sm font-bold leading-tight">{t('landing.nurturingMinds')}</p>
+                <div className="bg-school-secondary p-8 rounded-3xl text-white shadow-2xl transform hover:-translate-y-2 transition-all">
+                   <Heart className="mb-4 text-white/80" size={32} />
+                   <p className="text-lg font-bold leading-tight">{t('landing.nurturingMinds')}</p>
                 </div>
-                <div className="h-64 rounded-3xl overflow-hidden shadow-lg border-2 border-white dark:border-slate-800">
-                   <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop" alt="Campus Life" className="w-full h-full object-cover" />
+                <div className="h-64 rounded-3xl overflow-hidden shadow-2xl border-2 border-white dark:border-slate-800 group">
+                   <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop" alt="Campus Life" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Programs Section */}
-      <section id="programs" className="py-24">
+      <section id="programs" className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="section-header">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="section-header"
+          >
             <span className="section-subtitle">{t('landing.programs.subtitle')}</span>
             <h2 className="section-title">{t('landing.programs.title')}</h2>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 perspective-2000">
             {[
               { level: t('landing.programs.kindergartenLevel'), title: t('landing.programs.kindergarten'), desc: t('landing.programs.kindergartenDesc') },
               { level: t('landing.programs.elementaryLevel'), title: t('landing.programs.elementary'), desc: t('landing.programs.elementaryDesc') },
               { level: t('landing.programs.highSchoolLevel'), title: t('landing.programs.highSchool'), desc: t('landing.programs.highSchoolDesc') }
             ].map((prog, i) => (
-              <div key={i} className="group p-10 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-school-primary mb-8 group-hover:bg-school-primary group-hover:text-white transition-all duration-500">
-                  <BookOpen size={32} />
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, z: -100, rotateY: 45, y: 50 }}
+                whileInView={{ opacity: 1, z: 0, rotateY: 0, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: i * 0.2, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, rotateY: 10, rotateX: -5 }}
+                className="group p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-2xl transition-all duration-500 flex flex-col items-center text-center preserve-3d"
+              >
+                <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center text-school-primary mb-8 group-hover:bg-school-primary group-hover:text-white transition-all duration-500 shadow-xl preserve-3d">
+                  <BookOpen size={40} />
                 </div>
-                <span className="text-[10px] font-black text-school-primary uppercase tracking-[0.2em] mb-4 px-3 py-1 bg-school-primary/5 rounded-full">{prog.level}</span>
+                <span className="text-[10px] font-black text-school-primary uppercase tracking-[0.2em] mb-4 px-4 py-1.5 bg-school-primary/10 rounded-full">{prog.level}</span>
                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{prog.title}</h3>
                 <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm mb-8">{prog.desc}</p>
-                <button className="mt-auto flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest hover:text-school-primary transition-colors">
+                <button className="mt-auto flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest hover:text-school-primary transition-colors group/btn">
                   {t('landing.programs.explore')}
-                  <ChevronDown size={16} />
+                  <ChevronDown size={16} className="group-hover/btn:translate-y-1 transition-transform" />
                 </button>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -366,20 +401,28 @@ export const LandingPage = () => {
             <h2 className="section-title !text-white">{t('landing.values.title')}</h2>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 perspective-1000">
             {[
               { icon: ShieldAlert, title: t('landing.values.integrity'), desc: t('landing.values.integrityDesc') },
               { icon: Users, title: t('landing.values.leadership'), desc: t('landing.values.leadershipDesc') },
               { icon: Zap, title: t('landing.values.growth'), desc: t('landing.values.growthDesc') },
               { icon: Globe, title: t('landing.values.lifelong'), desc: t('landing.values.lifelongDesc') }
             ].map((val, i) => (
-              <div key={i} className="space-y-4">
-                <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-school-accent border border-white/10">
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, x: -30, rotateY: 45 }}
+                whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                whileHover={{ y: -10, rotateY: 10, scale: 1.02 }}
+                className="space-y-4 p-6 bg-white/5 rounded-[2rem] border border-white/5 hover:bg-white/10 transition-all duration-500 preserve-3d"
+              >
+                <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-school-accent border border-white/10 shadow-xl preserve-3d">
                   <val.icon size={28} />
                 </div>
                 <h3 className="text-xl font-black tracking-tight">{val.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{val.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -442,53 +485,70 @@ export const LandingPage = () => {
             <h2 className="section-title">{t('landing.communityTitle')}</h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Culture Day Video */}
-            <div className="group relative rounded-[2.5rem] overflow-hidden bg-slate-900 aspect-video shadow-2xl border-4 border-white dark:border-slate-800">
+            <motion.div 
+              initial={{ opacity: 0, x: -50, rotateY: 15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="group relative rounded-[3rem] overflow-hidden bg-slate-900 aspect-video shadow-2xl border-8 border-white dark:border-slate-800 perspective-1000"
+            >
               <iframe 
-                className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"
+                className="w-full h-full opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
                 src="https://www.youtube.com/embed/DMtKs79RUmA" 
                 title="Abdi Adama Culture Day"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowFullScreen
               ></iframe>
-              <div className="absolute bottom-6 left-6 right-6 pointer-events-none transition-all duration-500 group-hover:translate-y-2 group-hover:opacity-0">
-                <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+              <div className="absolute bottom-6 left-6 right-6 pointer-events-none transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
+                <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
                   <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">{t('landing.media.cultureDay')}</h4>
                   <p className="text-white/70 text-[10px] font-medium">{t('landing.media.cultureDesc')}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* School Intro Video */}
-            <div className="flex flex-col justify-center space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: 50, rotateY: -15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="flex flex-col justify-center space-y-8"
+            >
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 px-4 py-2 bg-school-primary/10 rounded-full text-school-primary">
                   <Video size={18} />
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('landing.media.introVideo')}</span>
                 </div>
-                <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                   {t('landing.media.introTitle')} <br />
                   meets <span className="text-gradient">{t('landing.media.introHighlight')}</span>
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                   {t('landing.media.introDesc1')}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed">
-                  {t('landing.media.introDesc2')}
-                </p>
+                <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800">
+                  <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed italic">
+                    {t('landing.media.introDesc2')}
+                  </p>
+                </div>
               </div>
 
-              <a 
+              <motion.a 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 href="https://drive.google.com/file/d/1dGwyS7pClTRLflLSDkj8a332nTsS8lNw/view" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 active:scale-95 transition-all w-fit"
+                className="inline-flex items-center gap-4 px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all w-fit group"
               >
                 {t('landing.media.watchFull')}
-                <ArrowRight size={18} />
-              </a>
-            </div>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </motion.a>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -501,52 +561,72 @@ export const LandingPage = () => {
             <h2 className="section-title">{t('landing.branches.title')}</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 perspective-2000">
             {[
               { name: t('landing.branches.kebele10'), location: t('landing.branches.adama'), desc: t('landing.branches.kebele10Desc') },
               { name: t('landing.branches.mogoro'), location: t('landing.branches.adama'), desc: t('landing.branches.mogoroDesc') },
               { name: t('landing.branches.village180'), location: t('landing.branches.adama'), desc: t('landing.branches.village180Desc') },
               { name: t('landing.branches.awash'), location: t('landing.branches.awash'), desc: t('landing.branches.awashDesc') }
             ].map((branch, i) => (
-              <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-lg hover:shadow-xl transition-all">
-                <MapPin className="text-school-primary mb-6" size={24} />
-                <h4 className="text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">{branch.name}</h4>
-                <p className="text-[10px] font-black text-school-primary uppercase tracking-widest mb-4">{branch.location}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6">{branch.desc}</p>
-                <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.name + ' ' + branch.location)}`} target="_blank" rel="noopener noreferrer" className="inline-block text-[10px] font-black text-school-primary uppercase tracking-widest hover:underline">{t('landing.branches.viewMap')}</a>
-              </div>
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 50, rotateX: -30 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.15 }}
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-2xl transition-all duration-500 preserve-3d"
+              >
+                <div className="w-12 h-12 bg-school-primary/10 rounded-2xl flex items-center justify-center text-school-primary mb-6 shadow-inner">
+                  <MapPin size={24} />
+                </div>
+                <h4 className="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{branch.name}</h4>
+                <p className="text-[10px] font-black text-school-primary uppercase tracking-widest mb-4 px-3 py-1 bg-school-primary/5 rounded-full w-fit">{branch.location}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">{branch.desc}</p>
+                <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.name + ' ' + branch.location)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-school-primary uppercase tracking-widest hover:gap-3 transition-all">{t('landing.branches.viewMap')} <ArrowRight size={12} /></a>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 text-center space-y-10 relative z-10">
-          <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-            {t('landing.cta.title')} <br /> {t('landing.cta.highlight')}
+      <section className="py-24 relative overflow-hidden perspective-1000">
+        <motion.div 
+          initial={{ opacity: 0, y: 100, rotateX: 45 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="max-w-7xl mx-auto px-6 text-center space-y-10 relative z-10 preserve-3d"
+        >
+          <h2 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-[0.9]">
+            {t('landing.cta.title')} <br /> <span className="text-gradient">{t('landing.cta.highlight')}</span>
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             {t('landing.cta.desc')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-             <button
+             <motion.button
+               whileHover={{ scale: 1.05, y: -5 }}
+               whileTap={{ scale: 0.95 }}
                onClick={() => setShowAdmission(true)}
-               className="px-12 py-6 bg-school-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-school-primary/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shine"
+               className="px-12 py-6 bg-school-primary text-white rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-2xl shadow-school-primary/40 flex items-center gap-4 hover:bg-school-primary/90 transition-all shine"
              >
                {t('landing.cta.startAdmission')}
-               <CheckCircle2 size={20} />
-             </button>
-             <button
+               <CheckCircle2 size={24} />
+             </motion.button>
+             <motion.button
+               whileHover={{ scale: 1.05, y: -5 }}
+               whileTap={{ scale: 0.95 }}
                onClick={() => navigate('/login')}
-               className="px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all"
+               className="px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all border-4 border-slate-900/5 dark:border-white/5"
              >
                {t('landing.cta.parentLogin')}
-             </button>
+             </motion.button>
           </div>
-        </div>
-        <div className="absolute top-1/2 left-0 w-64 h-64 bg-school-primary/10 blur-[120px]" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-school-secondary/10 blur-[120px]" />
+        </motion.div>
+        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-school-primary/10 blur-[150px] -translate-y-1/2" />
+        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-school-secondary/10 blur-[150px] -translate-y-1/2" />
       </section>
 
       {/* Footer */}
