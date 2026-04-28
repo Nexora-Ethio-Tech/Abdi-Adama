@@ -485,70 +485,70 @@ export const LandingPage = () => {
             <h2 className="section-title">{t('landing.communityTitle')}</h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Culture Day Video */}
-            <motion.div 
-              initial={{ opacity: 0, x: -50, rotateY: 15 }}
-              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="group relative rounded-[3rem] overflow-hidden bg-slate-900 aspect-video shadow-2xl border-8 border-white dark:border-slate-800 perspective-1000"
-            >
-              <iframe 
-                className="w-full h-full opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
-                src="https://www.youtube.com/embed/DMtKs79RUmA" 
-                title="Abdi Adama Culture Day"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen
-              ></iframe>
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-              <div className="absolute bottom-6 left-6 right-6 pointer-events-none transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
-                <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
-                  <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">{t('landing.media.cultureDay')}</h4>
-                  <p className="text-white/70 text-[10px] font-medium">{t('landing.media.cultureDesc')}</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* School Intro Video */}
-            <motion.div 
-              initial={{ opacity: 0, x: 50, rotateY: -15 }}
-              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="flex flex-col justify-center space-y-8"
-            >
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-3 px-4 py-2 bg-school-primary/10 rounded-full text-school-primary">
+          <div className="space-y-16">
+            {/* Header Text */}
+            <div className="max-w-3xl">
+               <div className="inline-flex items-center gap-3 px-4 py-2 bg-school-primary/10 rounded-full text-school-primary mb-6">
                   <Video size={18} />
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('landing.media.introVideo')}</span>
                 </div>
-                <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                  {t('landing.media.introTitle')} <br />
-                  meets <span className="text-gradient">{t('landing.media.introHighlight')}</span>
+                <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-6">
+                  {t('landing.media.introTitle')} meets <span className="text-gradient">{t('landing.media.introHighlight')}</span>
                 </h3>
                 <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                   {t('landing.media.introDesc1')}
                 </p>
-                <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800">
-                  <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed italic">
-                    {t('landing.media.introDesc2')}
-                  </p>
-                </div>
-              </div>
+            </div>
 
-              <motion.a 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href="https://drive.google.com/file/d/1dGwyS7pClTRLflLSDkj8a332nTsS8lNw/view" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-4 px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all w-fit group"
+            {/* Videos Grid */}
+            <div className="grid lg:grid-cols-2 gap-12">
+              {/* Culture Day Video (YouTube) */}
+              <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="group relative rounded-[3rem] overflow-hidden bg-slate-900 aspect-video shadow-2xl border-8 border-white dark:border-slate-800 perspective-1000"
               >
-                {t('landing.media.watchFull')}
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </motion.a>
-            </motion.div>
+                <iframe 
+                  className="w-full h-full opacity-90 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
+                  src="https://www.youtube.com/embed/DMtKs79RUmA" 
+                  title="Abdi Adama Culture Day"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent opacity-40 pointer-events-none" />
+                <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
+                  <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
+                    <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">{t('landing.media.cultureDay')}</h4>
+                    <p className="text-white/70 text-[10px] font-medium">{t('landing.media.cultureDesc')}</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* School Intro Video (Google Drive) */}
+              <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="group relative rounded-[3rem] overflow-hidden bg-slate-900 aspect-video shadow-2xl border-8 border-white dark:border-slate-800 perspective-1000"
+              >
+                <iframe 
+                  className="w-full h-full opacity-90 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
+                  src="https://drive.google.com/file/d/1dGwyS7pClTRLflLSDkj8a332nTsS8lNw/preview" 
+                  title="Abdi Adama Intro"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent opacity-40 pointer-events-none" />
+                <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
+                  <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
+                    <h4 className="text-white font-black uppercase tracking-widest text-xs mb-1">SCHOOL TOUR</h4>
+                    <p className="text-white/70 text-[10px] font-medium">Take a look at our campus and facilities</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
