@@ -162,11 +162,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       <div className="p-8 mt-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="relative p-1 bg-white rounded-xl shadow-lg">
-            <img src={logo} alt="Abdi Adama Logo" className="w-10 h-10 rounded-lg object-cover" />
+            <img src={logo} alt="Abdi Adama Logo" className="w-14 h-14 rounded-lg object-cover" />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="font-black text-lg tracking-tight block truncate text-white">{displaySchoolName}</span>
-            <span className="text-[10px] text-school-accent font-bold uppercase tracking-widest block truncate">Smart-School</span>
+            <span className="font-black text-xl tracking-tight block truncate text-white">{displaySchoolName}</span>
+            <span className="text-xs text-school-accent font-bold uppercase tracking-widest block truncate">Smart-School</span>
           </div>
         </div>
         <button

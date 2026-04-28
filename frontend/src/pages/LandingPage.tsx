@@ -106,10 +106,10 @@ export const LandingPage = () => {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4 ${scrolled ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img src={logo} alt="Logo" className="w-10 h-10 rounded-xl shadow-md transition-transform group-hover:scale-110" />
-            <div className="hidden sm:block">
-              <span className="font-black text-slate-900 dark:text-white tracking-tighter block leading-none">ABDI ADAMA</span>
-              <span className="text-[10px] font-black text-school-primary uppercase tracking-widest">School</span>
+            <img src={logo} alt="Logo" className="w-14 h-14 rounded-2xl shadow-lg transition-transform group-hover:scale-110" />
+            <div>
+              <span className="text-xl font-black text-slate-900 dark:text-white tracking-tighter block leading-none">ABDI ADAMA</span>
+              <span className="text-xs font-black text-school-primary uppercase tracking-widest">School</span>
             </div>
           </div>
           
@@ -152,6 +152,7 @@ export const LandingPage = () => {
                 <div className="flex flex-col gap-1 text-slate-500 dark:text-slate-400 font-medium italic border-l-4 border-school-primary pl-4 py-2">
                   <p>{schoolMotto.oromic}</p>
                   <p>{schoolMotto.amharic}</p>
+                  <p>{schoolMotto.english}</p>
                 </div>
               </div>
 
@@ -444,7 +445,7 @@ export const LandingPage = () => {
                 <h4 className="text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">{branch.name}</h4>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">{branch.location}</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6">{branch.desc}</p>
-                <button className="text-[10px] font-black text-school-primary uppercase tracking-widest hover:underline">View on Map</button>
+                <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.name + ' ' + branch.location)}`} target="_blank" rel="noopener noreferrer" className="inline-block text-[10px] font-black text-school-primary uppercase tracking-widest hover:underline">View on Map</a>
               </div>
             ))}
           </div>
