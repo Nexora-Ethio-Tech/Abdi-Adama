@@ -1,10 +1,21 @@
 import bcrypt from 'bcrypt';
-import pool from './config/db.js';
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+dotenv.config();
+
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT || '5432'),
+});
 
 const seedSuperAdmin = async () => {
   const name = 'Super Admin';
   const email = 'abdiadamaschooloffice@gmail.com';
-  const password = 'ChangeMe123!'; // User should change this after first login
+  const password = 'ChangeMe123!'; // Change after first login
   const role = 'super-admin';
   const status = 'Approved';
 
@@ -17,14 +28,14 @@ const seedSuperAdmin = async () => {
         'INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)',
         [name, email, hashedPassword, role, status]
       );
-      console.log('Super Admin seeded successfully.');
+      console.log('✅ Super Admin seeded. Email:', email, '| Password: ChangeMe123!');
     } else {
-      console.log('Super Admin already exists.');
+      console.log('✅ Super Admin already exists.');
     }
   } catch (err) {
-    console.error('Error seeding Super Admin:', err);
+    console.error('❌ Error seeding Super Admin:', err);
   } finally {
-    process.exit();
+    await pool.end();
   }
 };
 

@@ -110,7 +110,6 @@ CREATE TABLE students (
     monthly_fee         NUMERIC(12,2) NOT NULL DEFAULT 0,
     bus_fee             NUMERIC(12,2) NOT NULL DEFAULT 0,
     penalty_fee         NUMERIC(12,2) NOT NULL DEFAULT 0,
-    branch_id           UUID         REFERENCES branches(id) ON DELETE SET NULL,
     created_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );

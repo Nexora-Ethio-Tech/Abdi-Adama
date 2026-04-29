@@ -150,7 +150,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => {
+  const login = async (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }): Promise<{ success: boolean; redirect?: string; error?: string }> => {
     try {
       const res = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -161,16 +161,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         })
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
         localStorage.setItem('abdi_adama_token', data.token);
         setUser(data.user);
-        return true;
+        return { success: true, redirect: data.redirect };
       }
-      return false;
+      return { success: false, error: data.error || 'Invalid credentials' };
     } catch (err) {
       console.error('Login error:', err);
-      return false;
+      return { success: false, error: 'Unable to connect to server' };
     }
   };
 

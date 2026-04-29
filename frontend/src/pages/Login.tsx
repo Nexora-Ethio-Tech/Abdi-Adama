@@ -56,16 +56,16 @@ export const Login = () => {
         }
       }
 
-      const success = await login({
+      const result = await login({
         digitalIdOrEmail,
         password: loginMode === 'password' ? password : '',
         otp: loginMode === 'otp' ? otp : ''
       });
 
-      if (success) {
-        navigate('/');
+      if (result.success) {
+        navigate(result.redirect || '/');
       } else {
-        setError(loginMode === 'password' ? 'Invalid credentials' : 'Invalid 6-digit OTP');
+        setError(result.error || 'Invalid credentials');
       }
     } catch (err) {
       setError('An error occurred during login');
