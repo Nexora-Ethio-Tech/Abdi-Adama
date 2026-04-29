@@ -39,6 +39,7 @@ interface UserContextType {
   setSchoolMotto: (motto: MultilingualText) => void;
   login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<{ success: boolean; redirect?: string; error?: string }>;
   logout: () => void;
+  loading: boolean;
 }
 
 const mockBranches: Branch[] = [
@@ -51,10 +52,11 @@ const mockBranches: Branch[] = [
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('abdi_adama_user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  // ─── SECURITY FIX ──────────────────────────────────────────────────────────
+  // Do NOT trust localStorage on initial load. Start with null.
+  // The verifyToken effect will restore the user ONLY if the token is valid.
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true); // Block rendering until verified
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
 
@@ -98,10 +100,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
   });
 
+  // ─── Token Verification on Load ────────────────────────────────────────────
+  // This is the ONLY way a user gets restored after page refresh.
+  // No token → no user. Invalid token → user cleared.
   useEffect(() => {
     const verifyToken = async () => {
       const token = localStorage.getItem('abdi_adama_token');
-      if (!token) return;
+      if (!token) {
+        // No token at all — clear any stale user data and stop loading
+        localStorage.removeItem('abdi_adama_user');
+        setUser(null);
+        setLoading(false);
+        return;
+      }
 
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/verify`, {
@@ -113,17 +124,27 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
+          localStorage.setItem('abdi_adama_user', JSON.stringify(data.user));
         } else {
-          // Token invalid or expired
-          logout();
+          // Token expired or invalid — force logout
+          localStorage.removeItem('abdi_adama_user');
+          localStorage.removeItem('abdi_adama_token');
+          setUser(null);
         }
       } catch (err) {
         console.error('Failed to verify token:', err);
+        // Network error — clear session to be safe
+        localStorage.removeItem('abdi_adama_user');
+        localStorage.removeItem('abdi_adama_token');
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
     };
     verifyToken();
   }, []);
 
+  // Persist user to localStorage when it changes (for display only, never trusted)
   useEffect(() => {
     if (user) {
       localStorage.setItem('abdi_adama_user', JSON.stringify(user));
@@ -198,7 +219,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       schoolMotto,
       setSchoolMotto,
       login,
-      logout
+      logout,
+      loading
     }}>
       {children}
     </UserContext.Provider>

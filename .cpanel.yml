@@ -12,5 +12,6 @@ deployment:
     - /bin/mkdir -p $DEPLOYPATH/backend
     - /bin/cp -R backend/dist $DEPLOYPATH/backend/
     - /bin/cp backend/package.json $DEPLOYPATH/backend/
+    - /bin/cp backend/app.cjs $DEPLOYPATH/backend/
     # Install production dependencies on server
     - cd $DEPLOYPATH/backend && /usr/local/bin/npm install --omit=dev
