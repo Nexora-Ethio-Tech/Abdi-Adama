@@ -37,7 +37,7 @@ interface UserContextType {
   setSchoolName: (name: MultilingualText) => void;
   schoolMotto: MultilingualText;
   setSchoolMotto: (motto: MultilingualText) => void;
-  login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<boolean>;
+  login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<{ success: boolean; redirect?: string; error?: string }>;
   logout: () => void;
 }
 
