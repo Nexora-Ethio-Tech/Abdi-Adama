@@ -51,24 +51,34 @@ export const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
         const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status }, JWT_SECRET, { expiresIn: '24h' });
-        // Determine dashboard redirect
+        // STRICT ROLE-BASED DASHBOARD — NO SWITCHING ALLOWED
         let dashboard = '/dashboard';
-        if (user.role === 'super-admin')
+        switch (user.role) {
+          case 'super-admin':
             dashboard = '/super-admin-dashboard';
-        else if (user.role === 'school-admin')
+            break;
+          case 'school-admin':
             dashboard = '/school-admin-dashboard';
-        else if (user.role === 'teacher')
+            break;
+          case 'teacher':
             dashboard = '/teacher-dashboard';
-        else if (user.role === 'student')
+            break;
+          case 'student':
             dashboard = '/student-dashboard';
-        else if (user.role === 'parent')
+            break;
+          case 'parent':
             dashboard = '/parent-dashboard';
-        else if (user.role === 'finance-clerk')
+            break;
+          case 'finance-clerk':
             dashboard = '/finance-dashboard';
-        else if (user.role === 'vice-principal')
+            break;
+          case 'vice-principal':
             dashboard = '/vice-principal-dashboard';
-        else if (user.role === 'driver')
+            break;
+          case 'driver':
             dashboard = '/driver-dashboard';
+            break;
+        }
         res.json({
             token,
             user: {

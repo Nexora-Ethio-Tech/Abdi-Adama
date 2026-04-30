@@ -217,27 +217,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </nav>
 
       <div className="p-6 border-t border-slate-800/50 space-y-4">
-        <div className="relative group/role">
-          <div className="flex items-center gap-4 px-5 py-3 rounded-2xl bg-slate-800/30 text-slate-400 border border-slate-700/50">
-            <UserCog size={20} className="text-school-accent" />
-            <select
-              value={role || ''}
-              onChange={(e) => switchRole(e.target.value as any)}
-            disabled={isExamLockedDown}
-            className={cn(
-              "bg-transparent text-xs font-bold outline-none cursor-pointer w-full appearance-none",
-              isExamLockedDown && "cursor-not-allowed"
-            )}
-            >
-              {roles.map(r => (
-                <option key={r.id} value={r.id || ''} className="bg-slate-900 text-white">
-                  {t(`roles.${r.id}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider ml-5 mt-2">{t('sidebar.activeRole')}</p>
-        </div>
+
 
         <button
           onClick={handleLogout}
