@@ -1,5 +1,5 @@
 
-import { UserPlus, Calendar, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, Mail, Phone, MapPin, Briefcase, GraduationCap, BookOpen } from 'lucide-react';
+import { UserPlus, Calendar, Search, Filter, MoreVertical, DoorOpen, DoorClosed, Award, X, Check, Mail, Phone, MapPin, Briefcase, GraduationCap, BookOpen, Trophy, Medal } from 'lucide-react';
 import { mockTeachers, mockSchedules, mockClasses } from '../data/mockData';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ export const Teachers = () => {
   const [promotingTeacher, setPromotingTeacher] = useState<any | null>(null);
   const [viewingProfile, setViewingProfile] = useState<any | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [viewMode, setViewMode] = useState<'directory' | 'leaderboard'>('directory');
 
 
   if (viewingSchedule) {
@@ -118,21 +119,39 @@ export const Teachers = () => {
         </button>
 
         <div className="flex items-center gap-3">
+          {(isVP || isAdmin) && (
+            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner mr-2">
+              <button
+                onClick={() => setViewMode('directory')}
+                className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'directory' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+              >
+                Directory
+              </button>
+              <button
+                onClick={() => setViewMode('leaderboard')}
+                className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'leaderboard' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+              >
+                Leaderboard
+              </button>
+            </div>
+          )}
           <div className="relative flex-1 md:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
               placeholder="Search teachers..."
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64"
+              className="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64"
             />
           </div>
-          <button className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
-            <Filter size={20} className="text-slate-600" />
+          <button className="p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+            <Filter size={20} className="text-slate-600 dark:text-slate-400" />
           </button>
         </div>
       </div>
 
+      {viewMode === 'directory' ? (
       <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
+
         <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[800px]">
             <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
@@ -233,6 +252,73 @@ export const Teachers = () => {
         </table>
         </div>
       </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-amber-500/20 relative overflow-hidden">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <h2 className="text-3xl font-black tracking-tight mb-2">Teacher Leaderboard</h2>
+                <p className="text-amber-100 font-medium">Monthly performance and reward points tracking.</p>
+              </div>
+              <div className="flex items-center gap-4 bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/20">
+                <Trophy size={32} className="text-amber-200" />
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-200">Current Top Scorer</p>
+                  <p className="text-lg font-bold">
+                    {teachers.slice().sort((a, b) => (b.points || 0) - (a.points || 0))[0]?.name}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -right-10 -bottom-10 opacity-10 rotate-12 pointer-events-none">
+              <Award size={250} />
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">Rank</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Teacher</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Department</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">Total Points</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                {teachers.slice().sort((a, b) => (b.points || 0) - (a.points || 0)).map((teacher, index) => (
+                  <tr key={teacher.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all duration-300">
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center">
+                        {index === 0 && <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-black border border-amber-200"><Trophy size={14} /></div>}
+                        {index === 1 && <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-black border border-slate-200"><Medal size={14} /></div>}
+                        {index === 2 && <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-black border border-orange-200"><Medal size={14} /></div>}
+                        {index > 2 && <span className="text-slate-400 font-black text-lg">#{index + 1}</span>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/20 rounded-xl flex items-center justify-center text-purple-700 dark:text-purple-400 font-black text-sm">
+                          {teacher.name.split(' ').map((n: string) => n[0]).join('')}
+                        </div>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">{teacher.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-400">
+                      {teacher.department}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <span className="inline-flex items-center px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-sm font-black border border-emerald-100 dark:border-emerald-800/50">
+                        {teacher.points ? teacher.points.toLocaleString() : 0} pts
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {promotingTeacher && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

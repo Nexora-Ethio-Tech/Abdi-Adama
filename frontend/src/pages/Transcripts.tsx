@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { mockStudents } from '../data/mockData';
-import { FileText, Download, ArrowLeft, Search, Filter, Printer } from 'lucide-react';
+import { FileText, Download, ArrowLeft, Search, Filter, Printer, Calculator, Award, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 
@@ -12,6 +12,8 @@ export const Transcripts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterGrade, setFilterGrade] = useState('all');
   const [phase, setPhase] = useState<'Semester 1' | 'Final'>('Semester 1');
+  const [calculatedRanks, setCalculatedRanks] = useState<Record<string, { avg: number, overallRank: number, sectionRank: number, totalInSection: number, totalInGrade: number }>>({});
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const canManage = role === 'vice-principal' || role === 'super-admin';
 
@@ -24,6 +26,63 @@ export const Transcripts = () => {
     const matchesGrade = filterGrade === 'all' || s.grade === filterGrade;
     return matchesSearch && matchesGrade;
   });
+
+  const handleCalculate = () => {
+    setIsCalculating(true);
+    setTimeout(() => {
+      const newRanks: Record<string, any> = {};
+      
+      const studentAvgs = mockStudents.map(s => ({ ...s, avg: +(Math.random() * (99 - 65) + 65).toFixed(1) }));
+      
+      studentAvgs.forEach(student => {
+        const baseGrade = student.grade.replace(/[^0-9]/g, '');
+        const section = student.grade;
+        
+        const gradePeers = studentAvgs.filter(s => s.grade.replace(/[^0-9]/g, '') === baseGrade).sort((a, b) => b.avg - a.avg);
+        const sectionPeers = studentAvgs.filter(s => s.grade === section).sort((a, b) => b.avg - a.avg);
+
+        const overallRank = gradePeers.findIndex(s => s.id === student.id) + 1;
+        const sectionRank = sectionPeers.findIndex(s => s.id === student.id) + 1;
+
+        newRanks[student.id] = {
+          avg: student.avg,
+          overallRank,
+          sectionRank,
+          totalInGrade: gradePeers.length,
+          totalInSection: sectionPeers.length
+        };
+      });
+
+      setCalculatedRanks(newRanks);
+      setIsCalculating(false);
+    }, 1500);
+  };
+
+  const exportCSV = () => {
+    if (Object.keys(calculatedRanks).length === 0) {
+      alert("Please calculate grades first.");
+      return;
+    }
+    
+    const headers = ['Student ID', 'Name', 'Grade', 'Average', 'Section Rank', 'Overall Rank'];
+    const rows = filteredStudents.map(s => {
+      const data = calculatedRanks[s.id];
+      if (!data) return [s.id, s.name, s.grade, 'N/A', 'N/A', 'N/A'];
+      return [s.id, s.name, s.grade, `${data.avg}%`, `${data.sectionRank}/${data.totalInSection}`, `${data.overallRank}/${data.totalInGrade}`];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + rows.map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Grade_Report_${filterGrade}_${phase}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="space-y-6">
@@ -58,6 +117,37 @@ export const Transcripts = () => {
           </button>
         </div>
       </div>
+
+      {canManage && (
+        <div className="flex flex-col sm:flex-row gap-3 p-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800/50 dark:to-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-lg">
+              <Award size={20} />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">School Closing Process</h3>
+              <p className="text-[10px] text-slate-500 font-medium">Compute end-of-year statistics, averages, and generate ranks for students.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCalculate}
+              disabled={isCalculating}
+              className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 active:scale-95 disabled:opacity-50"
+            >
+              {isCalculating ? <Loader2 size={16} className="animate-spin" /> : <Calculator size={16} />}
+              Calculate Ranks
+            </button>
+            <button
+              onClick={exportCSV}
+              className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-slate-900/20 active:scale-95"
+            >
+              <Download size={16} />
+              Export CSV
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="relative md:col-span-2 group">
@@ -113,30 +203,43 @@ export const Transcripts = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">88.4%</span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 uppercase tracking-widest border border-amber-200/50 dark:border-amber-800/30">
-                      Rank #3 / 45
+                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">
+                      {calculatedRanks[student.id] ? `${calculatedRanks[student.id].avg}%` : 'Pending'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-black uppercase rounded-lg border border-emerald-200/50 dark:border-emerald-800/30 tracking-widest">Validated</span>
+                    {calculatedRanks[student.id] ? (
+                      <div className="flex flex-col gap-1 items-center">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 uppercase tracking-widest border border-blue-200/50 dark:border-blue-800/30">
+                          Sec Rank: #{calculatedRanks[student.id].sectionRank} / {calculatedRanks[student.id].totalInSection}
+                        </span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 uppercase tracking-widest border border-amber-200/50 dark:border-amber-800/30">
+                          OVR Rank: #{calculatedRanks[student.id].overallRank} / {calculatedRanks[student.id].totalInGrade}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-400 italic">Not Computed</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <span className={`px-3 py-1 ${calculatedRanks[student.id] ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200/50 dark:border-emerald-800/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200/50 dark:border-slate-700/50'} text-[10px] font-black uppercase rounded-lg border tracking-widest`}>
+                      {calculatedRanks[student.id] ? 'Validated' : 'Awaiting'}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-3">
-                      <button className="p-2.5 text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all hover:scale-110" title="Print Transcript">
-                        <Printer size={18} />
+                    <div className="flex items-center justify-end gap-2">
+                      <button className="p-2 text-amber-500 hover:text-amber-600 bg-amber-50 dark:bg-amber-900/20 rounded-xl transition-all hover:scale-110" title="Print Certificate">
+                        <Award size={16} />
+                      </button>
+                      <button className="p-2 text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all hover:scale-110" title="Print Transcript">
+                        <Printer size={16} />
                       </button>
                       <button
-                        onClick={() => alert(`Generating ${phase} Transcript for ${student.name}\nSubjects: Math, Physics, English, Bio, Chem\nAvg: 88.4%\nRank: 3`)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95"
+                        onClick={() => alert(`Generating ${phase} Transcript for ${student.name}`)}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95"
                       >
-                        <FileText size={16} />
+                        <FileText size={14} />
                         View
-                      </button>
-                      <button className="p-2.5 text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all hover:scale-110" title="Download PDF">
-                        <Download size={18} />
                       </button>
                     </div>
                   </td>
