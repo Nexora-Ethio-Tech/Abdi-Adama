@@ -27,7 +27,6 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   role: UserRole | null;
-  switchRole: (newRole: UserRole) => void;
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
@@ -164,12 +163,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const role = user?.role || null;
 
-  const switchRole = (newRole: UserRole) => {
-    if (user) {
-      const updatedUser = { ...user, role: newRole };
-      setUser(updatedUser);
-    }
-  };
 
   const login = async (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }): Promise<{ success: boolean; redirect?: string; error?: string }> => {
     try {
@@ -208,7 +201,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       user,
       setUser,
       role,
-      switchRole,
       selectedBranch,
       setSelectedBranch,
       branches: mockBranches,

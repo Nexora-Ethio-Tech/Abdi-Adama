@@ -37,7 +37,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { role, logout, switchRole, schoolName } = useUser();
+  const { role, logout, schoolName } = useUser();
   const { isExamLockedDown, selectedBranchId } = useStore();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -150,18 +150,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const navItems = getNavItems();
 
-  const roles: { id: typeof role; label: string }[] = [
-    { id: 'super-admin', label: 'Super Admin' },
-    { id: 'school-admin', label: 'School Admin' },
-    { id: 'teacher', label: 'Teacher' },
-    { id: 'student', label: 'Student' },
-    { id: 'parent', label: 'Parent' },
-    { id: 'finance-clerk', label: 'Finance Clerk' },
-    { id: 'vice-principal', label: 'Vice Principal' },
-    { id: 'librarian', label: 'Librarian' },
-    { id: 'clinic-admin', label: 'Clinic Admin' },
-    { id: 'driver', label: 'Driver' },
-  ];
 
   return (
     <aside className={cn(
