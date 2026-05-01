@@ -64,7 +64,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: PieChart, label: t('nav.analytics'), path: '/analytics' },
         ];
 
-        // Requirement: Hide specific branch details (Inventory/Finance) until a branch is selected
         if (selectedBranchId) {
           baseItems.push(
             { icon: Package, label: t('nav.inventory'), path: '/inventory' },
@@ -73,6 +72,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         }
 
         baseItems.push(
+          { icon: Users, label: t('nav.staffManagement') || 'Staff Management', path: '/staff' },
           { icon: Megaphone, label: t('nav.websitePosts'), path: '/website-posts' },
           { icon: Settings, label: t('nav.settings'), path: '/settings' }
         );
@@ -155,7 +155,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   };
 
   const navItems = getNavItems();
-
 
   return (
     <aside className={cn(

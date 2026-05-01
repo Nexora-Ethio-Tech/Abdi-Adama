@@ -10,6 +10,7 @@ import { Suspense, lazy, type ReactNode } from 'react';
 const Dashboard = lazy(() => import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })));
 const Students = lazy(() => import('./pages/Students').then((m) => ({ default: m.Students })));
 const Teachers = lazy(() => import('./pages/Teachers').then((m) => ({ default: m.Teachers })));
+const Staff = lazy(() => import('./pages/Staff').then((m) => ({ default: m.Staff })));
 const Finance = lazy(() => import('./pages/Finance').then((m) => ({ default: m.Finance })));
 const Branches = lazy(() => import('./pages/Branches').then((m) => ({ default: m.Branches })));
 const StudentProfile = lazy(() => import('./pages/StudentProfile').then((m) => ({ default: m.StudentProfile })));
@@ -139,6 +140,12 @@ function App() {
             <Route path="analytics" element={
               <ProtectedRoute allowedRoles={['super-admin']}>
                 <Analytics />
+              </ProtectedRoute>
+            } />
+
+            <Route path="staff" element={
+              <ProtectedRoute allowedRoles={['super-admin']}>
+                <Staff />
               </ProtectedRoute>
             } />
 

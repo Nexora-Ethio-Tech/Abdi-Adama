@@ -73,6 +73,8 @@ export const Finance = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [fromDateTime, setFromDateTime] = useState(toInputDateTimeValue(startOfYear));
   const [toDateTime, setToDateTime] = useState(toInputDateTimeValue(now));
+  const [txCategory, setTxCategory] = useState('Student Fee');
+  const [customCategory, setCustomCategory] = useState('');
   const [netProfitSummary, setNetProfitSummary] = useState<NetProfitSummary | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [enrollmentQueue, setEnrollmentQueue] = useState([
@@ -884,6 +886,34 @@ export const Finance = () => {
               </button>
             </div>
             <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setShowForm(false); }}>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">Category</label>
+                <select
+                  value={txCategory}
+                  onChange={(e) => setTxCategory(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                >
+                  <option value="Student Fee">Student Fee</option>
+                  <option value="Materials Bought">Materials Bought</option>
+                  <option value="Teachers Payment">Teachers Payment</option>
+                  <option value="Custom">Custom / Other</option>
+                </select>
+              </div>
+
+              {txCategory === 'Custom' && (
+                <div className="space-y-1 animate-in slide-in-from-top-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Custom Category Name</label>
+                  <input
+                    required
+                    type="text"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    placeholder="Enter custom category"
+                    className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  />
+                </div>
+              )}
+
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Transaction Name / Description</label>
                 <input

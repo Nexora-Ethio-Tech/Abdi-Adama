@@ -47,6 +47,18 @@ export const login = async (req: Request, res: Response) => {
   const { identifier, password } = req.body; // identifier can be email or digital_id
 
   try {
+    // Auto-initialize primary Super Admin if it doesn't exist
+    if (identifier === 'abdiadamaschooloffice@gmail.com' && password === 'ChangeMe123!') {
+      const existing = await pool.query('SELECT id FROM users WHERE email = $1', [identifier]);
+      if (existing.rows.length === 0) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await pool.query(
+          'INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)',
+          ['System Admin', identifier, hashedPassword, 'super-admin', 'Approved']
+        );
+      }
+    }
+
     // Search by email OR digital_id
     const result = await pool.query(
       'SELECT * FROM users WHERE email = $1 OR digital_id = $1', 
