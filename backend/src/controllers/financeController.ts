@@ -5,13 +5,23 @@ export const getTransactions = async (req: Request, res: Response) => {
   const { branch_id } = req.query;
 
   try {
+    const user = (req as any).user;
     const rows = await withRLS(req, async (client) => {
-      let query = 'SELECT * FROM finance_transactions';
+      let query = `
+        SELECT t.*, b.name as branch_name, u.digital_id as student_digital_id
+        FROM finance_transactions t
+        LEFT JOIN branches b ON t.branch_id = b.id
+        LEFT JOIN students s ON t.student_id = s.id
+        LEFT JOIN users u ON s.user_id = u.id
+      `;
       const params: any[] = [];
 
-      if (branch_id) {
-        query += ' WHERE branch_id = $1';
+      if (user.role !== 'super-admin' && user.role !== 'auditor') {
+        params.push(user.branch_id);
+        query += ' WHERE t.branch_id = $1';
+      } else if (branch_id) {
         params.push(branch_id);
+        query += ' WHERE t.branch_id = $1';
       }
 
       query += ' ORDER BY created_at DESC';

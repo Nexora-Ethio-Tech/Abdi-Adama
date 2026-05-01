@@ -73,7 +73,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status },
+      { id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status, is_branch_auditor: user.is_branch_auditor },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -88,6 +88,7 @@ export const login = async (req: Request, res: Response) => {
     else if (user.role === 'finance-clerk') dashboard = '/finance-dashboard';
     else if (user.role === 'vice-principal') dashboard = '/vice-principal-dashboard';
     else if (user.role === 'driver') dashboard = '/driver-dashboard';
+    else if (user.role === 'auditor') dashboard = '/auditor-dashboard';
 
     res.json({
       token,
@@ -97,6 +98,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         branch_id: user.branch_id,
+        is_branch_auditor: user.is_branch_auditor,
         status: user.status,
         digital_id: user.digital_id
       },
@@ -162,7 +164,7 @@ export const updateStatus = async (req: Request, res: Response) => {
       }
     } else if (adminRole === 'school-admin') {
       // School Admin can approve/revoke sub-roles
-      const subRoles = ['vice-principal', 'teacher', 'finance-clerk', 'student', 'driver', 'parent', 'librarian', 'clinic-admin'];
+      const subRoles = ['vice-principal', 'teacher', 'finance-clerk', 'student', 'driver', 'parent', 'librarian', 'clinic-admin', 'auditor'];
       if (!subRoles.includes(targetUserRole)) {
         return res.status(403).json({ error: 'School Admin can only manage staff, students, and parents' });
       }

@@ -6,7 +6,8 @@ export const createStudent = async (req: Request, res: Response) => {
   const { 
     name, email, password, digital_id, branch_id, 
     grade, dob, gender, parent_name, parent_phone,
-    emergency_contacts 
+    emergency_contacts,
+    monthly_fee, bus_fee, penalty_fee, fee_status, fee_notes
   } = req.body;
 
   try {
@@ -21,10 +22,13 @@ export const createStudent = async (req: Request, res: Response) => {
       const userId = userResult.rows[0].id;
 
       // 2. Create Student profile
+      const fee_approval_status = fee_status === 'reduced' ? 'pending' : 'none';
       const studentResult = await client.query(
-        `INSERT INTO students (user_id, branch_id, grade, dob, gender, parent_name, parent_phone) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-        [userId, branch_id, grade, dob, gender, parent_name, parent_phone]
+        `INSERT INTO students (user_id, branch_id, grade, dob, gender, parent_name, parent_phone, 
+                               monthly_fee, bus_fee, penalty_fee, fee_status, fee_approval_status, fee_notes) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
+        [userId, branch_id, grade, dob, gender, parent_name, parent_phone, 
+         monthly_fee || 0, bus_fee || 0, penalty_fee || 0, fee_status || 'standard', fee_approval_status, fee_notes]
       );
       const studentId = studentResult.rows[0].id;
 
@@ -126,5 +130,98 @@ export const getStudentById = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch student details' });
+  }
+};
+
+export const updateStudentFees = async (req: Request, res: Response) => {
+  const { studentId, monthly_fee, bus_fee, penalty_fee, fee_status, fee_notes } = req.body;
+  const user = (req as any).user;
+
+  try {
+    await withRLS(req, async (client) => {
+      // 1. Get old values for audit
+      const oldResult = await client.query('SELECT monthly_fee, bus_fee, penalty_fee, fee_status FROM students WHERE id = $1', [studentId]);
+      const old = oldResult.rows[0];
+
+      // 2. Update Student
+      const fee_approval_status = fee_status === 'reduced' ? 'pending' : 'none';
+      await client.query(
+        `UPDATE students SET monthly_fee = $1, bus_fee = $2, penalty_fee = $3, fee_status = $4, fee_approval_status = $5, fee_notes = $6, updated_at = NOW() WHERE id = $7`,
+        [monthly_fee, bus_fee, penalty_fee, fee_status, fee_approval_status, fee_notes, studentId]
+      );
+
+      // 3. Log to audit_log
+      await client.query(
+        `INSERT INTO audit_log (student_id, category, direction, action_label, modified_by, old_value, new_value) 
+         VALUES ($1, 'Fees', 'Out', $2, $3, $4, $5)`,
+        [studentId, `Fee update for student ${studentId}`, user.email, JSON.stringify(old), JSON.stringify({ monthly_fee, bus_fee, penalty_fee, fee_status })]
+      );
+    });
+    res.json({ message: 'Fees updated and pending approval' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update student fees' });
+  }
+};
+
+export const approveFeeReduction = async (req: Request, res: Response) => {
+  const { studentId, approved, approver_name } = req.body;
+  const user = (req as any).user;
+
+  // Only auditor or branch auditor (or super-admin) can approve
+  if (user.role !== 'auditor' && !user.is_branch_auditor && user.role !== 'super-admin') {
+    return res.status(403).json({ error: 'Unauthorized to approve fee reductions' });
+  }
+
+  try {
+    await withRLS(req, async (client) => {
+      const status = approved ? 'approved' : 'rejected';
+      await client.query(
+        'UPDATE students SET fee_approval_status = $1, updated_at = NOW() WHERE id = $2',
+        [status, studentId]
+      );
+
+      await client.query(
+        `INSERT INTO audit_log (student_id, category, direction, action_label, modified_by, approver_name) 
+         VALUES ($1, 'Fees', 'In', $2, $3, $4)`,
+        [studentId, `Fee reduction ${status}`, user.email, approver_name]
+      );
+    });
+    res.json({ message: `Fee reduction ${approved ? 'approved' : 'rejected'}` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to approve fee reduction' });
+  }
+};
+
+export const getSpecialStudents = async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  
+  try {
+    const rows = await withRLS(req, async (client) => {
+      let query = `
+        SELECT s.*, u.name, u.email, u.digital_id, b.name as branch_name
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        JOIN branches b ON s.branch_id = b.id
+        WHERE s.fee_status = 'reduced'
+      `;
+      const params: any[] = [];
+
+      if (user.role !== 'super-admin' && user.role !== 'auditor') {
+        params.push(user.branch_id);
+        query += ` AND s.branch_id = $${params.length}`;
+      }
+
+      query += ` ORDER BY s.fee_approval_status DESC, u.name ASC`;
+
+      const result = await client.query(query, params);
+      return result.rows;
+    });
+
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch special students' });
   }
 };

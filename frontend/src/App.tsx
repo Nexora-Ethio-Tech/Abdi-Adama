@@ -35,6 +35,7 @@ const Clinic = lazy(() => import('./pages/Clinic').then((m) => ({ default: m.Cli
 const ParentClinicChat = lazy(() => import('./pages/ParentClinicChat').then((m) => ({ default: m.ParentClinicChat })));
 const DriverPortal = lazy(() => import('./pages/DriverPortal').then((m) => ({ default: m.DriverPortal })));
 const WebsitePosts = lazy(() => import('./pages/WebsitePosts').then((m) => ({ default: m.WebsitePosts })));
+const AuditorDashboard = lazy(() => import('./pages/AuditorDashboard').then((m) => ({ default: m.AuditorDashboard })));
 
 const PageLoader = () => (
   <div className="min-h-[40vh] flex items-center justify-center">
@@ -54,6 +55,7 @@ const getDashboardRoute = (role: string | null) => {
     case 'driver': return '/dashboard/driver';
     case 'librarian': return '/dashboard/librarian';
     case 'clinic-admin': return '/dashboard/clinic-admin';
+    case 'auditor': return '/auditor-dashboard';
     default: return '/login';
   }
 };
@@ -125,6 +127,7 @@ function App() {
             <Route path="dashboard/vice-principal" element={<ProtectedRoute allowedRoles={['vice-principal']}><Dashboard /></ProtectedRoute>} />
             <Route path="dashboard/librarian" element={<ProtectedRoute allowedRoles={['librarian']}><Dashboard /></ProtectedRoute>} />
             <Route path="dashboard/clinic-admin" element={<ProtectedRoute allowedRoles={['clinic-admin']}><Dashboard /></ProtectedRoute>} />
+            <Route path="auditor-dashboard" element={<ProtectedRoute allowedRoles={['auditor']}><AuditorDashboard /></ProtectedRoute>} />
 
             {/* Role specific routes */}
             <Route path="branches" element={
@@ -227,6 +230,12 @@ function App() {
             <Route path="registration" element={
               <ProtectedRoute allowedRoles={['school-admin', 'super-admin', 'finance-clerk']}>
                 <Registration />
+              </ProtectedRoute>
+            } />
+
+            <Route path="special-students" element={
+              <ProtectedRoute allowedRoles={['auditor', 'finance-clerk', 'super-admin']}>
+                <AuditorDashboard />
               </ProtectedRoute>
             } />
 

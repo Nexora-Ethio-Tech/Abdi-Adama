@@ -33,7 +33,9 @@
     "chats": "Chats",
     "postNotice": "Post Notice",
     "analytics": "Analytics",
-    "websitePosts": "Website Posts"
+    "websitePosts": "Website Posts",
+    "auditorDashboard": "Auditor Dashboard",
+    "specialStudents": "Special Students"
   },
   "landing": {
     "heroTitle": "Planting Seeds of",

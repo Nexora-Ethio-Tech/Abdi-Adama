@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-export type UserRole = 'super-admin' | 'school-admin' | 'vice-principal' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian' | 'clinic-admin' | 'driver';
+export type UserRole = 'super-admin' | 'school-admin' | 'vice-principal' | 'teacher' | 'student' | 'parent' | 'finance-clerk' | 'librarian' | 'clinic-admin' | 'driver' | 'auditor';
 
 export interface User {
   id: string;
@@ -9,6 +9,7 @@ export interface User {
   email: string;
   role: UserRole;
   digitalId?: string;
+  isBranchAuditor?: boolean;
 }
 
 interface Branch {

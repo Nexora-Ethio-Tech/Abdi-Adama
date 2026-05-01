@@ -33,7 +33,9 @@
     "chats": "ውይይቶች",
     "postNotice": "ማስታወቂያ ለጥፍ",
     "analytics": "ትንታኔ",
-    "websitePosts": "የድር ጣቢያ ልጥፎች"
+    "websitePosts": "የድር ጣቢያ ልጥፎች",
+    "auditorDashboard": "የኦዲተር ዳሽቦርድ",
+    "specialStudents": "ልዩ ተማሪዎች"
   },
   "landing": {
     "heroTitle": "የ",

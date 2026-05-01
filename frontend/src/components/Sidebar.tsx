@@ -126,6 +126,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: t('nav.overview'), path: '/' },
           { icon: UserPlus, label: t('nav.registration'), path: '/registration' },
           { icon: Wallet, label: t('nav.finance'), path: '/finance' },
+          ...(user?.is_branch_auditor ? [{ icon: Users, label: t('nav.specialStudents'), path: '/special-students' }] : []),
         ];
       case 'librarian':
         return [
@@ -142,6 +143,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         return [
           { icon: LayoutDashboard, label: t('nav.myDashboard'), path: '/' },
           { icon: Megaphone, label: t('nav.postNotice'), path: '/' },
+        ];
+      case 'auditor':
+        return [
+          { icon: LayoutDashboard, label: t('nav.auditorDashboard'), path: '/auditor-dashboard' },
+          { icon: Wallet, label: t('nav.finance'), path: '/finance' },
+          { icon: Users, label: t('nav.specialStudents'), path: '/special-students' },
         ];
       default:
         return [];
@@ -161,6 +168,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { id: 'librarian', label: 'Librarian' },
     { id: 'clinic-admin', label: 'Clinic Admin' },
     { id: 'driver', label: 'Driver' },
+    { id: 'auditor', label: 'Auditor' },
   ];
 
   return (

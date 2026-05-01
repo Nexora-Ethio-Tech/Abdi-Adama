@@ -26,7 +26,8 @@ DROP TABLE IF EXISTS
 DROP TYPE IF EXISTS 
     user_role, risk_level, attendance_status, absence_status, exam_category, 
     exam_status, violation_type, finance_direction, audit_category, audit_direction, 
-    app_status, plan_status, visit_status, chat_sender_role, user_status CASCADE;
+    app_status, plan_status,    visit_status, chat_sender_role, user_status, 
+    fee_status, fee_approval_status CASCADE;
 
 -- ============================================================
 -- 1. BRANCHES
@@ -59,7 +60,7 @@ CREATE TYPE user_status AS ENUM ('Pending', 'Approved', 'Revoked');
 CREATE TYPE user_role AS ENUM (
     'super-admin','school-admin','vice-principal',
     'teacher','student','parent',
-    'finance-clerk','librarian','clinic-admin','driver'
+    'finance-clerk','librarian','clinic-admin','driver','auditor'
 );
 
 CREATE TABLE users (
@@ -72,6 +73,7 @@ CREATE TABLE users (
     branch_id   UUID         REFERENCES branches(id) ON DELETE SET NULL,
     status      user_status  NOT NULL DEFAULT 'Pending',
     is_active   BOOLEAN      NOT NULL DEFAULT TRUE,
+    is_branch_auditor BOOLEAN NOT NULL DEFAULT FALSE,
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
@@ -84,6 +86,8 @@ CREATE INDEX idx_users_digital   ON users(digital_id);
 -- 4. STUDENTS
 -- ============================================================
 CREATE TYPE risk_level AS ENUM ('Low','Medium','High');
+CREATE TYPE fee_status AS ENUM ('standard', 'reduced');
+CREATE TYPE fee_approval_status AS ENUM ('none', 'pending', 'approved', 'rejected');
 
 CREATE TABLE students (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -110,6 +114,9 @@ CREATE TABLE students (
     monthly_fee         NUMERIC(12,2) NOT NULL DEFAULT 0,
     bus_fee             NUMERIC(12,2) NOT NULL DEFAULT 0,
     penalty_fee         NUMERIC(12,2) NOT NULL DEFAULT 0,
+    fee_status          fee_status   NOT NULL DEFAULT 'standard',
+    fee_approval_status fee_approval_status NOT NULL DEFAULT 'none',
+    fee_notes           TEXT,
     created_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
@@ -460,6 +467,8 @@ CREATE TABLE audit_log (
     action_label    VARCHAR(200)    NOT NULL,
     modified_by     VARCHAR(150)    NOT NULL,
     approver_name   VARCHAR(150),
+    old_value       JSONB,
+    new_value       JSONB,
     status          BOOLEAN         NOT NULL DEFAULT TRUE,
     timestamp       TIMESTAMPTZ     NOT NULL DEFAULT NOW()
 );

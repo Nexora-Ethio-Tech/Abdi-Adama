@@ -31,7 +31,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { role } = useUser();
-  const isFinance = role === 'finance-clerk';
+  const isFinance = role === 'finance-clerk' || role === 'super-admin';
   
   const [activeTab, setActiveTab] = useState<RegistrationTab>('new');
   const [pipelineFilter, setPipelineFilter] = useState<PipelineFilter>(isFinance ? 'awaiting-finance' : 'pending');
@@ -49,6 +49,15 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
   const [showExamConfig, setShowExamConfig] = useState(false);
   const [examConfig, setExamConfig] = useState({ date: '2026-05-15', time: '09:00', location: 'Main Campus Hall A', subjects: 'Math, English, Science', notes: 'Bring pencils and eraser. No calculators allowed.' });
   const [emailToast, setEmailToast] = useState<string | null>(null);
+  const [showFeeModal, setShowFeeModal] = useState(false);
+  const [selectedAppForFee, setSelectedAppForFee] = useState<PendingApp | null>(null);
+  const [customFees, setCustomFees] = useState({
+    monthly_fee: 4500,
+    bus_fee: 1500,
+    penalty_fee: 0,
+    fee_status: 'standard' as 'standard' | 'reduced',
+    fee_notes: ''
+  });
 
   const transcriptHistory = {
     '2024/2025': {
@@ -166,17 +175,19 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
-  const handlePaymentResult = (appId: string, paid: boolean) => {
+  const handlePaymentResult = (appId: string, paid: boolean, fees?: typeof customFees) => {
     const app = pendingApps.find(a => a.id === appId);
     if (paid) {
       setPendingApps(prev => prev.map(a => a.id === appId ? { ...a, status: 'payment-confirmed' as AppStatus } : a));
-      setSuccessMessage(`${app?.name} marked as Passed (Paid)!`);
+      setSuccessMessage(`${app?.name} marked as Passed (Paid)!${fees?.fee_status === 'reduced' ? ' Pending auditor approval.' : ''}`);
       if (app) showEmailToast(app.email, 'Payment Confirmed! Officially Enrolled');
     } else {
       setPendingApps(prev => prev.map(a => a.id === appId ? { ...a, status: 'declined' as AppStatus } : a));
       setSuccessMessage(`${app?.name} marked as Failed (Unpaid)!`);
       if (app) showEmailToast(app.email, 'Application Closed: Payment Not Received');
     }
+    setShowFeeModal(false);
+    setSelectedAppForFee(null);
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
@@ -405,16 +416,19 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                         <button onClick={() => handleExamResult(app.id, false)} className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5"><X size={14} /> Exam Failed</button>
                       </>
                     )}
-                    {app.status === 'awaiting-payment' && (
-                      isFinance ? (
-                        <>
-                          <button onClick={() => handlePaymentResult(app.id, true)} className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"><Check size={16} /> Pass (Paid)</button>
-                          <button onClick={() => handlePaymentResult(app.id, false)} className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-rose-500/20 active:scale-95"><X size={16} /> Fail (Unpaid)</button>
-                        </>
-                      ) : (
-                        <span className="text-xs font-bold text-purple-600 flex items-center gap-1.5"><MapPin size={14} /> Waiting for finance clerk to confirm payment</span>
-                      )
-                    )}
+                     {app.status === 'awaiting-payment' && (
+                       isFinance ? (
+                         <>
+                           <button onClick={() => {
+                             setSelectedAppForFee(app);
+                             setShowFeeModal(true);
+                           }} className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"><Check size={16} /> Pass (Paid)</button>
+                           <button onClick={() => handlePaymentResult(app.id, false)} className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-rose-500/20 active:scale-95"><X size={16} /> Fail (Unpaid)</button>
+                         </>
+                       ) : (
+                         <span className="text-xs font-bold text-purple-600 flex items-center gap-1.5"><MapPin size={14} /> Waiting for finance clerk to confirm payment</span>
+                       )
+                     )}
                     {(app.status === 'declined' || app.status === 'exam-failed') && (
                       <span className="text-xs font-bold text-rose-500">Application closed</span>
                     )}
@@ -898,6 +912,74 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Fee Configuration Modal */}
+      {showFeeModal && selectedAppForFee && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+              <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">Configure Student Fees</h3>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Enrollment Finalization — {selectedAppForFee.name}</p>
+            </div>
+            <div className="p-8 space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Monthly Tuition (ETB)</label>
+                  <input 
+                    type="number" 
+                    value={customFees.monthly_fee} 
+                    onChange={(e) => setCustomFees({...customFees, monthly_fee: Number(e.target.value)})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-4 focus:ring-blue-500/10" 
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Transport Fee (ETB)</label>
+                  <input 
+                    type="number" 
+                    value={customFees.bus_fee} 
+                    onChange={(e) => setCustomFees({...customFees, bus_fee: Number(e.target.value)})}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-4 focus:ring-blue-500/10" 
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Fee Status</label>
+                <select 
+                  value={customFees.fee_status} 
+                  onChange={(e) => setCustomFees({...customFees, fee_status: e.target.value as any})}
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none"
+                >
+                  <option value="standard">Standard Fee</option>
+                  <option value="reduced">Reduced / Special Fee</option>
+                </select>
+              </div>
+              {customFees.fee_status === 'reduced' && (
+                <div className="space-y-1 animate-in fade-in slide-in-from-top-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Reason for Reduction</label>
+                  <textarea 
+                    value={customFees.fee_notes}
+                    onChange={(e) => setCustomFees({...customFees, fee_notes: e.target.value})}
+                    placeholder="Explain why this student has a reduced fee..."
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none min-h-[100px] resize-none"
+                  />
+                  <div className="flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 rounded-xl mt-2">
+                     <AlertCircle size={14} className="text-amber-600" />
+                     <p className="text-[10px] text-amber-700 font-medium">Reduced fees will be marked for Auditor approval.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="p-8 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+              <button onClick={() => setShowFeeModal(false)} className="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-slate-700">Cancel</button>
+              <button 
+                onClick={() => handlePaymentResult(selectedAppForFee.id, true, customFees)} 
+                className="bg-emerald-600 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-700 shadow-xl shadow-emerald-500/20 active:scale-95"
+              >
+                Confirm & Enroll
+              </button>
             </div>
           </div>
         </div>
