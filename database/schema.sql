@@ -613,6 +613,20 @@ CREATE TABLE clinic_chat_messages (
 );
 
 -- ============================================================
+-- 33b. CLINIC — MEDICINE INVENTORY
+-- ============================================================
+CREATE TABLE medicine_inventory (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name        VARCHAR(200) NOT NULL,
+    stock       INT          NOT NULL DEFAULT 0,
+    unit        VARCHAR(50)  NOT NULL DEFAULT 'pcs', -- pcs, ml, mg
+    location    VARCHAR(200),
+    branch_id   UUID         REFERENCES branches(id) ON DELETE CASCADE,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+-- ============================================================
 -- 34. LOGISTICS — DRIVER NOTICES
 -- ============================================================
 CREATE TABLE logistics_notices (
@@ -624,6 +638,33 @@ CREATE TABLE logistics_notices (
     driver_name     VARCHAR(150) NOT NULL,
     category        VARCHAR(30)  NOT NULL DEFAULT 'Logistics',
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+-- ============================================================
+-- 34b. TRANSPORT — VEHICLES & ROUTES
+-- ============================================================
+CREATE TABLE vehicles (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    plate_number    VARCHAR(20)  NOT NULL UNIQUE,
+    model           VARCHAR(100),
+    capacity        INT          NOT NULL DEFAULT 0,
+    branch_id       UUID         REFERENCES branches(id) ON DELETE CASCADE,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE routes (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name            VARCHAR(150) NOT NULL,
+    driver_id       UUID         REFERENCES users(id) ON DELETE SET NULL,
+    vehicle_id      UUID         REFERENCES vehicles(id) ON DELETE SET NULL,
+    branch_id       UUID         REFERENCES branches(id) ON DELETE CASCADE,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE student_routes (
+    student_id      UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    route_id        UUID NOT NULL REFERENCES routes(id)   ON DELETE CASCADE,
+    PRIMARY KEY (student_id, route_id)
 );
 
 -- ============================================================
@@ -694,6 +735,8 @@ CREATE TABLE library_loans (
     due_date        DATE NOT NULL,
     returned_at     DATE,
     days_overdue    INT  NOT NULL DEFAULT 0,
+    fine_amount     NUMERIC(12,2) NOT NULL DEFAULT 0,
+    daily_rate      NUMERIC(12,2) NOT NULL DEFAULT 5, -- Default 5 birr/day
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -765,6 +808,7 @@ CREATE TRIGGER trg_exams_updated      BEFORE UPDATE ON exams      FOR EACH ROW E
 CREATE TRIGGER trg_inventory_updated  BEFORE UPDATE ON inventory  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_weekly_plans_upd   BEFORE UPDATE ON weekly_plans FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_pending_apps_upd   BEFORE UPDATE ON pending_applications FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_medicine_updated   BEFORE UPDATE ON medicine_inventory FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================
 -- END OF SCHEMA

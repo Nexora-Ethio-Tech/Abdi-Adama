@@ -9,6 +9,9 @@ import teacherRoutes from './routes/teacherRoutes.js';
 import financeRoutes from './routes/financeRoutes.js';
 import examRoutes from './routes/examRoutes.js';
 import operationalRoutes from './routes/operationalRoutes.js';
+import libraryRoutes from './routes/libraryRoutes.js';
+import clinicRoutes from './routes/clinicRoutes.js';
+import transportRoutes from './routes/transportRoutes.js';
 
 dotenv.config();
 
@@ -69,6 +72,9 @@ app.use('/api/teachers', teacherRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/ops', operationalRoutes);
+app.use('/api/library', libraryRoutes);
+app.use('/api/clinic', clinicRoutes);
+app.use('/api/transport', transportRoutes);
 
 // ─── DB test ──────────────────────────────────────────────────────────────────
 app.get('/api/test-db', async (_req, res) => {

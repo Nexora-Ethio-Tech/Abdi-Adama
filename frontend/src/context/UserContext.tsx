@@ -28,7 +28,6 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   role: UserRole | null;
-  switchRole: (newRole: UserRole) => void;
   selectedBranch: Branch | null;
   setSelectedBranch: (branch: Branch | null) => void;
   branches: Branch[];
@@ -40,6 +39,7 @@ interface UserContextType {
   setSchoolMotto: (motto: MultilingualText) => void;
   login: (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }) => Promise<{ success: boolean; redirect?: string; error?: string }>;
   logout: () => void;
+  switchRole: (role: UserRole) => void;
   loading: boolean;
 }
 
@@ -165,12 +165,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const role = user?.role || null;
 
-  const switchRole = (newRole: UserRole) => {
-    if (user) {
-      const updatedUser = { ...user, role: newRole };
-      setUser(updatedUser);
-    }
-  };
 
   const login = async (credentials: { digitalIdOrEmail: string; password?: string; otp?: string }): Promise<{ success: boolean; redirect?: string; error?: string }> => {
     try {
@@ -204,12 +198,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('abdi_adama_token');
   };
 
+  const switchRole = (newRole: UserRole) => {
+    if (user) {
+      setUser({ ...user, role: newRole });
+    }
+  };
+
   return (
     <UserContext.Provider value={{
       user,
       setUser,
       role,
-      switchRole,
       selectedBranch,
       setSelectedBranch,
       branches: mockBranches,
@@ -221,6 +220,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setSchoolMotto,
       login,
       logout,
+      switchRole,
       loading
     }}>
       {children}

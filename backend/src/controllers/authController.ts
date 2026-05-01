@@ -89,6 +89,8 @@ export const login = async (req: Request, res: Response) => {
     else if (user.role === 'vice-principal') dashboard = '/vice-principal-dashboard';
     else if (user.role === 'driver') dashboard = '/driver-dashboard';
     else if (user.role === 'auditor') dashboard = '/auditor-dashboard';
+    else if (user.role === 'librarian') dashboard = '/library';
+    else if (user.role === 'clinic-admin') dashboard = '/clinic';
 
     res.json({
       token,
