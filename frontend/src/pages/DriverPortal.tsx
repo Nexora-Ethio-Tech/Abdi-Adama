@@ -1,5 +1,5 @@
 
-import { Megaphone, MapPin, Plus, X, Send, Bus, Clock, Users, RefreshCw } from 'lucide-react';
+import { Megaphone, Plus, X, Bus, Users, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';

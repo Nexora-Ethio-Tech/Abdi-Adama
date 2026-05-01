@@ -50,35 +50,31 @@ export const login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status }, JWT_SECRET, { expiresIn: '24h' });
-        // STRICT ROLE-BASED DASHBOARD — NO SWITCHING ALLOWED
+        const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status, is_branch_auditor: user.is_branch_auditor }, JWT_SECRET, { expiresIn: '24h' });
+        // Determine dashboard redirect
         let dashboard = '/dashboard';
-        switch (user.role) {
-          case 'super-admin':
+        if (user.role === 'super-admin')
             dashboard = '/super-admin-dashboard';
-            break;
-          case 'school-admin':
+        else if (user.role === 'school-admin')
             dashboard = '/school-admin-dashboard';
-            break;
-          case 'teacher':
+        else if (user.role === 'teacher')
             dashboard = '/teacher-dashboard';
-            break;
-          case 'student':
+        else if (user.role === 'student')
             dashboard = '/student-dashboard';
-            break;
-          case 'parent':
+        else if (user.role === 'parent')
             dashboard = '/parent-dashboard';
-            break;
-          case 'finance-clerk':
+        else if (user.role === 'finance-clerk')
             dashboard = '/finance-dashboard';
-            break;
-          case 'vice-principal':
+        else if (user.role === 'vice-principal')
             dashboard = '/vice-principal-dashboard';
-            break;
-          case 'driver':
+        else if (user.role === 'driver')
             dashboard = '/driver-dashboard';
-            break;
-        }
+        else if (user.role === 'auditor')
+            dashboard = '/auditor-dashboard';
+        else if (user.role === 'librarian')
+            dashboard = '/library';
+        else if (user.role === 'clinic-admin')
+            dashboard = '/clinic';
         res.json({
             token,
             user: {
@@ -87,6 +83,7 @@ export const login = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 branch_id: user.branch_id,
+                is_branch_auditor: user.is_branch_auditor,
                 status: user.status,
                 digital_id: user.digital_id
             },
@@ -142,7 +139,7 @@ export const updateStatus = async (req, res) => {
         }
         else if (adminRole === 'school-admin') {
             // School Admin can approve/revoke sub-roles
-            const subRoles = ['vice-principal', 'teacher', 'finance-clerk', 'student', 'driver', 'parent', 'librarian', 'clinic-admin'];
+            const subRoles = ['vice-principal', 'teacher', 'finance-clerk', 'student', 'driver', 'parent', 'librarian', 'clinic-admin', 'auditor'];
             if (!subRoles.includes(targetUserRole)) {
                 return res.status(403).json({ error: 'School Admin can only manage staff, students, and parents' });
             }

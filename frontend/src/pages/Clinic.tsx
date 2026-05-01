@@ -1,23 +1,11 @@
 
-import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
-  HeartPulse,
-  Search,
-  Plus,
-  History,
-  AlertCircle,
-  User,
-  CheckCircle,
-  FileText,
-  Clock,
-  Send,
-  Mail,
   Stethoscope,
-  MessageSquare,
-  MoreVertical,
-  Phone,
-  RefreshCw
+  Search,
+  User,
+  History,
+  HeartPulse
 } from 'lucide-react';
 
 interface Medicine {
@@ -47,12 +35,11 @@ interface Student {
 }
 
 export const Clinic = () => {
-  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'directory' | 'visits' | 'chat'>('directory');
   const [students, setStudents] = useState<Student[]>([]);
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [visitLogs, setVisitLogs] = useState<VisitLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showLogModal, setShowLogModal] = useState(false);

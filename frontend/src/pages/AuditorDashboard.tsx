@@ -2,10 +2,9 @@
 import { useState, useEffect } from 'react';
 import { 
   Wallet, Users, AlertCircle, CheckCircle, XCircle, Search, 
-  Filter, Download, TrendingUp, TrendingDown, Clock, ShieldCheck,
-  ChevronRight, ArrowUpRight, ArrowDownRight, Eye
+  Download, Clock, ShieldCheck,
+  ArrowUpRight, Eye
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 
 interface Transaction {
@@ -33,12 +32,11 @@ interface SpecialStudent {
 }
 
 export const AuditorDashboard = () => {
-  const { t } = useTranslation();
   const { user } = useUser();
   const [activeTab, setActiveTab] = useState<'transactions' | 'special-students'>('transactions');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [specialStudents, setSpecialStudents] = useState<SpecialStudent[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {

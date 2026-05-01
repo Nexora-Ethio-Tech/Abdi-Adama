@@ -14,7 +14,6 @@ import {
   Package,
   ClipboardList,
   X,
-  UserCog,
   HeartPulse,
   FileText,
   UserPlus,
@@ -37,7 +36,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { role, logout, switchRole, schoolName } = useUser();
+  const { user, role, logout, schoolName } = useUser();
   const { isExamLockedDown, selectedBranchId } = useStore();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -126,7 +125,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           { icon: LayoutDashboard, label: t('nav.overview'), path: '/' },
           { icon: UserPlus, label: t('nav.registration'), path: '/registration' },
           { icon: Wallet, label: t('nav.finance'), path: '/finance' },
-          ...(user?.is_branch_auditor ? [{ icon: Users, label: t('nav.specialStudents'), path: '/special-students' }] : []),
+          ...(user?.isBranchAuditor ? [{ icon: Users, label: t('nav.specialStudents'), path: '/special-students' }] : []),
         ];
       case 'librarian':
         return [
@@ -157,19 +156,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const navItems = getNavItems();
 
-  const roles: { id: typeof role; label: string }[] = [
-    { id: 'super-admin', label: 'Super Admin' },
-    { id: 'school-admin', label: 'School Admin' },
-    { id: 'teacher', label: 'Teacher' },
-    { id: 'student', label: 'Student' },
-    { id: 'parent', label: 'Parent' },
-    { id: 'finance-clerk', label: 'Finance Clerk' },
-    { id: 'vice-principal', label: 'Vice Principal' },
-    { id: 'librarian', label: 'Librarian' },
-    { id: 'clinic-admin', label: 'Clinic Admin' },
-    { id: 'driver', label: 'Driver' },
-    { id: 'auditor', label: 'Auditor' },
-  ];
 
   return (
     <aside className={cn(

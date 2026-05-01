@@ -1,5 +1,5 @@
 
-import { Book, Search, Filter, Plus, MoreVertical, Bookmark, CheckCircle, Clock, AlertTriangle, Calendar, RefreshCw } from 'lucide-react';
+import { Book, Search, Plus, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface BookType {
