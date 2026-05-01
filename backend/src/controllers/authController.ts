@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
+import crypto from 'crypto';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
@@ -208,5 +209,64 @@ export const getPendingUsers = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error fetching pending users' });
+  }
+};
+
+export const provisionUser = async (req: Request, res: Response) => {
+  const { name, email, role, branch_id } = req.body;
+  const adminRole = (req as any).user.role;
+
+  try {
+    // Check if email is already taken
+    if (email) {
+      const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+      if (existingUser.rows.length > 0) {
+        return res.status(400).json({ error: 'Email already in use' });
+      }
+    }
+
+    // Role validation
+    if (adminRole === 'school-admin' && (role === 'super-admin' || role === 'school-admin')) {
+      return res.status(403).json({ error: 'School Admins cannot provision other admins' });
+    }
+
+    // Generate Prefix
+    let prefix = 'STF';
+    if (role === 'student') prefix = 'STU';
+    else if (role === 'teacher') prefix = 'TCH';
+    else if (role === 'super-admin' || role === 'school-admin') prefix = 'ADM';
+
+    const year = new Date().getFullYear();
+
+    // Determine next sequence
+    // A simple count is not perfect for concurrent requests, but works for now.
+    const countResult = await pool.query(`SELECT COUNT(*) FROM users WHERE username LIKE $1`, [`${prefix}/${year}/%`]);
+    const sequence = parseInt(countResult.rows[0].count) + 1;
+    const username = `${prefix}/${year}/${sequence.toString().padStart(3, '0')}`;
+
+    // Generate Temporary Password
+    const tempPassword = crypto.randomBytes(4).toString('hex'); // 8 characters
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    
+    // Fallback email if not provided (e.g., young students without email)
+    const finalEmail = email || `${username.replace(/\//g, '').toLowerCase()}@abdi-adama.com`;
+
+    // Save User
+    const result = await pool.query(
+      'INSERT INTO users (username, name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, name, email, role, status',
+      [username, name, finalEmail, hashedPassword, role, branch_id, 'Approved'] // Pre-approve provisioned users
+    );
+
+    res.status(201).json({
+      message: 'User provisioned successfully',
+      credentials: {
+        username,
+        password: tempPassword
+      },
+      user: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error provisioning user' });
   }
 };

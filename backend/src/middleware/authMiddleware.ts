@@ -16,6 +16,14 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
     if (err) return res.status(403).json({ error: 'Invalid or expired token' });
     req.user = user;
+    
+    // Strict route guarding: block students from admin or teacher routes globally
+    if (user.role === 'student') {
+      if (req.originalUrl.startsWith('/api/admin') || req.originalUrl.startsWith('/api/teacher') || req.originalUrl.startsWith('/api/teachers')) {
+        return res.status(403).json({ error: 'Students cannot access admin or teacher routes' });
+      }
+    }
+    
     next();
   });
 };

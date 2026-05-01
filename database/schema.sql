@@ -66,6 +66,7 @@ CREATE TYPE user_role AS ENUM (
 CREATE TABLE users (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     digital_id  VARCHAR(20)  UNIQUE,
+    username    VARCHAR(50)  UNIQUE,
     name        VARCHAR(150) NOT NULL,
     email       VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
@@ -81,6 +82,7 @@ CREATE TABLE users (
 CREATE INDEX idx_users_role      ON users(role);
 CREATE INDEX idx_users_branch    ON users(branch_id);
 CREATE INDEX idx_users_digital   ON users(digital_id);
+CREATE INDEX idx_users_username  ON users(username);
 
 -- ============================================================
 -- 4. STUDENTS
