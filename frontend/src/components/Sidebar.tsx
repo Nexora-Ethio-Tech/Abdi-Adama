@@ -36,7 +36,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { user, role, logout, schoolName } = useUser();
+  const { user, role, logout, schoolName, switchRole } = useUser();
   const { isExamLockedDown, selectedBranchId } = useStore();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -73,6 +73,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         }
 
         baseItems.push(
+          { icon: Users, label: t('nav.staffManagement') || 'Staff Management', path: '/staff' },
           { icon: Megaphone, label: t('nav.websitePosts'), path: '/website-posts' },
           { icon: Settings, label: t('nav.settings'), path: '/settings' }
         );
@@ -211,7 +212,25 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </nav>
 
       <div className="p-6 border-t border-slate-800/50 space-y-4">
-
+        {!isExamLockedDown && (
+          <select
+            value={role || ''}
+            onChange={(e) => switchRole(e.target.value as any)}
+            className="w-full bg-slate-800 text-slate-300 text-xs font-bold rounded-xl px-3 py-2 outline-none border border-slate-700"
+          >
+            <option value="super-admin">Super Admin</option>
+            <option value="school-admin">School Admin</option>
+            <option value="vice-principal">Vice Principal</option>
+            <option value="teacher">Teacher</option>
+            <option value="student">Student</option>
+            <option value="parent">Parent</option>
+            <option value="finance-clerk">Finance Clerk</option>
+            <option value="librarian">Librarian</option>
+            <option value="clinic-admin">Clinic Admin</option>
+            <option value="driver">Driver</option>
+            <option value="auditor">Auditor</option>
+          </select>
+        )}
 
         <button
           onClick={handleLogout}
