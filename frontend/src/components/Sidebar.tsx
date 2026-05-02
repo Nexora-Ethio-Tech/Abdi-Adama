@@ -210,30 +210,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </nav>
 
       <div className="p-6 border-t border-slate-800/50 space-y-4">
-        {user?.role === 'super-admin' && (
-          <div className="px-5 py-2">
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Simulate Role (Super Admin)</label>
-            <select
-              value={role || ''}
-              onChange={(e) => switchRole(e.target.value as any)}
-              disabled={isExamLockedDown}
-              className="w-full bg-slate-800 text-white text-sm font-bold rounded-xl px-4 py-3 border-none focus:ring-2 focus:ring-school-primary appearance-none cursor-pointer hover:bg-slate-700 transition-colors"
-            >
-              <option value="super-admin">Super Admin</option>
-              <option value="school-admin">School Admin</option>
-              <option value="vice-principal">Vice Principal</option>
-              <option value="teacher">Teacher</option>
-              <option value="student">Student</option>
-              <option value="parent">Parent</option>
-              <option value="finance-clerk">Finance Clerk</option>
-              <option value="librarian">Librarian</option>
-              <option value="clinic-admin">Clinic</option>
-              <option value="driver">Driver</option>
-              <option value="auditor">Auditor</option>
-            </select>
-          </div>
-        )}
-
         <button
           onClick={handleLogout}
           disabled={isExamLockedDown}
