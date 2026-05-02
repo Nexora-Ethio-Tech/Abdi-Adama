@@ -36,7 +36,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { user, role, logout, schoolName, switchRole } = useUser();
+  const { user, role, logout, schoolName } = useUser();
   const { isExamLockedDown, selectedBranchId } = useStore();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
