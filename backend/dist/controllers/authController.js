@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import crypto from 'crypto';
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 export const register = async (req, res) => {
     const { name, email, password, role, branch_id } = req.body;
@@ -32,10 +31,26 @@ export const register = async (req, res) => {
     }
 };
 export const login = async (req, res) => {
-    const { identifier, password } = req.body; // identifier can be email or digital_id
+    const { identifier, password } = req.body; // identifier can be email, username, or digital_id
     try {
-        // Search by email OR digital_id
-        const result = await pool.query('SELECT * FROM users WHERE email = $1 OR digital_id = $1', [identifier]);
+        // Auto-initialize primary Super Admin if it doesn't exist
+        if (identifier === 'abdiadamaschooloffice@gmail.com' && password === 'ChangeMe123!') {
+            const existing = await pool.query('SELECT id FROM users WHERE email = $1', [identifier]);
+            if (existing.rows.length === 0) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                await pool.query('INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)', ['System Admin', identifier, hashedPassword, 'super-admin', 'Approved']);
+            }
+        }
+        // Initialize School Admin with correct credentials if doesn't exist
+        if (identifier === '65planet@gmail.com' && password === 'Abdiplanet11') {
+            const existing = await pool.query('SELECT id FROM users WHERE email = $1', [identifier]);
+            if (existing.rows.length === 0) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                await pool.query('INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)', ['School Admin', identifier, hashedPassword, 'school-admin', 'Approved']);
+            }
+        }
+        // Search by email, username (unique ID), OR digital_id
+        const result = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $1 OR digital_id = $1', [identifier]);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -184,9 +199,13 @@ export const getPendingUsers = async (req, res) => {
     }
 };
 export const provisionUser = async (req, res) => {
-    const { name, email, role, branch_id } = req.body;
+    const { name, email, role, branch_id, student_id } = req.body;
     const adminRole = req.user.role;
     try {
+        // Restrict Auditor creation to Super Admin only
+        if (role === 'auditor' && adminRole !== 'super-admin') {
+            return res.status(403).json({ error: 'Only Super Admin can create Auditor accounts' });
+        }
         // Check if email is already taken
         if (email) {
             const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -198,28 +217,67 @@ export const provisionUser = async (req, res) => {
         if (adminRole === 'school-admin' && (role === 'super-admin' || role === 'school-admin')) {
             return res.status(403).json({ error: 'School Admins cannot provision other admins' });
         }
-        // Generate Prefix
-        let prefix = 'STF';
-        if (role === 'student')
-            prefix = 'STU';
-        else if (role === 'teacher')
-            prefix = 'TCH';
-        else if (role === 'super-admin' || role === 'school-admin')
-            prefix = 'ADM';
-        const year = new Date().getFullYear();
-        // Determine next sequence
-        // A simple count is not perfect for concurrent requests, but works for now.
-        const countResult = await pool.query(`SELECT COUNT(*) FROM users WHERE username LIKE $1`, [`${prefix}/${year}/%`]);
-        const sequence = parseInt(countResult.rows[0].count) + 1;
-        const username = `${prefix}/${year}/${sequence.toString().padStart(3, '0')}`;
-        // Generate Temporary Password
-        const tempPassword = crypto.randomBytes(4).toString('hex'); // 8 characters
+        let username;
+        let tempPassword;
+        // Special handling for Parents - they use their child's student ID
+        if (role === 'parent') {
+            if (!student_id) {
+                return res.status(400).json({ error: 'Student ID is required for parent registration' });
+            }
+            // Verify student exists
+            const studentCheck = await pool.query('SELECT username FROM users WHERE username = $1 AND role = $2', [student_id, 'student']);
+            if (studentCheck.rows.length === 0) {
+                return res.status(400).json({ error: 'Student with this ID does not exist' });
+            }
+            username = student_id; // Parent uses same ID as student
+            tempPassword = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit password
+        }
+        else {
+            // Generate Prefix based on role
+            let prefix = 'STF'; // Default for staff
+            switch (role) {
+                case 'student':
+                    prefix = 'STU';
+                    break;
+                case 'teacher':
+                    prefix = 'TEA';
+                    break;
+                case 'driver':
+                    prefix = 'DRI';
+                    break;
+                case 'finance-clerk':
+                    prefix = 'FIN';
+                    break;
+                case 'librarian':
+                    prefix = 'LIB';
+                    break;
+                case 'clinic-admin':
+                    prefix = 'CLI';
+                    break;
+                case 'vice-principal':
+                    prefix = 'VIP';
+                    break;
+                case 'auditor':
+                    prefix = 'AUD';
+                    break;
+                case 'super-admin':
+                case 'school-admin':
+                    prefix = 'ADM';
+                    break;
+            }
+            const year = new Date().getFullYear();
+            // Determine next sequence number
+            const countResult = await pool.query(`SELECT COUNT(*) FROM users WHERE username LIKE $1`, [`${prefix}/${year}/%`]);
+            const sequence = parseInt(countResult.rows[0].count) + 1;
+            username = `${prefix}/${year}/${sequence.toString().padStart(3, '0')}`;
+            // Generate 6-digit password
+            tempPassword = Math.floor(100000 + Math.random() * 900000).toString();
+        }
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
-        // Fallback email if not provided (e.g., young students without email)
+        // Fallback email if not provided
         const finalEmail = email || `${username.replace(/\//g, '').toLowerCase()}@abdi-adama.com`;
         // Save User
-        const result = await pool.query('INSERT INTO users (username, name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, name, email, role, status', [username, name, finalEmail, hashedPassword, role, branch_id, 'Approved'] // Pre-approve provisioned users
-        );
+        const result = await pool.query('INSERT INTO users (username, name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, name, email, role, status', [username, name, finalEmail, hashedPassword, role, branch_id, 'Approved']);
         res.status(201).json({
             message: 'User provisioned successfully',
             credentials: {
