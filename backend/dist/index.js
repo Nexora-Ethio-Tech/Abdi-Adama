@@ -12,6 +12,8 @@ import operationalRoutes from './routes/operationalRoutes.js';
 import libraryRoutes from './routes/libraryRoutes.js';
 import clinicRoutes from './routes/clinicRoutes.js';
 import transportRoutes from './routes/transportRoutes.js';
+import academicRoutes from './routes/academicRoutes.js';
+import admissionsRoutes from './routes/admissionsRoutes.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -67,6 +69,8 @@ app.use('/api/ops', operationalRoutes);
 app.use('/api/library', libraryRoutes);
 app.use('/api/clinic', clinicRoutes);
 app.use('/api/transport', transportRoutes);
+app.use('/api/academic', academicRoutes);
+app.use('/api/admissions', admissionsRoutes);
 // ─── DB test ──────────────────────────────────────────────────────────────────
 app.get('/api/test-db', async (_req, res) => {
     try {

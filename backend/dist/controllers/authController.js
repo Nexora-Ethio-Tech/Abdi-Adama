@@ -42,7 +42,7 @@ export const login = async (req, res) => {
             }
         }
         // Initialize School Admin with correct credentials if doesn't exist
-        if (identifier === '65planet@gmail.com' && password === 'Abdiplanet11') {
+        if (identifier === '65plante@gmail.com' && password === 'Abdiplanet11') {
             const existing = await pool.query('SELECT id FROM users WHERE email = $1', [identifier]);
             if (existing.rows.length === 0) {
                 const hashedPassword = await bcrypt.hash(password, 10);
