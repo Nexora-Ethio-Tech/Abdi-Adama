@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc --noEmit",
-    "build:prod": "tsc",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
     "start": "node dist/index.js",
+    "start:cjs": "node app.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
