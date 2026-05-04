@@ -1,7 +1,10 @@
-import { withRLS } from '../utils/dbClient.js';
-export const getBooks = async (req, res) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLoans = exports.returnBook = exports.issueBook = exports.getBooks = void 0;
+const dbClient_js_1 = require("../utils/dbClient.js");
+const getBooks = async (req, res) => {
     try {
-        const books = await withRLS(req, async (client) => {
+        const books = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query('SELECT * FROM library_books ORDER BY title ASC');
             return result.rows;
         });
@@ -12,10 +15,11 @@ export const getBooks = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch books' });
     }
 };
-export const issueBook = async (req, res) => {
+exports.getBooks = getBooks;
+const issueBook = async (req, res) => {
     const { book_id, student_id, due_date } = req.body;
     try {
-        await withRLS(req, async (client) => {
+        await (0, dbClient_js_1.withRLS)(req, async (client) => {
             // 1. Check availability
             const bookRes = await client.query('SELECT available FROM library_books WHERE id = $1', [book_id]);
             if (bookRes.rows.length === 0 || bookRes.rows[0].available <= 0) {
@@ -33,10 +37,11 @@ export const issueBook = async (req, res) => {
         res.status(400).json({ error: err.message || 'Failed to issue book' });
     }
 };
-export const returnBook = async (req, res) => {
+exports.issueBook = issueBook;
+const returnBook = async (req, res) => {
     const { loan_id } = req.params;
     try {
-        await withRLS(req, async (client) => {
+        await (0, dbClient_js_1.withRLS)(req, async (client) => {
             // 1. Get loan details
             const loanRes = await client.query('SELECT * FROM library_loans WHERE id = $1', [loan_id]);
             if (loanRes.rows.length === 0)
@@ -65,9 +70,10 @@ export const returnBook = async (req, res) => {
         res.status(400).json({ error: err.message || 'Failed to return book' });
     }
 };
-export const getLoans = async (req, res) => {
+exports.returnBook = returnBook;
+const getLoans = async (req, res) => {
     try {
-        const loans = await withRLS(req, async (client) => {
+        const loans = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query(`
         SELECT l.*, b.title as book_title, s.name as student_name 
         FROM library_loans l
@@ -85,3 +91,4 @@ export const getLoans = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch loans' });
     }
 };
+exports.getLoans = getLoans;

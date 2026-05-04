@@ -2,10 +2,8 @@ import pkg from 'pg';
 const { Pool } = pkg;
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// CommonJS __dirname is available natively
 
 const pool = new Pool({
   user: 'abdiadam_super-admin',
@@ -171,7 +169,7 @@ const runFile = async (filePath: string, label: string) => {
 
 const main = async () => {
   const schemaPath = path.resolve(__dirname, '../../database/schema.sql');
-  const rlsPath    = path.resolve(__dirname, '../../database/rls_policies.sql');
+  const rlsPath = path.resolve(__dirname, '../../database/rls_policies.sql');
 
   console.log('\n📦 Applying schema...');
   const schemaErrors = await runFile(schemaPath, 'Schema');

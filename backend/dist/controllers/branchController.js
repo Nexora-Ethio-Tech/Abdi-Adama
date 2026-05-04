@@ -1,7 +1,10 @@
-import { withRLS } from '../utils/dbClient.js';
-export const getBranches = async (req, res) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBranchById = exports.getBranches = void 0;
+const dbClient_js_1 = require("../utils/dbClient.js");
+const getBranches = async (req, res) => {
     try {
-        const rows = await withRLS(req, async (client) => {
+        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query('SELECT * FROM branches ORDER BY name ASC');
             return result.rows;
         });
@@ -12,10 +15,11 @@ export const getBranches = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch branches' });
     }
 };
-export const getBranchById = async (req, res) => {
+exports.getBranches = getBranches;
+const getBranchById = async (req, res) => {
     const { id } = req.params;
     try {
-        const branch = await withRLS(req, async (client) => {
+        const branch = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query('SELECT * FROM branches WHERE id = $1', [id]);
             return result.rows[0] || null;
         });
@@ -29,3 +33,4 @@ export const getBranchById = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch branch' });
     }
 };
+exports.getBranchById = getBranchById;

@@ -1,7 +1,10 @@
-import { withRLS } from '../utils/dbClient.js';
-export const getMedicine = async (req, res) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getVisits = exports.logVisit = exports.getMedicine = void 0;
+const dbClient_js_1 = require("../utils/dbClient.js");
+const getMedicine = async (req, res) => {
     try {
-        const medicine = await withRLS(req, async (client) => {
+        const medicine = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query('SELECT * FROM medicine_inventory ORDER BY name ASC');
             return result.rows;
         });
@@ -12,11 +15,12 @@ export const getMedicine = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch medicine inventory' });
     }
 };
-export const logVisit = async (req, res) => {
+exports.getMedicine = getMedicine;
+const logVisit = async (req, res) => {
     const { student_id, student_name, reason, treatment, medicines } = req.body; // medicines: [{id, quantity}]
     const logged_by = req.user.id;
     try {
-        await withRLS(req, async (client) => {
+        await (0, dbClient_js_1.withRLS)(req, async (client) => {
             // 1. Create visit record
             await client.query('INSERT INTO clinic_visits (student_id, student_name, date, time, reason, treatment, logged_by) VALUES ($1, $2, CURRENT_DATE, TO_CHAR(NOW(), \'HH12:MI AM\'), $3, $4, $5)', [student_id, student_name, reason, treatment, logged_by]);
             // 2. Deduct stock for each medicine
@@ -37,9 +41,10 @@ export const logVisit = async (req, res) => {
         res.status(400).json({ error: err.message || 'Failed to log visit' });
     }
 };
-export const getVisits = async (req, res) => {
+exports.logVisit = logVisit;
+const getVisits = async (req, res) => {
     try {
-        const visits = await withRLS(req, async (client) => {
+        const visits = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query('SELECT * FROM clinic_visits ORDER BY created_at DESC');
             return result.rows;
         });
@@ -50,3 +55,4 @@ export const getVisits = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch clinic visits' });
     }
 };
+exports.getVisits = getVisits;

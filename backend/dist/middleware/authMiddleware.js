@@ -1,11 +1,17 @@
-import jwt from 'jsonwebtoken';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authorizeRoles = exports.authenticateToken = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
-export const authenticateToken = (req, res, next) => {
+const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token)
         return res.status(401).json({ error: 'Access denied, token missing' });
-    jwt.verify(token, JWT_SECRET, (err, user) => {
+    jsonwebtoken_1.default.verify(token, JWT_SECRET, (err, user) => {
         if (err)
             return res.status(403).json({ error: 'Invalid or expired token' });
         req.user = user;
@@ -18,7 +24,8 @@ export const authenticateToken = (req, res, next) => {
         next();
     });
 };
-export const authorizeRoles = (...roles) => {
+exports.authenticateToken = authenticateToken;
+const authorizeRoles = (...roles) => {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({ error: 'Unauthorized role' });
@@ -26,3 +33,4 @@ export const authorizeRoles = (...roles) => {
         next();
     };
 };
+exports.authorizeRoles = authorizeRoles;

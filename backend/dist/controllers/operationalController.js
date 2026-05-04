@@ -1,9 +1,12 @@
-import { withRLS } from '../utils/dbClient.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLogisticsNotices = exports.getNotices = exports.markAttendance = void 0;
+const dbClient_js_1 = require("../utils/dbClient.js");
 // --- ATTENDANCE ---
-export const markAttendance = async (req, res) => {
+const markAttendance = async (req, res) => {
     const { student_id, date, status, recorded_by } = req.body;
     try {
-        await withRLS(req, async (client) => {
+        await (0, dbClient_js_1.withRLS)(req, async (client) => {
             await client.query(`INSERT INTO student_attendance (student_id, date, status, recorded_by) 
          VALUES ($1, $2, $3, $4)
          ON CONFLICT (student_id, date) DO UPDATE SET status = $3, recorded_by = $4`, [student_id, date, status, recorded_by]);
@@ -15,11 +18,12 @@ export const markAttendance = async (req, res) => {
         res.status(500).json({ error: 'Failed to record attendance' });
     }
 };
+exports.markAttendance = markAttendance;
 // --- NOTICES ---
-export const getNotices = async (req, res) => {
+const getNotices = async (req, res) => {
     const { branch_id } = req.query;
     try {
-        const rows = await withRLS(req, async (client) => {
+        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             let query = 'SELECT * FROM notices';
             const params = [];
             if (branch_id) {
@@ -37,10 +41,11 @@ export const getNotices = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch notices' });
     }
 };
+exports.getNotices = getNotices;
 // --- LOGISTICS ---
-export const getLogisticsNotices = async (req, res) => {
+const getLogisticsNotices = async (req, res) => {
     try {
-        const rows = await withRLS(req, async (client) => {
+        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
             const result = await client.query('SELECT * FROM logistics_notices ORDER BY created_at DESC');
             return result.rows;
         });
@@ -51,3 +56,4 @@ export const getLogisticsNotices = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch logistics notices' });
     }
 };
+exports.getLogisticsNotices = getLogisticsNotices;
