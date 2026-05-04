@@ -1,17 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.withRLS = void 0;
-const db_js_1 = __importDefault(require("../config/db.js"));
+import pool from '../config/db.js';
 /**
  * Executes a database query within a transaction that sets the PostgreSQL
  * current_setting configuration variables for Row Level Security (RLS).
  */
-const withRLS = async (req, callback) => {
+export const withRLS = async (req, callback) => {
     const user = req.user;
-    const client = await db_js_1.default.connect();
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
         // If we have an authenticated user, set the local session variables for RLS
@@ -36,4 +30,3 @@ const withRLS = async (req, callback) => {
         client.release();
     }
 };
-exports.withRLS = withRLS;

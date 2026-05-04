@@ -1,17 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTeacherSchedule = exports.removeDepartmentHead = exports.assignDepartmentHead = exports.removeExamAssignment = exports.assignExaminer = exports.removeRoomTeacher = exports.assignRoomTeacher = exports.getTeacherById = exports.createTeacher = exports.getTeachers = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const dbClient_js_1 = require("../utils/dbClient.js");
+import bcrypt from 'bcrypt';
+import { withRLS } from '../utils/dbClient.js';
 // ============================================================
 // MODULE 4: TEACHER LIFECYCLE & DYNAMIC ASSIGNMENTS
 // ============================================================
-const getTeachers = async (req, res) => {
+export const getTeachers = async (req, res) => {
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             const result = await client.query(`
         SELECT 
           t.*, 
@@ -46,15 +40,14 @@ const getTeachers = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch teachers' });
     }
 };
-exports.getTeachers = getTeachers;
-const createTeacher = async (req, res) => {
+export const createTeacher = async (req, res) => {
     const { name, email, branch_id, subjects, department, experience, bio, age, sex, emergency_contact, background_details } = req.body;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        const credentials = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const credentials = await withRLS(req, async (client) => {
             // Generate teacher ID
             const year = new Date().getFullYear();
             const countResult = await client.query(`SELECT COUNT(*) FROM users WHERE username LIKE $1`, [`TEA/${year}/%`]);
@@ -62,7 +55,7 @@ const createTeacher = async (req, res) => {
             const teacherUsername = `TEA/${year}/${sequence.toString().padStart(3, '0')}`;
             // Generate 6-digit password
             const tempPassword = Math.floor(100000 + Math.random() * 900000).toString();
-            const hashedPassword = await bcrypt_1.default.hash(tempPassword, 10);
+            const hashedPassword = await bcrypt.hash(tempPassword, 10);
             const userResult = await client.query(`INSERT INTO users (username, name, email, password_hash, role, branch_id, digital_id, status) 
          VALUES ($1, $2, $3, $4, 'teacher', $5, $1, 'Approved') RETURNING id`, [teacherUsername, name, email || `${teacherUsername.replace(/\//g, '').toLowerCase()}@abdi-adama.com`,
                 hashedPassword, branch_id || user.branch_id]);
@@ -84,14 +77,13 @@ const createTeacher = async (req, res) => {
         res.status(500).json({ error: 'Failed to create teacher' });
     }
 };
-exports.createTeacher = createTeacher;
 /**
  * Get teacher by ID with full details
  */
-const getTeacherById = async (req, res) => {
+export const getTeacherById = async (req, res) => {
     const { id } = req.params;
     try {
-        const teacher = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const teacher = await withRLS(req, async (client) => {
             const result = await client.query(`
         SELECT 
           t.*, 
@@ -150,11 +142,10 @@ const getTeacherById = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch teacher details' });
     }
 };
-exports.getTeacherById = getTeacherById;
 /**
  * Assign teacher as Room Teacher
  */
-const assignRoomTeacher = async (req, res) => {
+export const assignRoomTeacher = async (req, res) => {
     const { teacherId } = req.params;
     const { section_id } = req.body;
     const user = req.user;
@@ -162,7 +153,7 @@ const assignRoomTeacher = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Update teacher
             await client.query(`
         UPDATE teachers 
@@ -186,18 +177,17 @@ const assignRoomTeacher = async (req, res) => {
         res.status(500).json({ error: 'Failed to assign room teacher' });
     }
 };
-exports.assignRoomTeacher = assignRoomTeacher;
 /**
  * Remove room teacher assignment
  */
-const removeRoomTeacher = async (req, res) => {
+export const removeRoomTeacher = async (req, res) => {
     const { teacherId } = req.params;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Get current section
             const teacherResult = await client.query('SELECT assigned_room_section_id FROM teachers WHERE id = $1', [teacherId]);
             const sectionId = teacherResult.rows[0]?.assigned_room_section_id;
@@ -226,11 +216,10 @@ const removeRoomTeacher = async (req, res) => {
         res.status(500).json({ error: 'Failed to remove room teacher assignment' });
     }
 };
-exports.removeRoomTeacher = removeRoomTeacher;
 /**
  * Assign teacher as Examiner
  */
-const assignExaminer = async (req, res) => {
+export const assignExaminer = async (req, res) => {
     const { teacherId } = req.params;
     const { exam_title, exam_date, assigned_class, exam_id } = req.body;
     const user = req.user;
@@ -238,7 +227,7 @@ const assignExaminer = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Create exam assignment
             await client.query(`
         INSERT INTO teacher_exam_assignments 
@@ -259,18 +248,17 @@ const assignExaminer = async (req, res) => {
         res.status(500).json({ error: 'Failed to assign examiner' });
     }
 };
-exports.assignExaminer = assignExaminer;
 /**
  * Remove exam assignment
  */
-const removeExamAssignment = async (req, res) => {
+export const removeExamAssignment = async (req, res) => {
     const { assignmentId } = req.params;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Soft delete assignment
             await client.query(`
         UPDATE teacher_exam_assignments 
@@ -308,11 +296,10 @@ const removeExamAssignment = async (req, res) => {
         res.status(500).json({ error: 'Failed to remove exam assignment' });
     }
 };
-exports.removeExamAssignment = removeExamAssignment;
 /**
  * Assign teacher as Department Head
  */
-const assignDepartmentHead = async (req, res) => {
+export const assignDepartmentHead = async (req, res) => {
     const { teacherId } = req.params;
     const { department_name } = req.body;
     const user = req.user;
@@ -320,7 +307,7 @@ const assignDepartmentHead = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Create department head assignment
             await client.query(`
         INSERT INTO teacher_department_heads 
@@ -343,18 +330,17 @@ const assignDepartmentHead = async (req, res) => {
         res.status(500).json({ error: 'Failed to assign department head' });
     }
 };
-exports.assignDepartmentHead = assignDepartmentHead;
 /**
  * Remove department head assignment
  */
-const removeDepartmentHead = async (req, res) => {
+export const removeDepartmentHead = async (req, res) => {
     const { assignmentId } = req.params;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Get teacher_id before deletion
             const result = await client.query(`
         SELECT teacher_id FROM teacher_department_heads WHERE id = $1
@@ -391,11 +377,10 @@ const removeDepartmentHead = async (req, res) => {
         res.status(500).json({ error: 'Failed to remove department head assignment' });
     }
 };
-exports.removeDepartmentHead = removeDepartmentHead;
 /**
  * Update teacher schedule (purge old data before update)
  */
-const updateTeacherSchedule = async (req, res) => {
+export const updateTeacherSchedule = async (req, res) => {
     const { teacherId } = req.params;
     const { schedule } = req.body; // Array of schedule items
     const user = req.user;
@@ -403,7 +388,7 @@ const updateTeacherSchedule = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Delete old schedule data (purge to minimize traffic/storage)
             await client.query(`
         DELETE FROM schedules WHERE teacher_id = $1
@@ -425,4 +410,3 @@ const updateTeacherSchedule = async (req, res) => {
         res.status(500).json({ error: 'Failed to update teacher schedule' });
     }
 };
-exports.updateTeacherSchedule = updateTeacherSchedule;

@@ -1,10 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const pg_1 = __importDefault(require("pg"));
-const { Pool } = pg_1.default;
+import pkg from 'pg';
+const { Pool } = pkg;
 // Connect as postgres superuser (trust mode - no password needed right now)
 const pool = new Pool({
     user: 'postgres',

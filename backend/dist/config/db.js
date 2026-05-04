@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const pg_1 = __importDefault(require("pg"));
-const { Pool } = pg_1.default;
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+dotenv.config();
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -15,4 +10,4 @@ const pool = new Pool({
     port: parseInt(process.env.DB_PORT || '5432'),
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
-exports.default = pool;
+export default pool;

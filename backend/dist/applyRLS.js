@@ -1,15 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const pg_1 = __importDefault(require("pg"));
-const { Pool } = pg_1.default;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const url_1 = require("url");
-const __filename = (0, url_1.fileURLToPath)(import.meta.url);
-const __dirname = path_1.default.dirname(__filename);
+import pkg from 'pg';
+const { Pool } = pkg;
+import fs from 'fs';
+import path from 'path';
+// CommonJS __dirname is available natively
 const pool = new Pool({
     user: 'abdiadam_super-admin',
     host: 'localhost',
@@ -133,7 +126,7 @@ const splitSQL = (sql) => {
     return statements;
 };
 const runFile = async (filePath, label) => {
-    const sql = fs_1.default.readFileSync(filePath, 'utf-8');
+    const sql = fs.readFileSync(filePath, 'utf-8');
     const statements = splitSQL(sql);
     let success = 0, skipped = 0, errors = 0;
     for (const stmt of statements) {
@@ -160,8 +153,8 @@ const runFile = async (filePath, label) => {
     return errors;
 };
 const main = async () => {
-    const schemaPath = path_1.default.resolve(__dirname, '../../database/schema.sql');
-    const rlsPath = path_1.default.resolve(__dirname, '../../database/rls_policies.sql');
+    const schemaPath = path.resolve(__dirname, '../../database/schema.sql');
+    const rlsPath = path.resolve(__dirname, '../../database/rls_policies.sql');
     console.log('\n📦 Applying schema...');
     const schemaErrors = await runFile(schemaPath, 'Schema');
     console.log('\n🔒 Applying RLS policies...');

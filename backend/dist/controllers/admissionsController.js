@@ -1,21 +1,15 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.bulkSendExamNotification = exports.finalizeEnrollment = exports.confirmPayment = exports.markExamPassed = exports.reviewApplication = exports.getApplications = exports.submitApplication = exports.toggleRegistration = exports.getRegistrationConfig = void 0;
-const dbClient_js_1 = require("../utils/dbClient.js");
-const bcrypt_1 = __importDefault(require("bcrypt"));
+import { withRLS } from '../utils/dbClient.js';
+import bcrypt from 'bcrypt';
 // ============================================================
 // MODULE 2: ADMISSION PIPELINE & FINANCIAL INTEGRATION
 // ============================================================
 /**
  * Get registration config for branch
  */
-const getRegistrationConfig = async (req, res) => {
+export const getRegistrationConfig = async (req, res) => {
     const user = req.user;
     try {
-        const row = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const row = await withRLS(req, async (client) => {
             const result = await client.query(`
         SELECT * FROM registration_config 
         WHERE branch_id = $1
@@ -29,18 +23,17 @@ const getRegistrationConfig = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch registration config' });
     }
 };
-exports.getRegistrationConfig = getRegistrationConfig;
 /**
  * Toggle registration open/close
  */
-const toggleRegistration = async (req, res) => {
+export const toggleRegistration = async (req, res) => {
     const { is_open, start_date, end_date, admission_fee } = req.body;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             await client.query(`
         INSERT INTO registration_config (branch_id, is_open, start_date, end_date, admission_fee)
         VALUES ($1, $2, $3, $4, $5)
@@ -60,11 +53,10 @@ const toggleRegistration = async (req, res) => {
         res.status(500).json({ error: 'Failed to update registration config' });
     }
 };
-exports.toggleRegistration = toggleRegistration;
 /**
  * Submit online application (public endpoint - no auth required)
  */
-const submitApplication = async (req, res) => {
+export const submitApplication = async (req, res) => {
     const { name, dob, parent_name, phone, email, previous_school, last_grade, grade_applying, transcript_url, transcript_size_kb, branch_id } = req.body;
     try {
         // Validate file size (2MB = 2048 KB)
@@ -73,7 +65,7 @@ const submitApplication = async (req, res) => {
         }
         // Format phone number with Ethiopian prefix
         const formattedPhone = phone.startsWith('+251') ? phone : `+251${phone.replace(/^0+/, '')}`;
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Get admission fee from config
             const configResult = await client.query('SELECT admission_fee, is_open FROM registration_config WHERE branch_id = $1', [branch_id]);
             if (configResult.rows.length === 0 || !configResult.rows[0].is_open) {
@@ -95,15 +87,14 @@ const submitApplication = async (req, res) => {
         res.status(500).json({ error: err.message || 'Failed to submit application' });
     }
 };
-exports.submitApplication = submitApplication;
 /**
  * Get all applications (Admin view) - ordered by submission time
  */
-const getApplications = async (req, res) => {
+export const getApplications = async (req, res) => {
     const { status } = req.query;
     const user = req.user;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             let query = `
         SELECT pa.*, 
                u.name as reviewed_by_name,
@@ -135,11 +126,10 @@ const getApplications = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch applications' });
     }
 };
-exports.getApplications = getApplications;
 /**
  * Review application - Pass/Exam/Decline
  */
-const reviewApplication = async (req, res) => {
+export const reviewApplication = async (req, res) => {
     const { applicationId } = req.params;
     const { action, exam_details } = req.body; // action: 'pass', 'exam', 'decline'
     const user = req.user;
@@ -147,7 +137,7 @@ const reviewApplication = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Get application details
             const appResult = await client.query('SELECT * FROM pending_applications WHERE id = $1', [applicationId]);
             if (appResult.rows.length === 0) {
@@ -199,18 +189,17 @@ const reviewApplication = async (req, res) => {
         res.status(500).json({ error: err.message || 'Failed to review application' });
     }
 };
-exports.reviewApplication = reviewApplication;
 /**
  * Mark exam as passed (after exam)
  */
-const markExamPassed = async (req, res) => {
+export const markExamPassed = async (req, res) => {
     const { applicationId } = req.params;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             await client.query(`
         UPDATE pending_applications 
         SET status = 'awaiting-payment', updated_at = NOW()
@@ -224,18 +213,17 @@ const markExamPassed = async (req, res) => {
         res.status(500).json({ error: 'Failed to update application' });
     }
 };
-exports.markExamPassed = markExamPassed;
 /**
  * Confirm payment (Finance Officer)
  */
-const confirmPayment = async (req, res) => {
+export const confirmPayment = async (req, res) => {
     const { applicationId } = req.params;
     const user = req.user;
     if (user.role !== 'finance-clerk' && user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             await client.query(`
         UPDATE pending_applications 
         SET status = 'payment-confirmed', 
@@ -252,11 +240,10 @@ const confirmPayment = async (req, res) => {
         res.status(500).json({ error: 'Failed to confirm payment' });
     }
 };
-exports.confirmPayment = confirmPayment;
 /**
  * Finalize enrollment - assign grade/section and create student account
  */
-const finalizeEnrollment = async (req, res) => {
+export const finalizeEnrollment = async (req, res) => {
     const { applicationId } = req.params;
     const { section_id } = req.body;
     const user = req.user;
@@ -264,7 +251,7 @@ const finalizeEnrollment = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        const studentId = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const studentId = await withRLS(req, async (client) => {
             // Get application details
             const appResult = await client.query('SELECT * FROM pending_applications WHERE id = $1 AND status = $2', [applicationId, 'payment-confirmed']);
             if (appResult.rows.length === 0) {
@@ -289,7 +276,7 @@ const finalizeEnrollment = async (req, res) => {
             const studentUsername = `STU/${year}/${sequence.toString().padStart(3, '0')}`;
             // Generate 6-digit password
             const tempPassword = Math.floor(100000 + Math.random() * 900000).toString();
-            const hashedPassword = await bcrypt_1.default.hash(tempPassword, 10);
+            const hashedPassword = await bcrypt.hash(tempPassword, 10);
             // Create user account
             const userResult = await client.query(`
         INSERT INTO users (username, name, email, password_hash, role, branch_id, digital_id, status)
@@ -312,7 +299,7 @@ const finalizeEnrollment = async (req, res) => {
             const newStudentId = studentResult.rows[0].id;
             // Create parent account with same student ID
             const parentPassword = Math.floor(100000 + Math.random() * 900000).toString();
-            const parentHashedPassword = await bcrypt_1.default.hash(parentPassword, 10);
+            const parentHashedPassword = await bcrypt.hash(parentPassword, 10);
             const parentUserResult = await client.query(`
         INSERT INTO users (username, name, email, password_hash, role, branch_id, digital_id, status)
         VALUES ($1, $2, $3, $4, 'parent', $5, $1, 'Approved')
@@ -364,18 +351,17 @@ const finalizeEnrollment = async (req, res) => {
         res.status(500).json({ error: err.message || 'Failed to finalize enrollment' });
     }
 };
-exports.finalizeEnrollment = finalizeEnrollment;
 /**
  * Bulk send exam notification
  */
-const bulkSendExamNotification = async (req, res) => {
+export const bulkSendExamNotification = async (req, res) => {
     const { application_ids, message_type, subject, message } = req.body;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Get applicants
             const applicantsResult = await client.query(`
         SELECT id, phone, email, name 
@@ -409,4 +395,3 @@ const bulkSendExamNotification = async (req, res) => {
         res.status(500).json({ error: 'Failed to send bulk notification' });
     }
 };
-exports.bulkSendExamNotification = bulkSendExamNotification;

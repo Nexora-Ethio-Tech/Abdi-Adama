@@ -1,22 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const authMiddleware_js_1 = require("../middleware/authMiddleware.js");
-const teacherController_js_1 = require("../controllers/teacherController.js");
-const router = (0, express_1.Router)();
-router.use(authMiddleware_js_1.authenticateToken);
-router.get('/', teacherController_js_1.getTeachers);
-router.post('/', teacherController_js_1.createTeacher);
-router.get('/:id', teacherController_js_1.getTeacherById);
+import { Router } from 'express';
+import { authenticateToken } from '../middleware/authMiddleware.js';
+import { getTeachers, createTeacher, getTeacherById, assignRoomTeacher, removeRoomTeacher, assignExaminer, removeExamAssignment, assignDepartmentHead, removeDepartmentHead, updateTeacherSchedule } from '../controllers/teacherController.js';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getTeachers);
+router.post('/', createTeacher);
+router.get('/:id', getTeacherById);
 // Room teacher assignments
-router.post('/:teacherId/assign-room', teacherController_js_1.assignRoomTeacher);
-router.delete('/:teacherId/remove-room', teacherController_js_1.removeRoomTeacher);
+router.post('/:teacherId/assign-room', assignRoomTeacher);
+router.delete('/:teacherId/remove-room', removeRoomTeacher);
 // Examiner assignments
-router.post('/:teacherId/assign-examiner', teacherController_js_1.assignExaminer);
-router.delete('/exam-assignments/:assignmentId', teacherController_js_1.removeExamAssignment);
+router.post('/:teacherId/assign-examiner', assignExaminer);
+router.delete('/exam-assignments/:assignmentId', removeExamAssignment);
 // Department head assignments
-router.post('/:teacherId/assign-department-head', teacherController_js_1.assignDepartmentHead);
-router.delete('/department-heads/:assignmentId', teacherController_js_1.removeDepartmentHead);
+router.post('/:teacherId/assign-department-head', assignDepartmentHead);
+router.delete('/department-heads/:assignmentId', removeDepartmentHead);
 // Schedule management
-router.put('/:teacherId/schedule', teacherController_js_1.updateTeacherSchedule);
-exports.default = router;
+router.put('/:teacherId/schedule', updateTeacherSchedule);
+export default router;

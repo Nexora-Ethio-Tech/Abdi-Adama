@@ -1,16 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStudentsBySection = exports.deleteSection = exports.updateSection = exports.bulkCreateSections = exports.createSection = exports.getGradesWithSections = exports.getSectionsByGrade = exports.createGrade = exports.getGrades = void 0;
-const dbClient_js_1 = require("../utils/dbClient.js");
+import { withRLS } from '../utils/dbClient.js';
 // ============================================================
 // MODULE 1: DYNAMIC ACADEMIC STRUCTURE
 // ============================================================
 /**
  * Get all grades (Admin-managed)
  */
-const getGrades = async (req, res) => {
+export const getGrades = async (req, res) => {
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             const result = await client.query(`
         SELECT * FROM academic_grades 
         WHERE is_active = TRUE 
@@ -29,11 +26,10 @@ const getGrades = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch grades' });
     }
 };
-exports.getGrades = getGrades;
 /**
  * Create a new grade
  */
-const createGrade = async (req, res) => {
+export const createGrade = async (req, res) => {
     const { grade_level, branch_id } = req.body;
     const user = req.user;
     // Only school-admin can create grades
@@ -41,7 +37,7 @@ const createGrade = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             await client.query(`INSERT INTO academic_grades (grade_level, branch_id, is_active) 
          VALUES ($1, $2, TRUE)`, [grade_level, branch_id || user.branch_id]);
         });
@@ -52,14 +48,13 @@ const createGrade = async (req, res) => {
         res.status(500).json({ error: 'Failed to create grade' });
     }
 };
-exports.createGrade = createGrade;
 /**
  * Get sections for a specific grade
  */
-const getSectionsByGrade = async (req, res) => {
+export const getSectionsByGrade = async (req, res) => {
     const { gradeId } = req.params;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             const result = await client.query(`
         SELECT s.*, t.id as teacher_id, u.name as room_teacher_name
         FROM academic_sections s
@@ -77,14 +72,13 @@ const getSectionsByGrade = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch sections' });
     }
 };
-exports.getSectionsByGrade = getSectionsByGrade;
 /**
  * Get all grades with their sections (for dropdown in registration)
  */
-const getGradesWithSections = async (req, res) => {
+export const getGradesWithSections = async (req, res) => {
     const user = req.user;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             let query = `
         SELECT 
           g.id as grade_id,
@@ -123,18 +117,17 @@ const getGradesWithSections = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch grades with sections' });
     }
 };
-exports.getGradesWithSections = getGradesWithSections;
 /**
  * Create sections for a grade
  */
-const createSection = async (req, res) => {
+export const createSection = async (req, res) => {
     const { grade_id, section_name, capacity, branch_id } = req.body;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             await client.query(`INSERT INTO academic_sections (grade_id, section_name, capacity, branch_id, current_count) 
          VALUES ($1, $2, $3, $4, 0)`, [grade_id, section_name, capacity || 40, branch_id || user.branch_id]);
         });
@@ -145,18 +138,17 @@ const createSection = async (req, res) => {
         res.status(500).json({ error: 'Failed to create section' });
     }
 };
-exports.createSection = createSection;
 /**
  * Bulk create sections for a grade
  */
-const bulkCreateSections = async (req, res) => {
+export const bulkCreateSections = async (req, res) => {
     const { grade_id, section_count, capacity, branch_id } = req.body;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             const sections = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').slice(0, section_count);
             for (const section of sections) {
                 await client.query(`INSERT INTO academic_sections (grade_id, section_name, capacity, branch_id, current_count) 
@@ -171,11 +163,10 @@ const bulkCreateSections = async (req, res) => {
         res.status(500).json({ error: 'Failed to create sections' });
     }
 };
-exports.bulkCreateSections = bulkCreateSections;
 /**
  * Update section capacity
  */
-const updateSection = async (req, res) => {
+export const updateSection = async (req, res) => {
     const { sectionId } = req.params;
     const { capacity, room_teacher_id } = req.body;
     const user = req.user;
@@ -183,7 +174,7 @@ const updateSection = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             await client.query(`UPDATE academic_sections 
          SET capacity = COALESCE($1, capacity),
              room_teacher_id = COALESCE($2, room_teacher_id),
@@ -197,18 +188,17 @@ const updateSection = async (req, res) => {
         res.status(500).json({ error: 'Failed to update section' });
     }
 };
-exports.updateSection = updateSection;
 /**
  * Delete section
  */
-const deleteSection = async (req, res) => {
+export const deleteSection = async (req, res) => {
     const { sectionId } = req.params;
     const user = req.user;
     if (user.role !== 'school-admin' && user.role !== 'super-admin') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // Soft delete
             await client.query(`UPDATE academic_sections SET is_active = FALSE, updated_at = NOW() WHERE id = $1`, [sectionId]);
         });
@@ -219,14 +209,13 @@ const deleteSection = async (req, res) => {
         res.status(500).json({ error: 'Failed to delete section' });
     }
 };
-exports.deleteSection = deleteSection;
 /**
  * Get students by section (sorted alphabetically)
  */
-const getStudentsBySection = async (req, res) => {
+export const getStudentsBySection = async (req, res) => {
     const { sectionId } = req.params;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             const result = await client.query(`
         SELECT s.*, u.name, u.email, u.digital_id
         FROM students s
@@ -248,4 +237,3 @@ const getStudentsBySection = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch students' });
     }
 };
-exports.getStudentsBySection = getStudentsBySection;

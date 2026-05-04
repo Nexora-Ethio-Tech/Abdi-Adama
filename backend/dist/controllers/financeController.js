@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTransaction = exports.getSummaries = exports.getTransactions = void 0;
-const dbClient_js_1 = require("../utils/dbClient.js");
-const getTransactions = async (req, res) => {
+import { withRLS } from '../utils/dbClient.js';
+export const getTransactions = async (req, res) => {
     const { branch_id } = req.query;
     try {
         const user = req.user;
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             let query = `
         SELECT t.*, b.name as branch_name, u.digital_id as student_digital_id
         FROM finance_transactions t
@@ -34,10 +31,9 @@ const getTransactions = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch transactions' });
     }
 };
-exports.getTransactions = getTransactions;
-const getSummaries = async (req, res) => {
+export const getSummaries = async (req, res) => {
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             const result = await client.query('SELECT * FROM finance_summaries ORDER BY date DESC');
             return result.rows;
         });
@@ -48,11 +44,10 @@ const getSummaries = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch finance summaries' });
     }
 };
-exports.getSummaries = getSummaries;
-const createTransaction = async (req, res) => {
+export const createTransaction = async (req, res) => {
     const { student_id, student_name, amount, type, date, verified_by, branch_id } = req.body;
     try {
-        const txId = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const txId = await withRLS(req, async (client) => {
             // 1. Insert Transaction
             const txResult = await client.query(`INSERT INTO finance_transactions (student_id, student_name, amount, type, date, verified_by, branch_id) 
          VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, [student_id, student_name, amount, type, date, verified_by, branch_id]);
@@ -68,4 +63,3 @@ const createTransaction = async (req, res) => {
         res.status(500).json({ error: 'Failed to record transaction' });
     }
 };
-exports.createTransaction = createTransaction;

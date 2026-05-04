@@ -1,14 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.provisionUser = exports.getPendingUsers = exports.updateStatus = exports.verify = exports.login = exports.register = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const db_js_1 = __importDefault(require("../config/db.js"));
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import pool from '../config/db.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
-const register = async (req, res) => {
+export const register = async (req, res) => {
     const { name, email, password, role, branch_id } = req.body;
     // Provisioned roles (Student, Teacher) cannot self-register
     const provisionedRoles = ['student', 'teacher'];
@@ -16,16 +10,16 @@ const register = async (req, res) => {
         return res.status(403).json({ error: 'Students and Teachers must be provisioned by an administrator.' });
     }
     try {
-        const hashedPassword = await bcrypt_1.default.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         // Check if user already exists
-        const existingUser = await db_js_1.default.query('SELECT * FROM users WHERE email = $1', [email]);
+        const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (existingUser.rows.length > 0) {
             return res.status(400).json({ error: 'User already exists' });
         }
         // Default status is 'Pending'
         // Special case for Super Admin email
         const status = email === 'abdiadamaschooloffice@gmail.com' ? 'Approved' : 'Pending';
-        const result = await db_js_1.default.query('INSERT INTO users (name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, status', [name, email, hashedPassword, role, branch_id, status]);
+        const result = await pool.query('INSERT INTO users (name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, status', [name, email, hashedPassword, role, branch_id, status]);
         res.status(201).json({
             message: 'Registration successful. Your account is pending approval.',
             user: result.rows[0]
@@ -36,28 +30,27 @@ const register = async (req, res) => {
         res.status(500).json({ error: 'Server error during registration' });
     }
 };
-exports.register = register;
-const login = async (req, res) => {
+export const login = async (req, res) => {
     const { identifier, password } = req.body; // identifier can be email, username, or digital_id
     try {
         // Auto-initialize primary Super Admin if it doesn't exist
         if (identifier === 'abdiadamaschooloffice@gmail.com' && password === 'ChangeMe123!') {
-            const existing = await db_js_1.default.query('SELECT id FROM users WHERE email = $1', [identifier]);
+            const existing = await pool.query('SELECT id FROM users WHERE email = $1', [identifier]);
             if (existing.rows.length === 0) {
-                const hashedPassword = await bcrypt_1.default.hash(password, 10);
-                await db_js_1.default.query('INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)', ['System Admin', identifier, hashedPassword, 'super-admin', 'Approved']);
+                const hashedPassword = await bcrypt.hash(password, 10);
+                await pool.query('INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)', ['System Admin', identifier, hashedPassword, 'super-admin', 'Approved']);
             }
         }
         // Initialize School Admin with correct credentials if doesn't exist
         if (identifier === '65plante@gmail.com' && password === 'Abdiplanet11') {
-            const existing = await db_js_1.default.query('SELECT id FROM users WHERE email = $1', [identifier]);
+            const existing = await pool.query('SELECT id FROM users WHERE email = $1', [identifier]);
             if (existing.rows.length === 0) {
-                const hashedPassword = await bcrypt_1.default.hash(password, 10);
-                await db_js_1.default.query('INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)', ['School Admin', identifier, hashedPassword, 'school-admin', 'Approved']);
+                const hashedPassword = await bcrypt.hash(password, 10);
+                await pool.query('INSERT INTO users (name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5)', ['School Admin', identifier, hashedPassword, 'school-admin', 'Approved']);
             }
         }
         // Search by email, username (unique ID), OR digital_id
-        const result = await db_js_1.default.query('SELECT * FROM users WHERE email = $1 OR username = $1 OR digital_id = $1', [identifier]);
+        const result = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $1 OR digital_id = $1', [identifier]);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -69,11 +62,11 @@ const login = async (req, res) => {
         if (user.status === 'Revoked') {
             return res.status(403).json({ error: 'Your account has been revoked.' });
         }
-        const isPasswordValid = await bcrypt_1.default.compare(password, user.password_hash);
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status, is_branch_auditor: user.is_branch_auditor }, JWT_SECRET, { expiresIn: '24h' });
+        const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status, is_branch_auditor: user.is_branch_auditor }, JWT_SECRET, { expiresIn: '24h' });
         // Determine dashboard redirect — must match App.tsx getDashboardRoute()
         let dashboard = '/dashboard/school-admin';
         if (user.role === 'super-admin')
@@ -118,13 +111,12 @@ const login = async (req, res) => {
         res.status(500).json({ error: 'Server error during login' });
     }
 };
-exports.login = login;
-const verify = async (req, res) => {
+export const verify = async (req, res) => {
     // If the request made it here, authenticateToken middleware passed
     const user = req.user;
     try {
         // Fetch latest user info from DB to ensure they aren't revoked/deleted since token issuance
-        const result = await db_js_1.default.query('SELECT id, name, email, role, branch_id, status, digital_id FROM users WHERE id = $1', [user.id]);
+        const result = await pool.query('SELECT id, name, email, role, branch_id, status, digital_id FROM users WHERE id = $1', [user.id]);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: 'User no longer exists' });
         }
@@ -139,13 +131,12 @@ const verify = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-exports.verify = verify;
-const updateStatus = async (req, res) => {
+export const updateStatus = async (req, res) => {
     const { userId, status } = req.body;
     const adminRole = req.user.role;
     try {
         // Fetch user to be updated
-        const userResult = await db_js_1.default.query('SELECT role, email FROM users WHERE id = $1', [userId]);
+        const userResult = await pool.query('SELECT role, email FROM users WHERE id = $1', [userId]);
         if (userResult.rows.length === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -172,7 +163,7 @@ const updateStatus = async (req, res) => {
         else {
             return res.status(403).json({ error: 'Unauthorized to update user status' });
         }
-        await db_js_1.default.query('UPDATE users SET status = $1, updated_at = NOW() WHERE id = $2', [status, userId]);
+        await pool.query('UPDATE users SET status = $1, updated_at = NOW() WHERE id = $2', [status, userId]);
         res.json({ message: `User status updated to ${status}` });
     }
     catch (err) {
@@ -180,8 +171,7 @@ const updateStatus = async (req, res) => {
         res.status(500).json({ error: 'Server error during status update' });
     }
 };
-exports.updateStatus = updateStatus;
-const getPendingUsers = async (req, res) => {
+export const getPendingUsers = async (req, res) => {
     const adminRole = req.user.role;
     try {
         let query = 'SELECT id, name, email, role, status, created_at FROM users WHERE status = \'Pending\'';
@@ -200,7 +190,7 @@ const getPendingUsers = async (req, res) => {
         else {
             return res.status(403).json({ error: 'Unauthorized' });
         }
-        const result = await db_js_1.default.query(query, params);
+        const result = await pool.query(query, params);
         res.json(result.rows);
     }
     catch (err) {
@@ -208,8 +198,7 @@ const getPendingUsers = async (req, res) => {
         res.status(500).json({ error: 'Server error fetching pending users' });
     }
 };
-exports.getPendingUsers = getPendingUsers;
-const provisionUser = async (req, res) => {
+export const provisionUser = async (req, res) => {
     const { name, email, role, branch_id, student_id } = req.body;
     const adminRole = req.user.role;
     try {
@@ -219,7 +208,7 @@ const provisionUser = async (req, res) => {
         }
         // Check if email is already taken
         if (email) {
-            const existingUser = await db_js_1.default.query('SELECT * FROM users WHERE email = $1', [email]);
+            const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
             if (existingUser.rows.length > 0) {
                 return res.status(400).json({ error: 'Email already in use' });
             }
@@ -236,7 +225,7 @@ const provisionUser = async (req, res) => {
                 return res.status(400).json({ error: 'Student ID is required for parent registration' });
             }
             // Verify student exists
-            const studentCheck = await db_js_1.default.query('SELECT username FROM users WHERE username = $1 AND role = $2', [student_id, 'student']);
+            const studentCheck = await pool.query('SELECT username FROM users WHERE username = $1 AND role = $2', [student_id, 'student']);
             if (studentCheck.rows.length === 0) {
                 return res.status(400).json({ error: 'Student with this ID does not exist' });
             }
@@ -278,17 +267,17 @@ const provisionUser = async (req, res) => {
             }
             const year = new Date().getFullYear();
             // Determine next sequence number
-            const countResult = await db_js_1.default.query(`SELECT COUNT(*) FROM users WHERE username LIKE $1`, [`${prefix}/${year}/%`]);
+            const countResult = await pool.query(`SELECT COUNT(*) FROM users WHERE username LIKE $1`, [`${prefix}/${year}/%`]);
             const sequence = parseInt(countResult.rows[0].count) + 1;
             username = `${prefix}/${year}/${sequence.toString().padStart(3, '0')}`;
             // Generate 6-digit password
             tempPassword = Math.floor(100000 + Math.random() * 900000).toString();
         }
-        const hashedPassword = await bcrypt_1.default.hash(tempPassword, 10);
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
         // Fallback email if not provided
         const finalEmail = email || `${username.replace(/\//g, '').toLowerCase()}@abdi-adama.com`;
         // Save User
-        const result = await db_js_1.default.query('INSERT INTO users (username, name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, name, email, role, status', [username, name, finalEmail, hashedPassword, role, branch_id, 'Approved']);
+        const result = await pool.query('INSERT INTO users (username, name, email, password_hash, role, branch_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, name, email, role, status', [username, name, finalEmail, hashedPassword, role, branch_id, 'Approved']);
         res.status(201).json({
             message: 'User provisioned successfully',
             credentials: {
@@ -303,4 +292,3 @@ const provisionUser = async (req, res) => {
         res.status(500).json({ error: 'Server error provisioning user' });
     }
 };
-exports.provisionUser = provisionUser;

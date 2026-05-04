@@ -1,17 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSpecialStudents = exports.approveFeeReduction = exports.updateStudentFees = exports.getStudentById = exports.getStudents = exports.createStudent = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const dbClient_js_1 = require("../utils/dbClient.js");
-const createStudent = async (req, res) => {
+import bcrypt from 'bcrypt';
+import { withRLS } from '../utils/dbClient.js';
+export const createStudent = async (req, res) => {
     const { name, email, password, digital_id, branch_id, grade, dob, gender, parent_name, parent_phone, emergency_contacts, monthly_fee, bus_fee, penalty_fee, fee_status, fee_notes } = req.body;
     try {
-        const result = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const result = await withRLS(req, async (client) => {
             // 1. Create User (Provisioned students are auto-approved)
-            const hashedPassword = await bcrypt_1.default.hash(password || 'AbdiAdama123', 10);
+            const hashedPassword = await bcrypt.hash(password || 'AbdiAdama123', 10);
             const userResult = await client.query(`INSERT INTO users (name, email, password_hash, role, branch_id, digital_id, status) 
          VALUES ($1, $2, $3, 'student', $4, $5, 'Approved') RETURNING id`, [name, email, hashedPassword, branch_id, digital_id]);
             const userId = userResult.rows[0].id;
@@ -38,12 +32,11 @@ const createStudent = async (req, res) => {
         res.status(500).json({ error: 'Failed to create student' });
     }
 };
-exports.createStudent = createStudent;
-const getStudents = async (req, res) => {
+export const getStudents = async (req, res) => {
     const { branch_id, grade } = req.query;
     const user = req.user;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             let query = `
         SELECT s.*, u.name, u.email, u.digital_id, u.role, u.status as user_status
         FROM students s
@@ -75,11 +68,10 @@ const getStudents = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch students' });
     }
 };
-exports.getStudents = getStudents;
-const getStudentById = async (req, res) => {
+export const getStudentById = async (req, res) => {
     const { id } = req.params;
     try {
-        const student = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const student = await withRLS(req, async (client) => {
             // Get student + user info
             const studentResult = await client.query(`
         SELECT s.*, u.name, u.email, u.digital_id, u.role, u.is_active 
@@ -107,12 +99,11 @@ const getStudentById = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch student details' });
     }
 };
-exports.getStudentById = getStudentById;
-const updateStudentFees = async (req, res) => {
+export const updateStudentFees = async (req, res) => {
     const { studentId, monthly_fee, bus_fee, penalty_fee, fee_status, fee_notes } = req.body;
     const user = req.user;
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             // 1. Get old values for audit
             const oldResult = await client.query('SELECT monthly_fee, bus_fee, penalty_fee, fee_status FROM students WHERE id = $1', [studentId]);
             const old = oldResult.rows[0];
@@ -130,8 +121,7 @@ const updateStudentFees = async (req, res) => {
         res.status(500).json({ error: 'Failed to update student fees' });
     }
 };
-exports.updateStudentFees = updateStudentFees;
-const approveFeeReduction = async (req, res) => {
+export const approveFeeReduction = async (req, res) => {
     const { studentId, approved, approver_name } = req.body;
     const user = req.user;
     // Only auditor or branch auditor (or super-admin) can approve
@@ -139,7 +129,7 @@ const approveFeeReduction = async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized to approve fee reductions' });
     }
     try {
-        await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        await withRLS(req, async (client) => {
             const status = approved ? 'approved' : 'rejected';
             await client.query('UPDATE students SET fee_approval_status = $1, updated_at = NOW() WHERE id = $2', [status, studentId]);
             await client.query(`INSERT INTO audit_log (student_id, category, direction, action_label, modified_by, approver_name) 
@@ -152,11 +142,10 @@ const approveFeeReduction = async (req, res) => {
         res.status(500).json({ error: 'Failed to approve fee reduction' });
     }
 };
-exports.approveFeeReduction = approveFeeReduction;
-const getSpecialStudents = async (req, res) => {
+export const getSpecialStudents = async (req, res) => {
     const user = req.user;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             let query = `
         SELECT s.*, u.name, u.email, u.digital_id, b.name as branch_name
         FROM students s
@@ -180,4 +169,3 @@ const getSpecialStudents = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch special students' });
     }
 };
-exports.getSpecialStudents = getSpecialStudents;

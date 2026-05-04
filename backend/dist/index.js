@@ -1,26 +1,21 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const db_js_1 = __importDefault(require("./config/db.js"));
-const branchRoutes_js_1 = __importDefault(require("./routes/branchRoutes.js"));
-const authRoutes_js_1 = __importDefault(require("./routes/authRoutes.js"));
-const studentRoutes_js_1 = __importDefault(require("./routes/studentRoutes.js"));
-const teacherRoutes_js_1 = __importDefault(require("./routes/teacherRoutes.js"));
-const financeRoutes_js_1 = __importDefault(require("./routes/financeRoutes.js"));
-const examRoutes_js_1 = __importDefault(require("./routes/examRoutes.js"));
-const operationalRoutes_js_1 = __importDefault(require("./routes/operationalRoutes.js"));
-const libraryRoutes_js_1 = __importDefault(require("./routes/libraryRoutes.js"));
-const clinicRoutes_js_1 = __importDefault(require("./routes/clinicRoutes.js"));
-const transportRoutes_js_1 = __importDefault(require("./routes/transportRoutes.js"));
-const academicRoutes_js_1 = __importDefault(require("./routes/academicRoutes.js"));
-const admissionsRoutes_js_1 = __importDefault(require("./routes/admissionsRoutes.js"));
-dotenv_1.default.config();
-const app = (0, express_1.default)();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import pool from './config/db.js';
+import branchRoutes from './routes/branchRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import studentRoutes from './routes/studentRoutes.js';
+import teacherRoutes from './routes/teacherRoutes.js';
+import financeRoutes from './routes/financeRoutes.js';
+import examRoutes from './routes/examRoutes.js';
+import operationalRoutes from './routes/operationalRoutes.js';
+import libraryRoutes from './routes/libraryRoutes.js';
+import clinicRoutes from './routes/clinicRoutes.js';
+import transportRoutes from './routes/transportRoutes.js';
+import academicRoutes from './routes/academicRoutes.js';
+import admissionsRoutes from './routes/admissionsRoutes.js';
+dotenv.config();
+const app = express();
 const PORT = process.env.PORT || 5000;
 const isProd = process.env.NODE_ENV === 'production';
 // ─── Trust LiteSpeed reverse proxy ───────────────────────────────────────────
@@ -35,7 +30,7 @@ const allowedOrigins = [
     'https://www.abdi-adama.com', // production www
     process.env.FRONTEND_URL, // from .env
 ].filter(Boolean);
-app.use((0, cors_1.default)({
+app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
@@ -57,29 +52,29 @@ app.use((_req, res, next) => {
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     next();
 });
-app.use(express_1.default.json());
+app.use(express.json());
 // ─── Health check ─────────────────────────────────────────────────────────────
 // LiteSpeed proxies  https://abdi-adama.com/api  →  Node (root '/')
 app.get('/', (_req, res) => {
     res.json({ status: 'ok', message: 'Abdi Adama School API is running!' });
 });
 // ─── API Routes ───────────────────────────────────────────────────────────────
-app.use('/api/branches', branchRoutes_js_1.default);
-app.use('/api/auth', authRoutes_js_1.default);
-app.use('/api/students', studentRoutes_js_1.default);
-app.use('/api/teachers', teacherRoutes_js_1.default);
-app.use('/api/finance', financeRoutes_js_1.default);
-app.use('/api/exams', examRoutes_js_1.default);
-app.use('/api/ops', operationalRoutes_js_1.default);
-app.use('/api/library', libraryRoutes_js_1.default);
-app.use('/api/clinic', clinicRoutes_js_1.default);
-app.use('/api/transport', transportRoutes_js_1.default);
-app.use('/api/academic', academicRoutes_js_1.default);
-app.use('/api/admissions', admissionsRoutes_js_1.default);
+app.use('/api/branches', branchRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/teachers', teacherRoutes);
+app.use('/api/finance', financeRoutes);
+app.use('/api/exams', examRoutes);
+app.use('/api/ops', operationalRoutes);
+app.use('/api/library', libraryRoutes);
+app.use('/api/clinic', clinicRoutes);
+app.use('/api/transport', transportRoutes);
+app.use('/api/academic', academicRoutes);
+app.use('/api/admissions', admissionsRoutes);
 // ─── DB test ──────────────────────────────────────────────────────────────────
 app.get('/api/test-db', async (_req, res) => {
     try {
-        const result = await db_js_1.default.query('SELECT NOW()');
+        const result = await pool.query('SELECT NOW()');
         res.json({ status: 'Connected', time: result.rows[0].now });
     }
     catch (err) {

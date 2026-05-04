@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.submitExam = exports.getExamDetails = exports.getExams = void 0;
-const dbClient_js_1 = require("../utils/dbClient.js");
-const getExams = async (req, res) => {
+import { withRLS } from '../utils/dbClient.js';
+export const getExams = async (req, res) => {
     const { course_id } = req.query;
     try {
-        const rows = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const rows = await withRLS(req, async (client) => {
             let query = 'SELECT * FROM exams WHERE is_hidden = false';
             const params = [];
             if (course_id) {
@@ -22,11 +19,10 @@ const getExams = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch exams' });
     }
 };
-exports.getExams = getExams;
-const getExamDetails = async (req, res) => {
+export const getExamDetails = async (req, res) => {
     const { id } = req.params;
     try {
-        const exam = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const exam = await withRLS(req, async (client) => {
             const examResult = await client.query('SELECT * FROM exams WHERE id = $1', [id]);
             if (examResult.rows.length === 0)
                 return null;
@@ -54,11 +50,10 @@ const getExamDetails = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch exam questions' });
     }
 };
-exports.getExamDetails = getExamDetails;
-const submitExam = async (req, res) => {
+export const submitExam = async (req, res) => {
     const { exam_id, student_id, answers, warning_count, started_at } = req.body;
     try {
-        const submissionId = await (0, dbClient_js_1.withRLS)(req, async (client) => {
+        const submissionId = await withRLS(req, async (client) => {
             const result = await client.query(`INSERT INTO exam_submissions (exam_id, student_id, answers, warning_count, started_at, submitted_at) 
          VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id`, [exam_id, student_id, JSON.stringify(answers), warning_count, started_at]);
             return result.rows[0].id;
@@ -70,4 +65,3 @@ const submitExam = async (req, res) => {
         res.status(500).json({ error: 'Failed to submit exam' });
     }
 };
-exports.submitExam = submitExam;

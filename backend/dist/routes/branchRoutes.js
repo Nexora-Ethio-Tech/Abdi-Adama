@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const branchController_js_1 = require("../controllers/branchController.js");
-const router = (0, express_1.Router)();
-router.get('/', branchController_js_1.getBranches);
-router.get('/:id', branchController_js_1.getBranchById);
-exports.default = router;
+import { Router } from 'express';
+import { getBranches, getBranchById } from '../controllers/branchController.js';
+const router = Router();
+router.get('/', getBranches);
+router.get('/:id', getBranchById);
+export default router;
