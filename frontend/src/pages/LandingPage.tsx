@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useScroll, useTransform, useSpring, motion } from 'framer-motion';
 import { StudentRegistration } from '../components/StudentRegistration';
 import { Chatbot } from '../components/Chatbot';
+import { PillarsSection, VisionMissionSection, CommunitySection, PromiseSection, SchoolLifeSection, TeamSection } from '../components/LandingSections';
 import logo from '../assets/logo.jpg';
 import classroomImg from '../assets/students_classroom.png';
 import founderImg from '../assets/founder.jpg';
@@ -10,9 +11,7 @@ import { useUser } from '../context/UserContext';
 import { useStore } from '../context/useStore';
 import {
   ArrowRight,
-  ChevronDown,
   LogIn,
-  ShieldAlert,
   ArrowLeft,
   Send,
   Video,
@@ -115,8 +114,8 @@ export const LandingPage = () => {
           
           <div className="flex items-center gap-6">
             <div className="hidden lg:flex items-center gap-8">
-              {['home', 'about', 'programs', 'media', 'branches'].map((item) => (
-                <a key={item} href={`#${item}`} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-school-primary transition-colors">{t(`nav.${item}`)}</a>
+              {['home', 'about', 'programs', 'school-life', 'branches'].map((item) => (
+                <a key={item} href={`#${item}`} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-school-primary transition-colors">{item === 'school-life' ? 'School Life' : t(`nav.${item}`)}</a>
               ))}
             </div>
             <select
@@ -382,9 +381,9 @@ export const LandingPage = () => {
                 <span className="text-[10px] font-black text-school-primary uppercase tracking-[0.2em] mb-4 px-4 py-1.5 bg-school-primary/10 rounded-full">{prog.level}</span>
                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{prog.title}</h3>
                 <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm mb-8">{prog.desc}</p>
-                <button className="mt-auto flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest hover:text-school-primary transition-colors group/btn">
+                <button onClick={() => setShowAdmission(true)} className="mt-auto flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest hover:text-school-primary transition-colors group/btn">
                   {t('landing.programs.explore')}
-                  <ChevronDown size={16} className="group-hover/btn:translate-y-1 transition-transform" />
+                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </motion.div>
             ))}
@@ -392,41 +391,13 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" style={{ opacity: 0.1 }} />
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="section-header">
-            <span className="section-subtitle !text-school-accent">{t('landing.valuesSubtitle')}</span>
-            <h2 className="section-title !text-white">{t('landing.values.title')}</h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 perspective-1000">
-            {[
-              { icon: ShieldAlert, title: t('landing.values.integrity'), desc: t('landing.values.integrityDesc') },
-              { icon: Users, title: t('landing.values.leadership'), desc: t('landing.values.leadershipDesc') },
-              { icon: Zap, title: t('landing.values.growth'), desc: t('landing.values.growthDesc') },
-              { icon: Globe, title: t('landing.values.lifelong'), desc: t('landing.values.lifelongDesc') }
-            ].map((val, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, x: -30, rotateY: 45 }}
-                whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                whileHover={{ y: -10, rotateY: 10, scale: 1.02 }}
-                className="space-y-4 p-6 bg-white/5 rounded-[2rem] border border-white/5 hover:bg-white/10 transition-all duration-500 preserve-3d"
-              >
-                <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-school-accent border border-white/10 shadow-xl preserve-3d">
-                  <val.icon size={28} />
-                </div>
-                <h3 className="text-xl font-black tracking-tight">{val.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{val.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ═══ NEW SECTIONS FROM SCHOOL OWNER ═══ */}
+      <PillarsSection />
+      <VisionMissionSection />
+      <CommunitySection />
+      <PromiseSection />
+      <SchoolLifeSection id="school-life" />
+      <TeamSection />
 
       {/* Updates / Posts Section */}
       {publicPosts.length > 0 && (
@@ -438,17 +409,17 @@ export const LandingPage = () => {
                 <h2 className="section-title">{t('landing.updates.title')}</h2>
               </div>
               <div className="hidden sm:flex gap-2">
-                <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400">
+                <button onClick={() => { const el = document.querySelector('.updates-scroll'); if(el) el.scrollBy({left:-420,behavior:'smooth'}); }} className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-school-primary hover:border-school-primary transition-colors">
                   <ArrowLeft size={20} />
-                </div>
-                <div className="w-10 h-10 rounded-full bg-school-primary text-white flex items-center justify-center shadow-lg">
+                </button>
+                <button onClick={() => { const el = document.querySelector('.updates-scroll'); if(el) el.scrollBy({left:420,behavior:'smooth'}); }} className="w-10 h-10 rounded-full bg-school-primary text-white flex items-center justify-center shadow-lg hover:bg-school-primary/90 transition-colors">
                   <ArrowRight size={20} />
-                </div>
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="pl-6 md:pl-[calc(50vw-40rem+1.5rem)] pb-8 overflow-x-auto flex snap-x snap-mandatory hide-scrollbar gap-6 pr-6">
+          <div className="updates-scroll pl-6 md:pl-[calc(50vw-40rem+1.5rem)] pb-8 overflow-x-auto flex snap-x snap-mandatory hide-scrollbar gap-6 pr-6">
             {publicPosts.map((post) => (
               <div key={post.id} className="snap-start shrink-0 w-[85vw] sm:w-[400px] bg-white dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 flex flex-col">
                 <div className="relative aspect-[4/3] bg-slate-100 dark:bg-slate-900 overflow-hidden">
@@ -659,13 +630,14 @@ export const LandingPage = () => {
               <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white mb-6">{t('landing.footer.connect')}</h4>
               <div className="flex gap-4">
                 {[
-                  { icon: Send, url: 'https://t.me/abdiadamaschool', color: 'hover:text-blue-500' },
-                  { icon: Video, url: 'https://www.youtube.com/@AbdiadamaSchool-s1c', color: 'hover:text-rose-600' },
-                  { icon: Camera, url: 'https://www.instagram.com/abdi_adama_school/', color: 'hover:text-pink-500' },
-                  { icon: Music2, url: 'https://www.tiktok.com/@abdiadama1', color: 'hover:text-black dark:hover:text-white' }
+                  { icon: Send, url: 'https://t.me/abdiadamaschool', color: 'hover:text-blue-500', name: 'Telegram' },
+                  { icon: Video, url: 'https://www.youtube.com/@AbdiadamaSchool-s1c', color: 'hover:text-rose-600', name: 'YouTube' },
+                  { icon: Camera, url: 'https://www.instagram.com/abdi_adama_school/', color: 'hover:text-pink-500', name: 'Instagram' },
+                  { icon: Music2, url: 'https://www.tiktok.com/@abdiadama1', color: 'hover:text-black dark:hover:text-white', name: 'TikTok' }
                 ].map((social, i) => (
-                  <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className={`p-3 bg-slate-50 dark:bg-slate-900 rounded-xl text-slate-400 ${social.color} transition-all shadow-sm`}>
+                  <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className={`flex flex-col items-center gap-1.5 p-3 bg-slate-50 dark:bg-slate-900 rounded-xl text-slate-400 ${social.color} transition-all shadow-sm group`}>
                     <social.icon size={20} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">{social.name}</span>
                   </a>
                 ))}
               </div>
@@ -677,7 +649,7 @@ export const LandingPage = () => {
                 onClick={() => navigate('/login')}
                 className="flex items-center gap-3 px-6 py-3 bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-school-primary rounded-xl text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-school-primary/20 transition-all w-full"
               >
-                <ShieldAlert size={16} />
+                <LogIn size={16} />
                 {t('landing.footer.staffPortal')}
               </button>
             </div>
