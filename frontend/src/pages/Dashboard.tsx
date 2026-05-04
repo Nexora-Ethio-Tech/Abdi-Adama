@@ -297,7 +297,7 @@ export const Dashboard = () => {
               <h3 className="font-bold text-slate-800 dark:text-slate-100">
                 Grade Insertion is {gradesLocked ? 'LOCKED' : 'OPEN'}
               </h3>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
                 {gradesLocked
                   ? 'System is currently performing averages and ranking.'
                   : 'Teachers can currently enter and modify student grades.'}
@@ -311,7 +311,7 @@ export const Dashboard = () => {
                 onClick={() => {
                   alert('Calculating Student Ranks for all sections...');
                 }}
-                className="w-full sm:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-200"
+                className="w-full sm:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-200 dark:shadow-none"
               >
                 <TrendingUp size={18} />
                 Calculate Ranks

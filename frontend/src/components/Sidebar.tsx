@@ -162,22 +162,22 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   return (
     <aside className={cn(
-      "fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 dark:bg-black text-white flex flex-col h-screen transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto border-r border-slate-800/50",
+      "fixed inset-y-0 left-0 z-30 w-72 bg-white dark:bg-black text-slate-900 dark:text-white flex flex-col h-screen transition-all duration-300 lg:translate-x-0 lg:static lg:inset-auto border-r border-slate-200 dark:border-slate-800/50",
       isOpen ? "translate-x-0" : "-translate-x-full"
     )}>
       <div className="p-8 mt-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="relative p-1 bg-white rounded-xl shadow-lg">
+          <div className="relative p-1 bg-slate-100 dark:bg-white rounded-xl shadow-lg">
             <img src={logo} alt="Abdi Adama Logo" className="w-14 h-14 rounded-lg object-cover" />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="font-black text-xl tracking-tight block truncate text-white">{displaySchoolName}</span>
+            <span className="font-black text-xl tracking-tight block truncate text-slate-900 dark:text-white">{displaySchoolName}</span>
             <span className="text-xs text-school-accent font-bold uppercase tracking-widest block truncate">Smart-School</span>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="p-2 hover:bg-slate-800 rounded-lg lg:hidden"
+          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg lg:hidden text-slate-500 dark:text-white"
         >
           <X size={20} />
         </button>
@@ -200,12 +200,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               isExamLockedDown && "opacity-50 cursor-not-allowed",
               isActive && !isExamLockedDown
                 ? "bg-school-primary text-white shadow-lg shadow-school-primary/20 scale-[1.02]"
-                : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
+                : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             {({ isActive }) => (
               <>
-                <item.icon size={20} className={cn("transition-transform group-hover:scale-110", isActive ? "text-white" : "text-slate-500 group-hover:text-school-accent")} />
+                <item.icon size={20} className={cn("transition-transform group-hover:scale-110", isActive ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-school-accent")} />
                 <span className="font-bold text-sm tracking-wide">{item.label}</span>
               </>
             )}
@@ -213,12 +213,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         ))}
       </nav>
 
-      <div className="p-6 border-t border-slate-800/50 space-y-4">
+      <div className="p-6 border-t border-slate-200 dark:border-slate-800/50 space-y-4">
         <button
           onClick={handleLogout}
           disabled={isExamLockedDown}
           className={cn(
-            "flex items-center gap-4 px-5 py-4 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl transition-all duration-300 group",
+            "flex items-center gap-4 px-5 py-4 w-full text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-400/10 rounded-2xl transition-all duration-300 group",
             isExamLockedDown && "opacity-50 cursor-not-allowed"
           )}
         >
