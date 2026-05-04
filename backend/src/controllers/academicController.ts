@@ -89,37 +89,40 @@ export const getGradesWithSections = async (req: Request, res: Response) => {
 
     try {
         const rows = await withRLS(req, async (client) => {
-            let query = `
-        SELECT 
-          g.id as grade_id,
-          g.grade_level,
-          json_agg(
-            json_build_object(
-              'id', s.id,
-              'section_name', s.section_name,
-              'capacity', s.capacity,
-              'current_count', s.current_count,
-              'available', (s.capacity - s.current_count)
-            ) ORDER BY s.section_name
-          ) FILTER (WHERE s.id IS NOT NULL) as sections
-        FROM academic_grades g
-        LEFT JOIN academic_sections s ON g.id = s.grade_id AND s.is_active = TRUE
-        WHERE g.is_active = TRUE
-      `;
-
+            let whereClause = 'WHERE g.is_active = TRUE';
             const params: any[] = [];
 
-            // Branch filtering for non-super-admins
             if (user.role !== 'super-admin') {
                 params.push(user.branch_id);
-                query += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
+                whereClause += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
             }
 
-            query += ` GROUP BY g.id, g.grade_level ORDER BY 
-        CASE 
-          WHEN g.grade_level ~ '^[0-9]+$' THEN g.grade_level::INTEGER 
-          ELSE 999 
-        END`;
+            const query = `
+                SELECT 
+                    g.id as grade_id,
+                    g.grade_level,
+                    (
+                        SELECT json_agg(sections_data)
+                        FROM (
+                            SELECT 
+                                s.id, 
+                                s.section_name, 
+                                s.capacity, 
+                                s.current_count,
+                                (s.capacity - s.current_count) as available
+                            FROM academic_sections s
+                            WHERE s.grade_id = g.id AND s.is_active = TRUE
+                            ORDER BY s.section_name
+                        ) sections_data
+                    ) as sections
+                FROM academic_grades g
+                ${whereClause}
+                ORDER BY 
+                    CASE 
+                        WHEN g.grade_level ~ '^[0-9]+$' THEN g.grade_level::INTEGER 
+                        ELSE 999 
+                    END
+            `;
 
             const result = await client.query(query, params);
             return result.rows;
