@@ -37,6 +37,7 @@ const ParentClinicChat = lazy(() => import('./pages/ParentClinicChat').then((m) 
 const DriverPortal = lazy(() => import('./pages/DriverPortal').then((m) => ({ default: m.DriverPortal })));
 const WebsitePosts = lazy(() => import('./pages/WebsitePosts').then((m) => ({ default: m.WebsitePosts })));
 const AuditorDashboard = lazy(() => import('./pages/AuditorDashboard').then((m) => ({ default: m.AuditorDashboard })));
+const AcademicManagement = lazy(() => import('./pages/AcademicManagement').then((m) => ({ default: m.AcademicManagement })));
 
 const PageLoader = () => (
   <div className="min-h-[40vh] flex items-center justify-center">
@@ -243,6 +244,20 @@ function App() {
             <Route path="special-students" element={
               <ProtectedRoute allowedRoles={['auditor', 'finance-clerk', 'super-admin']}>
                 <AuditorDashboard />
+              </ProtectedRoute>
+            } />
+
+            <Route path="academic-management" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin']}>
+                <AcademicManagement />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admissions-dashboard" element={
+              <ProtectedRoute allowedRoles={['school-admin', 'super-admin']}>
+                <div className="flex items-center justify-center min-h-screen text-slate-400 text-lg font-semibold">
+                  🚧 Admissions Dashboard — Coming Next!
+                </div>
               </ProtectedRoute>
             } />
 
