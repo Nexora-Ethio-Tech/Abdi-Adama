@@ -67,30 +67,30 @@ export const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
         const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id, status: user.status, is_branch_auditor: user.is_branch_auditor }, JWT_SECRET, { expiresIn: '24h' });
-        // Determine dashboard redirect
-        let dashboard = '/dashboard';
+        // Determine dashboard redirect — must match App.tsx getDashboardRoute()
+        let dashboard = '/dashboard/school-admin';
         if (user.role === 'super-admin')
-            dashboard = '/super-admin-dashboard';
+            dashboard = '/dashboard/super-admin';
         else if (user.role === 'school-admin')
-            dashboard = '/school-admin-dashboard';
+            dashboard = '/dashboard/school-admin';
         else if (user.role === 'teacher')
-            dashboard = '/teacher-dashboard';
+            dashboard = '/dashboard/teacher';
         else if (user.role === 'student')
-            dashboard = '/student-dashboard';
+            dashboard = '/dashboard/student';
         else if (user.role === 'parent')
-            dashboard = '/parent-dashboard';
+            dashboard = '/dashboard/parent';
         else if (user.role === 'finance-clerk')
-            dashboard = '/finance-dashboard';
+            dashboard = '/dashboard/finance';
         else if (user.role === 'vice-principal')
-            dashboard = '/vice-principal-dashboard';
+            dashboard = '/dashboard/vice-principal';
         else if (user.role === 'driver')
-            dashboard = '/driver-dashboard';
+            dashboard = '/dashboard/driver';
         else if (user.role === 'auditor')
             dashboard = '/auditor-dashboard';
         else if (user.role === 'librarian')
-            dashboard = '/library';
+            dashboard = '/dashboard/librarian';
         else if (user.role === 'clinic-admin')
-            dashboard = '/clinic';
+            dashboard = '/dashboard/clinic-admin';
         res.json({
             token,
             user: {

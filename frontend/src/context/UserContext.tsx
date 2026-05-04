@@ -121,7 +121,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
@@ -198,10 +198,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('abdi_adama_token');
   };
 
-  const switchRole = (newRole: UserRole) => {
-    if (user) {
-      setUser({ ...user, role: newRole });
-    }
+  // switchRole is intentionally disabled in production.
+  // Role is determined ONLY by the server at login.
+  const switchRole = (_newRole: UserRole) => {
+    console.warn('switchRole is disabled. Role is set by server authentication only.');
   };
 
   return (

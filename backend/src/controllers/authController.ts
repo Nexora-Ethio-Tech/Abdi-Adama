@@ -103,19 +103,19 @@ export const login = async (req: Request, res: Response) => {
       { expiresIn: '24h' }
     );
 
-    // Determine dashboard redirect
-    let dashboard = '/dashboard';
-    if (user.role === 'super-admin') dashboard = '/super-admin-dashboard';
-    else if (user.role === 'school-admin') dashboard = '/school-admin-dashboard';
-    else if (user.role === 'teacher') dashboard = '/teacher-dashboard';
-    else if (user.role === 'student') dashboard = '/student-dashboard';
-    else if (user.role === 'parent') dashboard = '/parent-dashboard';
-    else if (user.role === 'finance-clerk') dashboard = '/finance-dashboard';
-    else if (user.role === 'vice-principal') dashboard = '/vice-principal-dashboard';
-    else if (user.role === 'driver') dashboard = '/driver-dashboard';
+    // Determine dashboard redirect — must match App.tsx getDashboardRoute()
+    let dashboard = '/dashboard/school-admin';
+    if (user.role === 'super-admin') dashboard = '/dashboard/super-admin';
+    else if (user.role === 'school-admin') dashboard = '/dashboard/school-admin';
+    else if (user.role === 'teacher') dashboard = '/dashboard/teacher';
+    else if (user.role === 'student') dashboard = '/dashboard/student';
+    else if (user.role === 'parent') dashboard = '/dashboard/parent';
+    else if (user.role === 'finance-clerk') dashboard = '/dashboard/finance';
+    else if (user.role === 'vice-principal') dashboard = '/dashboard/vice-principal';
+    else if (user.role === 'driver') dashboard = '/dashboard/driver';
     else if (user.role === 'auditor') dashboard = '/auditor-dashboard';
-    else if (user.role === 'librarian') dashboard = '/library';
-    else if (user.role === 'clinic-admin') dashboard = '/clinic';
+    else if (user.role === 'librarian') dashboard = '/dashboard/librarian';
+    else if (user.role === 'clinic-admin') dashboard = '/dashboard/clinic-admin';
 
     res.json({
       token,
