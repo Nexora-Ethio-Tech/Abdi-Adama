@@ -16,7 +16,7 @@ export const withRLS = async <T>(req: Request, callback: (client: PoolClient) =>
     // If we have an authenticated user, set the local session variables for RLS
     if (user) {
       await client.query(`SET LOCAL app.current_user_id = '${user.id}'`);
-      await client.query(`SET LOCAL app.current_role = '${user.role}'`);
+      await client.query(`SET LOCAL app.user_role = '${user.role}'`);
       await client.query(`SET LOCAL app.current_branch_id = '${user.branch_id || ''}'`);
     } else {
       // For public/unauthenticated routes
