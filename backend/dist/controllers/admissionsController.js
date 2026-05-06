@@ -1,3 +1,4 @@
+import { NotificationService } from '../services/notificationService.js';
 import { withRLS } from '../utils/dbClient.js';
 import bcrypt from 'bcrypt';
 // ============================================================
@@ -386,8 +387,8 @@ export const bulkSendExamNotification = async (req, res) => {
             (communication_id, application_id, phone, email, status)
           VALUES ($1, $2, $3, $4, 'sent')
         `, [commId, recipient.id, recipient.phone, recipient.email]);
-                // TODO: Actually send SMS/Email here
-                console.log(`Sending ${message_type} to ${recipient.name}: ${message}`);
+                // Notification is handled via NotificationService (mock until SMS provider is purchased)
+                await NotificationService.notifyParent(recipient.phone, recipient.name, message_type, message);
             }
         });
         res.json({ message: `Notification sent to ${application_ids.length} applicants` });

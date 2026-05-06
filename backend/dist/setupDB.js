@@ -1,38 +1,44 @@
 import pkg from 'pg';
 const { Pool } = pkg;
-// Connect as postgres superuser (trust mode - no password needed right now)
+import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+dotenv.config();
+// Connect using cPanel environment variables
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres',
-    port: 5432,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: parseInt(process.env.DB_PORT || '5432'),
 });
-const TARGET_USER = 'abdiadam_super-admin';
-const TARGET_PASS = 'AbdiAdama@Server@';
-const TARGET_DB = 'abdiadam_school_db';
 const run = async () => {
     try {
-        // 1. Create or update user
-        const userCheck = await pool.query(`SELECT usename FROM pg_user WHERE usename = $1`, [TARGET_USER]);
-        if (userCheck.rows.length === 0) {
-            await pool.query(`CREATE USER "${TARGET_USER}" WITH SUPERUSER PASSWORD '${TARGET_PASS}'`);
-            console.log('✅ User created:', TARGET_USER);
+        console.log('🚀 Starting Database Setup for cPanel...');
+        // In cPanel, the user and database are already created via the UI.
+        // We just need to ensure the schema is applied.
+        // Look for the schema file
+        const schemaPath = path.resolve(__dirname, '../../database/schema.sql');
+        if (!fs.existsSync(schemaPath)) {
+            console.error('❌ Schema file not found at:', schemaPath);
+            return;
         }
-        else {
-            await pool.query(`ALTER USER "${TARGET_USER}" WITH SUPERUSER PASSWORD '${TARGET_PASS}'`);
-            console.log('✅ User password set:', TARGET_USER);
+        const sql = fs.readFileSync(schemaPath, 'utf-8');
+        // Simple split by semicolon (caution: doesn't handle complex triggers/functions perfectly,
+        // but works for standard CREATE TABLE statements)
+        const statements = sql.split(';').map(s => s.trim()).filter(s => s.length > 0);
+        for (const statement of statements) {
+            try {
+                await pool.query(statement);
+            }
+            catch (err) {
+                // Ignore "already exists" errors
+                if (!err.message.includes('already exists')) {
+                    console.warn(`⚠️  Warning during statement execution: ${err.message}`);
+                }
+            }
         }
-        // 2. Create database if needed
-        const dbCheck = await pool.query(`SELECT datname FROM pg_database WHERE datname = $1`, [TARGET_DB]);
-        if (dbCheck.rows.length === 0) {
-            await pool.query(`CREATE DATABASE "${TARGET_DB}" OWNER "${TARGET_USER}"`);
-            console.log('✅ Database created:', TARGET_DB);
-        }
-        else {
-            await pool.query(`GRANT ALL PRIVILEGES ON DATABASE "${TARGET_DB}" TO "${TARGET_USER}"`);
-            console.log('✅ Database exists, privileges granted');
-        }
-        console.log('\n✅ Setup complete! Now applying schema and RLS...\n');
+        console.log('✅ Database tables setup successful!');
     }
     catch (err) {
         console.error('❌ Setup error:', err.message);
