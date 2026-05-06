@@ -1,17 +1,14 @@
-
 import { BookOpen, Users, Calendar, ArrowRight, Award, ClipboardList, Star, Save, CheckCircle, ChevronRight, History, FileText, CheckSquare, MessageSquare, X, Plus } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { mockClasses, mockStudents, commFields, ratingLabels, mockWeeklyPlans, mockTeachers, type WeeklyPlan } from '../data/mockData';
-import { mockExams } from '../data/examData';
+import type { WeeklyPlan } from '../data/mockData';
 import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 
 export const TeacherPortal = () => {
   const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
-  const teacherProfile = mockTeachers.find(t => t.id === user?.id);
-  const isDean = teacherProfile?.isDean || false;
-  const isRoomTeacher = teacherProfile?.isRoomTeacher || false;
+  const isDean = (user as any)?.is_dean || false;
+  const isRoomTeacher = (user as any)?.is_room_teacher || false;
 
   const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'communication' | 'review'>('overview');
 
@@ -32,8 +29,21 @@ export const TeacherPortal = () => {
   const [teacherNote, setTeacherNote] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
+  const commFields = [
+    { id: 'discipline', label: 'Discipline', description: 'Behavior and following rules' },
+    { id: 'hygiene', label: 'Hygiene', description: 'Personal cleanliness and uniform' },
+    { id: 'participation', label: 'Participation', description: 'In-class activity and engagement' },
+    { id: 'homework', label: 'Homework', description: 'Completion and quality of assignments' }
+  ];
+
+  const ratingLabels: Record<number, string> = {
+    3: 'Excellent',
+    2: 'Good',
+    1: 'Fair',
+    0: 'Needs Improvement'
+  };
+
   // Smart Lesson Planning State
-  const [plans, setPlans] = useState<WeeklyPlan[]>(mockWeeklyPlans);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [newPlan, setNewPlan] = useState<Partial<WeeklyPlan>>({
     date: new Date().toISOString().split('T')[0],
@@ -49,32 +59,59 @@ export const TeacherPortal = () => {
     status: 'Pending'
   });
 
-  const handleAddPlan = (e: React.FormEvent) => {
-    e.preventDefault();
-    const plan: WeeklyPlan = {
-      ...newPlan as WeeklyPlan,
-      id: `P${plans.length + 1}`,
-      teacherId: user?.id || 'T1',
-      status: 'Pending'
-    };
-    setPlans([plan, ...plans]);
-    setIsPlanModalOpen(false);
-    setNewPlan({
-      date: new Date().toISOString().split('T')[0],
-      content: '',
-      objectives: '',
-      teacherActivity: '',
-      time: '',
-      studentActivity: '',
-      teachingMethod: '',
-      teachingAids: '',
-      evaluation: '',
-      remark: '',
-      status: 'Pending'
-    });
+  const [assignedSections, setAssignedSections] = useState<any[]>([]);
+  const [plans, setPlans] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getToken = () => localStorage.getItem('abdi_adama_token') || '';
+
+  const fetchData = async () => {
+    try {
+      // 1. Fetch assigned sections
+      const sRes = await fetch(`${API}/api/academic/teacher/sections`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (sRes.ok) setAssignedSections(await sRes.json());
+
+      // 2. Fetch weekly plans
+      const pRes = await fetch(`${API}/api/operational/weekly-plans`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (pRes.ok) setPlans(await pRes.json());
+    } catch (err) { console.error(err); }
   };
 
-  const pendingAssignments = mockExams.filter(e => e.category === 'Assignment').length;
+  useEffect(() => { fetchData(); }, []);
+
+  const handleAddPlan = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API}/api/operational/weekly-plans`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify(newPlan)
+      });
+      if (res.ok) {
+        setIsPlanModalOpen(false);
+        fetchData(); // Refresh plans
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchStudentsForClass = async (sectionId: string) => {
+    try {
+      const res = await fetch(`${API}/api/academic/sections/${sectionId}/students`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (res.ok) setStudents(await res.json());
+    } catch (err) { console.error(err); }
+  };
+
+  const pendingAssignments = 0; // TODO: fetch from /api/exams when exam module is live
 
   const handleRating = (fieldId: string, rating: number) => {
     setRatings(prev => ({ ...prev, [fieldId]: rating }));
@@ -326,15 +363,14 @@ export const TeacherPortal = () => {
               <button className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest hover:underline">View All Classes</button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {mockClasses.map((cls) => (
+              {assignedSections.map((cls) => (
                 <div key={cls.id} className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none flex items-center justify-between group hover:border-blue-500/50 transition-all duration-500">
                   <div className="flex items-center gap-6">
                     <div className="bg-slate-50 dark:bg-slate-800 p-5 rounded-[2rem] text-slate-600 dark:text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
                       <Users size={28} />
                     </div>
                     <div>
-                      <h4 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">{cls.name}</h4>
-                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">{cls.students} Enrolled Students</p>
+                      <h4 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">Grade {cls.grade_level} - {cls.section_name}</h4>
                     </div>
                   </div>
                   <Link
@@ -483,16 +519,17 @@ export const TeacherPortal = () => {
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
               <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Select Class</h3>
               <div className="space-y-2">
-                {mockClasses.map(cls => (
+                {assignedSections.map(cls => (
                   <button
                     key={cls.id}
                     onClick={() => {
-                      setSelectedClass(cls.name);
+                      setSelectedClass(cls.id);
+                      fetchStudentsForClass(cls.id);
                       setSelectedStudent(null);
                     }}
-                    className={`w-full p-4 flex items-center justify-between rounded-xl transition-all ${selectedClass === cls.name ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700'}`}
+                    className={`w-full p-4 flex items-center justify-between rounded-xl transition-all ${selectedClass === cls.id ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700'}`}
                   >
-                    <span className="font-bold">{cls.name}</span>
+                    <span className="font-bold">Grade {cls.grade_level} - {cls.section_name}</span>
                     <ChevronRight size={18} />
                   </button>
                 ))}
@@ -503,7 +540,7 @@ export const TeacherPortal = () => {
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm animate-in slide-in-from-top-4">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Students</h3>
                 <div className="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar">
-                  {mockStudents.filter(s => s.grade === selectedClass.replace('Grade ', '')).map(student => (
+                  {students.map(student => (
                     <button
                       key={student.id}
                       onClick={() => {

@@ -1,5 +1,5 @@
 
-import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Briefcase, ShoppingCart, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, Filter, ChevronDown, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CreditCard, ArrowUpRight, ArrowDownRight, Search, FileText, Users, Plus, X, Check, AlertCircle, Bell, History, ShieldCheck, Clock, Filter, ChevronDown, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { mockFinances, mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
@@ -7,6 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { exportToCSV } from '../utils/exportUtils';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useCallback } from 'react';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+const getToken = () => localStorage.getItem('abdi_adama_token') || '';
+
+const authHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${getToken()}`,
+});
 
 interface PaymentLog {
   status: boolean;
@@ -73,8 +83,6 @@ export const Finance = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [fromDateTime, setFromDateTime] = useState(toInputDateTimeValue(startOfYear));
   const [toDateTime, setToDateTime] = useState(toInputDateTimeValue(now));
-  const [txCategory, setTxCategory] = useState('Student Fee');
-  const [customCategory, setCustomCategory] = useState('');
   const [netProfitSummary, setNetProfitSummary] = useState<NetProfitSummary | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [enrollmentQueue, setEnrollmentQueue] = useState([
@@ -90,6 +98,10 @@ export const Finance = () => {
   });
 
   const [activeView, setActiveView] = useState<'main' | 'audit'>('main');
+  const [dbSummary, setDbSummary] = useState<any>(null);
+  const [dbTransactions, setDbTransactions] = useState<any[]>([]);
+  const [txCategory, setTxCategory] = useState('Student Fee');
+  const [customCategory, setCustomCategory] = useState('');
   const [auditFilter, setAuditFilter] = useState<'In' | 'Out'>('In');
   const [auditCategory, setAuditCategory] = useState<'Fees' | 'Staff'>('Fees');
   const [auditSection, setAuditSection] = useState('all');
@@ -99,6 +111,21 @@ export const Finance = () => {
   const [auditMinAmount, setAuditMinAmount] = useState('');
   const [auditMaxAmount, setAuditMaxAmount] = useState('');
   const AUDIT_PAGE_SIZE = 10;
+
+  const fetchData = useCallback(async () => {
+    try {
+      const [sumRes, txRes] = await Promise.all([
+        fetch(`${API}/api/finance/summary`, { headers: authHeaders() }),
+        fetch(`${API}/api/finance/transactions`, { headers: authHeaders() })
+      ]);
+      if (sumRes.ok) setDbSummary(await sumRes.json());
+      if (txRes.ok) setDbTransactions(await txRes.json());
+    } catch (err) {
+      console.error('Failed to fetch finance data', err);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const matchesRange = (timestamp: string) => {
     const current = new Date(timestamp);
@@ -179,15 +206,7 @@ export const Finance = () => {
     return matchesRange(summary.timestamp) && matchesSearch;
   });
 
-  const filteredRecentTransactions = mockFinances.recentTransactions.filter((tx) => {
-    const txTime = `${tx.date}T12:00:00`;
-    const matchesSearch =
-      tx.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.verifiedBy.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesRange(txTime) && matchesSearch;
-  });
+
 
   const calculateNetProfit = () => {
     const totalIn = filteredSummaries
@@ -259,7 +278,7 @@ export const Finance = () => {
         <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-900/20 relative overflow-hidden group hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
           <div className="relative z-10">
             <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{t('finance.totalRevenue')}</p>
-            <h3 className="text-4xl font-black tracking-tight">{mockFinances.totalRevenue.toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
+            <h3 className="text-4xl font-black tracking-tight">{(dbSummary?.total_revenue || 0).toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
             <div className="mt-8 flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-widest bg-white/5 w-fit px-3 py-1 rounded-full">
               <ArrowUpRight size={14} />
               <span>+12% {t('finance.trend')}</span>
@@ -272,7 +291,7 @@ export const Finance = () => {
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-800 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
           <p className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{t('finance.pendingFees')}</p>
-          <h3 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">{mockFinances.pendingFees.toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
+          <h3 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">{(dbSummary?.pending_fees || 0).toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
           <div className="mt-8 flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-widest bg-amber-50 dark:bg-amber-900/20 w-fit px-3 py-1 rounded-full">
             <ArrowDownRight size={14} />
             <span>5.2% {t('finance.attention')}</span>
@@ -281,7 +300,7 @@ export const Finance = () => {
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-800 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
           <p className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{t('finance.registrationFees')}</p>
-          <h3 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">45,000 <span className="text-sm font-bold text-slate-400">ETB</span></h3>
+          <h3 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">{(dbSummary?.monthly_revenue || 0).toLocaleString()} <span className="text-sm font-bold text-slate-400">ETB</span></h3>
           <div className="mt-8 flex items-center gap-2 text-blue-500 text-[10px] font-black uppercase tracking-widest bg-blue-50 dark:bg-blue-900/20 w-fit px-3 py-1 rounded-full">
             <ArrowUpRight size={14} />
             <span>{t('finance.monthlyTarget')}</span>
@@ -732,80 +751,63 @@ export const Finance = () => {
               </thead>
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
                 {isAdmin ? (
-                  filteredSummaries.map((summary) => (
-                    <tr key={summary.id} className="hover:bg-slate-50 transition-all duration-200 group/row border-l-4 border-transparent hover:border-blue-500">
+                  dbTransactions.map((tx) => (
+                    <tr key={tx.id} className="hover:bg-slate-50 transition-all duration-200 group/row border-l-4 border-transparent hover:border-blue-500">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className={`p-2.5 rounded-xl shadow-sm group-hover/row:scale-110 transition-transform duration-300 ${
-                            summary.category === 'Student Fees' ? 'bg-blue-50 text-blue-600' :
-                            summary.category === 'Staff Payment' ? 'bg-purple-50 text-purple-600' :
-                            'bg-amber-50 text-amber-600'
+                            tx.type === 'Income' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600'
                           }`}>
-                            {summary.category === 'Student Fees' && <Users size={16} />}
-                            {summary.category === 'Staff Payment' && <Briefcase size={16} />}
-                            {summary.category === 'Item Purchase' && <ShoppingCart size={16} />}
+                            {tx.type === 'Income' ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                           </div>
-                          <span className="font-medium text-slate-800">{summary.category}</span>
+                          <span className="font-medium text-slate-800">{tx.type}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">{summary.description}</td>
+                      <td className="px-6 py-4 text-slate-600">{tx.student_name}</td>
                       <td className="px-6 py-4">
                         <span className="text-xs text-slate-500">
-                          {summary.category === 'Student Fees' && `From ${summary.count} students`}
-                          {summary.category === 'Staff Payment' && `To ${summary.count} staff members`}
-                          {summary.category === 'Item Purchase' && `${summary.count} items bought`}
+                          Branch: {tx.branch_name}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 font-semibold">{summary.approvedBy}</td>
-                      <td className="px-6 py-4 text-slate-500">{formatDateTime(summary.timestamp)}</td>
+                      <td className="px-6 py-4 text-slate-500 font-semibold">{tx.verified_by}</td>
+                      <td className="px-6 py-4 text-slate-500">{formatDateTime(tx.date)}</td>
                       <td className={`px-6 py-4 text-right font-bold ${
-                        summary.type === 'Income' ? 'text-emerald-600' : 'text-rose-600'
+                        tx.type === 'Income' ? 'text-emerald-600' : 'text-rose-600'
                       }`}>
-                        {summary.type === 'Expense' && '-'}
-                        {summary.amount.toLocaleString()} ETB
+                        {tx.type === 'Expense' && '-'}
+                        {tx.amount.toLocaleString()} ETB
                       </td>
                     </tr>
                   ))
                 ) : (
-                  filteredRecentTransactions.map((tx) => (
+                  dbTransactions.map((tx) => (
                     <tr key={tx.id} className="hover:bg-slate-50 transition-all duration-200 group/row border-l-4 border-transparent hover:border-blue-500">
-                      <td className="px-6 py-4 font-mono text-slate-500">{tx.id}</td>
-                      <td className="px-6 py-4 font-medium text-slate-800">{tx.student}</td>
                       <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                          {tx.type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 group relative cursor-help">
-                           <ShieldCheck size={14} className="text-emerald-500" />
-                           <span className="text-xs font-bold text-slate-700">{tx.verifiedBy}</span>
-                           <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block w-48 p-2 bg-slate-900 text-white text-[8px] rounded-lg shadow-xl z-10 border border-white/10">
-                              <p className="font-mono opacity-60 mb-1">DIGITAL SIGNATURE</p>
-                              <p className="font-mono break-all">{btoa(tx.verifiedBy + tx.id).slice(0, 32)}...</p>
-                              <div className="mt-1 flex items-center gap-1 text-emerald-400 font-bold uppercase">
-                                 <Check size={8} />
-                                 Authenticity Verified
-                              </div>
-                           </div>
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2.5 rounded-xl shadow-sm group-hover/row:scale-110 transition-transform duration-300 ${
+                            tx.type === 'Income' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600'
+                          }`}>
+                            {tx.type === 'Income' ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                          </div>
+                          <span className="font-medium text-slate-800">{tx.type}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-500">{tx.date}</td>
-                      <td className="px-6 py-4 text-right font-bold text-slate-800">{tx.amount.toLocaleString()} ETB</td>
+                      <td className="px-6 py-4 text-slate-600">{tx.student_name}</td>
+                      <td className="px-6 py-4 text-slate-500 font-semibold">{tx.verified_by}</td>
+                      <td className="px-6 py-4 text-slate-500">{formatDateTime(tx.date)}</td>
+                      <td className={`px-6 py-4 text-right font-bold ${
+                        tx.type === 'Income' ? 'text-emerald-600' : 'text-rose-600'
+                      }`}>
+                        {tx.type === 'Expense' && '-'}
+                        {tx.amount.toLocaleString()} ETB
+                      </td>
                     </tr>
                   ))
                 )}
-                {isAdmin && filteredSummaries.length === 0 && (
+                {dbTransactions.length === 0 && (
                   <tr>
                     <td colSpan={6} className="px-6 py-10 text-center text-sm font-semibold text-slate-400">
-                      No summary records match the selected range and search term.
-                    </td>
-                  </tr>
-                )}
-                {!isAdmin && filteredRecentTransactions.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-sm font-semibold text-slate-400">
-                      No transactions found in this time range.
+                      No transactions found in the database.
                     </td>
                   </tr>
                 )}
@@ -885,10 +887,37 @@ export const Finance = () => {
                 <X size={20} />
               </button>
             </div>
-            <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setShowForm(false); }}>
+            <form className="p-6 space-y-4" onSubmit={async (e) => {
+              e.preventDefault();
+              const f = new FormData(e.currentTarget);
+              const data = {
+                student_name: f.get('desc'),
+                amount: Number(f.get('amount')),
+                type: f.get('type'),
+                date: new Date().toISOString(),
+                verified_by: user?.name || 'Unknown',
+                branch_id: (user as any).branch_id || 'B001',
+                student_id: null
+              };
+              try {
+                const res = await fetch(`${API}/api/finance/transactions`, {
+                  method: 'POST',
+                  headers: authHeaders(),
+                  body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                   setSuccessMsg('Transaction recorded successfully!');
+                   fetchData();
+                   setShowForm(false);
+                }
+              } catch (err) {
+                console.error(err);
+              }
+            }}>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Category</label>
                 <select
+                  name="category"
                   value={txCategory}
                   onChange={(e) => setTxCategory(e.target.value)}
                   className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
@@ -918,6 +947,7 @@ export const Finance = () => {
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Transaction Name / Description</label>
                 <input
                   required
+                  name="desc"
                   type="text"
                   placeholder="e.g. Electricity Bill, Stationery Purchase"
                   className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
@@ -927,15 +957,16 @@ export const Finance = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-500 uppercase">Type</label>
-                  <select className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                    <option value="in">Money In (Income)</option>
-                    <option value="out">Money Out (Expense)</option>
+                  <select name="type" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Income">Money In (Income)</option>
+                    <option value="Expense">Money Out (Expense)</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-500 uppercase">Amount (ETB)</label>
                   <input
                     required
+                    name="amount"
                     type="number"
                     placeholder="0.00"
                     className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"

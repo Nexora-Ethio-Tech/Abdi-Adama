@@ -9,18 +9,21 @@ import {
     bulkCreateSections,
     updateSection,
     deleteSection,
-    getStudentsBySection
+    getStudentsBySection,
+    getTeacherSections
 } from '../controllers/academicController.js';
 
 const router = Router();
 
-// All routes require authentication
+// Public route for student registration dropdowns
+router.get('/grades/with-sections', getGradesWithSections);
+
+// All other routes require authentication
 router.use(authenticateToken);
 
 // Grades
 router.get('/grades', getGrades);
 router.post('/grades', createGrade);
-router.get('/grades/with-sections', getGradesWithSections);
 
 // Sections
 router.get('/grades/:gradeId/sections', getSectionsByGrade);
@@ -28,6 +31,7 @@ router.post('/sections', createSection);
 router.post('/sections/bulk', bulkCreateSections);
 router.put('/sections/:sectionId', updateSection);
 router.delete('/sections/:sectionId', deleteSection);
+router.get('/teacher/sections', getTeacherSections);
 router.get('/sections/:sectionId/students', getStudentsBySection);
 
 export default router;

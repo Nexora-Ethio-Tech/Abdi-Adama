@@ -79,34 +79,48 @@ export const getGradesWithSections = async (req, res) => {
     const user = req.user;
     try {
         const rows = await withRLS(req, async (client) => {
-            let query = `
-        SELECT 
-          g.id as grade_id,
-          g.grade_level,
-          json_agg(
-            json_build_object(
-              'id', s.id,
-              'section_name', s.section_name,
-              'capacity', s.capacity,
-              'current_count', s.current_count,
-              'available', (s.capacity - s.current_count)
-            ) ORDER BY s.section_name
-          ) FILTER (WHERE s.id IS NOT NULL) as sections
-        FROM academic_grades g
-        LEFT JOIN academic_sections s ON g.id = s.grade_id AND s.is_active = TRUE
-        WHERE g.is_active = TRUE
-      `;
+            let whereClause = 'WHERE g.is_active = TRUE';
             const params = [];
-            // Branch filtering for non-super-admins
-            if (user.role !== 'super-admin') {
+            if (user && user.role !== 'super-admin') {
                 params.push(user.branch_id);
-                query += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
+                whereClause += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
             }
-            query += ` GROUP BY g.id, g.grade_level ORDER BY 
-        CASE 
-          WHEN g.grade_level ~ '^[0-9]+$' THEN g.grade_level::INTEGER 
-          ELSE 999 
-        END`;
+            else if (!user) {
+                // Public request - usually for registration. 
+                // We might want to filter by a specific branch if provided in query, 
+                // otherwise show all active grades.
+                const branchId = req.query.branch_id;
+                if (branchId) {
+                    params.push(branchId);
+                    whereClause += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
+                }
+            }
+            const query = `
+                SELECT 
+                    g.id as grade_id,
+                    g.grade_level,
+                    (
+                        SELECT json_agg(sections_data)
+                        FROM (
+                            SELECT 
+                                s.id, 
+                                s.section_name, 
+                                s.capacity, 
+                                s.current_count,
+                                (s.capacity - s.current_count) as available
+                            FROM academic_sections s
+                            WHERE s.grade_id = g.id AND s.is_active = TRUE
+                            ORDER BY s.section_name
+                        ) sections_data
+                    ) as sections
+                FROM academic_grades g
+                ${whereClause}
+                ORDER BY 
+                    CASE 
+                        WHEN g.grade_level ~ '^[0-9]+$' THEN g.grade_level::INTEGER 
+                        ELSE 999 
+                    END
+            `;
             const result = await client.query(query, params);
             return result.rows;
         });
@@ -235,5 +249,28 @@ export const getStudentsBySection = async (req, res) => {
     catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch students' });
+    }
+};
+/**
+ * Get sections assigned to a teacher
+ */
+export const getTeacherSections = async (req, res) => {
+    const user = req.user;
+    try {
+        const rows = await withRLS(req, async (client) => {
+            const result = await client.query(`
+                SELECT s.id, s.section_name, g.grade_level
+                FROM academic_sections s
+                JOIN academic_grades g ON s.grade_id = g.id
+                WHERE s.room_teacher_id = (SELECT id FROM teachers WHERE user_id = $1)
+                AND s.is_active = TRUE
+            `, [user.id]);
+            return result.rows;
+        });
+        res.json(rows);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch teacher sections' });
     }
 };

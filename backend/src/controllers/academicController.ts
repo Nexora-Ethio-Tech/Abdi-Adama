@@ -92,9 +92,18 @@ export const getGradesWithSections = async (req: Request, res: Response) => {
             let whereClause = 'WHERE g.is_active = TRUE';
             const params: any[] = [];
 
-            if (user.role !== 'super-admin') {
+            if (user && user.role !== 'super-admin') {
                 params.push(user.branch_id);
                 whereClause += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
+            } else if (!user) {
+                // Public request - usually for registration. 
+                // We might want to filter by a specific branch if provided in query, 
+                // otherwise show all active grades.
+                const branchId = req.query.branch_id;
+                if (branchId) {
+                  params.push(branchId);
+                  whereClause += ` AND (g.branch_id = $1 OR g.branch_id IS NULL)`;
+                }
             }
 
             const query = `
@@ -273,5 +282,28 @@ export const getStudentsBySection = async (req: Request, res: Response) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch students' });
+    }
+};
+
+/**
+ * Get sections assigned to a teacher
+ */
+export const getTeacherSections = async (req: Request, res: Response) => {
+    const user = (req as any).user;
+    try {
+        const rows = await withRLS(req, async (client) => {
+            const result = await client.query(`
+                SELECT s.id, s.section_name, g.grade_level
+                FROM academic_sections s
+                JOIN academic_grades g ON s.grade_id = g.id
+                WHERE s.room_teacher_id = (SELECT id FROM teachers WHERE user_id = $1)
+                AND s.is_active = TRUE
+            `, [user.id]);
+            return result.rows;
+        });
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch teacher sections' });
     }
 };

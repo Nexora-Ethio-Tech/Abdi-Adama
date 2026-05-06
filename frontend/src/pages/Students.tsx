@@ -1,6 +1,4 @@
-
 import { Search, Filter, MoreVertical, Download, ChevronRight, ArrowLeft, UserPlus, X, Check } from 'lucide-react';
-import { mockStudents } from '../data/mockData';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
@@ -9,9 +7,36 @@ import { exportToCSV } from '../utils/exportUtils';
 export const Students = () => {
   const navigate = useNavigate();
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
+  const [allStudents, setAllStudents] = useState<any[]>([]);
+  const [grades, setGrades] = useState<any[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [allStudents, setAllStudents] = useState(mockStudents);
-  const grades = Array.from(new Set(allStudents.map(s => s.grade))).sort();
+  const [phonePrefix] = useState('+251 ');
+
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getToken = () => localStorage.getItem('abdi_adama_token') || '';
+
+  const fetchData = async () => {
+    try {
+      const gRes = await fetch(`${API}/api/academic/grades/with-sections`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (gRes.ok) setGrades(await gRes.json());
+
+      const sRes = await fetch(`${API}/api/students`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (sRes.ok) {
+        const data = await sRes.json();
+        // AUTOMATED SORTING: Alphabetical by name
+        const sorted = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
+        setAllStudents(sorted);
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+
+  useState(() => { fetchData(); });
 
   const handleExport = (data = allStudents, filename = 'Students_List') => {
     const dataToExport = data.map(s => ({
@@ -25,48 +50,36 @@ export const Students = () => {
     exportToCSV(dataToExport, filename);
   };
 
-  const handleAddStudent = (e: React.FormEvent) => {
+  const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
-    const name = formData.get('name') as string;
-    const grade = formData.get('grade') as string;
-    const parentName = formData.get('parentName') as string;
-    const parentPhone = formData.get('parentPhone') as string;
-
-    const newStudent = {
-      id: `ST${Date.now()}`,
-      name,
-      grade,
-      parentName,
-      parentPhone,
-      status: 'Active' as const,
-      attendance: '100%',
-      gpa: 'N/A',
-      riskLevel: 'Low',
-      riskFactor: 'Initial registration.',
-
-      isScholarship: false,
-      isBusUser: false,
-      penaltyFee: 0,
-      monthlyFee: 5000,
-      busFee: 0,
-      dob: '2010-01-01',
-      gender: 'Other',
-      address: 'Not provided',
-      bloodGroup: 'N/A',
-      allergies: 'None',
-      medications: 'None',
-      chronicConditions: 'None',
-      vaccinationStatus: 'Unknown',
-      homeMedications: 'None',
-      bio: 'New student.',
-      attendanceHistory: [],
-      academicHistory: [],
-      emergencyContact: { name: parentName, relation: 'Parent', phone: parentPhone }
+    
+    const payload = {
+      name: formData.get('name'),
+      grade: formData.get('grade'),
+      section_id: formData.get('section'),
+      parentName: formData.get('parentName'),
+      parentPhone: phonePrefix + formData.get('parentPhone'),
+      branch_id: grades[0]?.branch_id // Default to same branch as grades
     };
 
-    setAllStudents(prev => [newStudent, ...prev]);
-    setShowAddModal(false);
+    try {
+      const res = await fetch(`${API}/api/students`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      if (res.ok) {
+        setShowAddModal(false);
+        fetchData(); // Refresh list
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (selectedGrade) {
@@ -114,7 +127,7 @@ export const Students = () => {
                       className="flex items-center gap-3 group/profile cursor-pointer"
                     >
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/30 dark:to-blue-800/20 rounded-xl flex items-center justify-center text-blue-700 dark:text-blue-400 font-black text-xs transition-all group-hover/profile:scale-110">
-                        {student.name.split(' ').map(n => n[0]).join('')}
+                        {student.name.split(' ').map((n: string) => n[0]).join('')}
                       </div>
                       <span className="text-sm font-medium text-slate-800 dark:text-white group-hover/profile:text-blue-600 dark:group-hover/profile:text-blue-400 transition-colors">{student.name}</span>
                     </Link>
@@ -161,7 +174,7 @@ export const Students = () => {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <button 
-            onClick={() => setShowAddModal(true)}
+            onClick={() => navigate('/registration')}
             className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-200 dark:shadow-none text-sm font-bold"
           >
             <UserPlus size={20} />
@@ -194,16 +207,16 @@ export const Students = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {grades.map((grade) => (
           <button
-            key={grade}
-            onClick={() => setSelectedGrade(grade)}
+            key={grade.grade_id}
+            onClick={() => setSelectedGrade(grade.grade_level)}
             className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-xl dark:hover:shadow-none hover:-translate-y-1 transition-all group text-left"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-2xl font-black text-slate-800 dark:text-white">{grade}</span>
+              <span className="text-2xl font-black text-slate-800 dark:text-white">G-{grade.grade_level}</span>
               <ChevronRight size={20} className="text-slate-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors" />
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
-              {allStudents.filter(s => s.grade === grade).length} Students
+              {allStudents.filter(s => s.grade_level === grade.grade_level).length} Students
             </p>
           </button>
         ))}
@@ -228,11 +241,21 @@ export const Students = () => {
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Student Full Name</label>
                 <input name="name" required type="text" placeholder="e.g. Abdi Tolosa" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Grade Level</label>
-                <select name="grade" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                  {grades.map(g => <option key={g} value={g}>{g}</option>)}
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Grade Level</label>
+                  <select name="grade" required className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    {grades.map(g => <option key={g.grade_id} value={g.grade_level}>{g.grade_level}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Section</label>
+                  <select name="section" required className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    {grades.flatMap(g => g.sections || []).map(s => (
+                      <option key={s.id} value={s.id}>{s.section_name} (Avail: {s.available})</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Parent/Guardian Name</label>
@@ -240,7 +263,12 @@ export const Students = () => {
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase">Guardian Phone Number</label>
-                <input name="parentPhone" required type="tel" placeholder="e.g. +251 9..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <div className="flex gap-2">
+                  <div className="px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-500">
+                    {phonePrefix}
+                  </div>
+                  <input name="parentPhone" required type="tel" placeholder="912345678" className="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
               </div>
               <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-800/50">
                 <p className="text-[10px] text-amber-700 dark:text-amber-400 font-medium leading-relaxed">

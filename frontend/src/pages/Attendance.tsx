@@ -1,9 +1,7 @@
-
-import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck, Users, ShieldAlert, ArrowRight, X, Send, Check, Loader2 } from 'lucide-react';
-import { mockStudents, mockTeachers } from '../data/mockData';
+import { CheckCircle, XCircle, Clock, ChevronDown, UserCheck, Users, ShieldAlert, ArrowRight, X, Send, Check, Loader2, ArrowLeft } from 'lucide-react';
+import { mockTeachers, mockStudents } from '../data/mockData';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
-import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 
@@ -24,7 +22,7 @@ export const Attendance = () => {
     { id: '2', studentName: 'Sara Mohammed', grade: '9B', reason: 'Family emergency', time: '08:45 AM' },
   ]);
 
-  const students = mockStudents.filter(s => s.grade === selectedGrade);
+  const students = mockStudents.filter((s: any) => s.grade === selectedGrade);
 
   const toggleStatus = (studentId: string, status: 'present' | 'absent' | 'late') => {
     setAttendance(prev => ({
@@ -35,7 +33,7 @@ export const Attendance = () => {
 
   const markAll = (status: 'present' | 'absent' | 'late') => {
     const newAttendance = { ...attendance };
-    students.forEach(s => {
+    students.forEach((s: any) => {
       newAttendance[s.id] = status;
     });
     setAttendance(newAttendance);
@@ -368,7 +366,7 @@ export const Attendance = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
-                  {students.map((student) => (
+                  {students.map((student: any) => (
                     <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">

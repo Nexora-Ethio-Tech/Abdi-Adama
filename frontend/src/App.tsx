@@ -38,6 +38,7 @@ const DriverPortal = lazy(() => import('./pages/DriverPortal').then((m) => ({ de
 const WebsitePosts = lazy(() => import('./pages/WebsitePosts').then((m) => ({ default: m.WebsitePosts })));
 const AuditorDashboard = lazy(() => import('./pages/AuditorDashboard').then((m) => ({ default: m.AuditorDashboard })));
 const AcademicManagement = lazy(() => import('./pages/AcademicManagement').then((m) => ({ default: m.AcademicManagement })));
+const VicePrincipalDashboard = lazy(() => import('./pages/VicePrincipalDashboard').then((m) => ({ default: m.VicePrincipalDashboard })));
 
 const PageLoader = () => (
   <div className="min-h-[40vh] flex items-center justify-center">
@@ -125,10 +126,10 @@ function App() {
             <Route path="dashboard/student" element={<ProtectedRoute allowedRoles={['student']}><StudentPortal /></ProtectedRoute>} />
             <Route path="dashboard/parent" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
             <Route path="dashboard/driver" element={<ProtectedRoute allowedRoles={['driver']}><DriverPortal /></ProtectedRoute>} />
-            <Route path="dashboard/finance" element={<ProtectedRoute allowedRoles={['finance-clerk']}><Dashboard /></ProtectedRoute>} />
-            <Route path="dashboard/vice-principal" element={<ProtectedRoute allowedRoles={['vice-principal']}><Dashboard /></ProtectedRoute>} />
-            <Route path="dashboard/librarian" element={<ProtectedRoute allowedRoles={['librarian']}><Dashboard /></ProtectedRoute>} />
-            <Route path="dashboard/clinic-admin" element={<ProtectedRoute allowedRoles={['clinic-admin']}><Dashboard /></ProtectedRoute>} />
+            <Route path="dashboard/finance" element={<ProtectedRoute allowedRoles={['finance-clerk']}><Finance /></ProtectedRoute>} />
+            <Route path="dashboard/vice-principal" element={<ProtectedRoute allowedRoles={['vice-principal']}><VicePrincipalDashboard /></ProtectedRoute>} />
+            <Route path="dashboard/librarian" element={<ProtectedRoute allowedRoles={['librarian']}><Library /></ProtectedRoute>} />
+            <Route path="dashboard/clinic-admin" element={<ProtectedRoute allowedRoles={['clinic-admin']}><Clinic /></ProtectedRoute>} />
             <Route path="auditor-dashboard" element={<ProtectedRoute allowedRoles={['auditor']}><AuditorDashboard /></ProtectedRoute>} />
 
             {/* Role specific routes */}

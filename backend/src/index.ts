@@ -59,6 +59,7 @@ app.use((_req, res, next) => {
 });
 
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 // LiteSpeed proxies  https://abdi-adama.com/api  →  Node (root '/')

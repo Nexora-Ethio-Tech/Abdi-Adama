@@ -8,7 +8,7 @@ import { useUser } from '../context/UserContext';
 export const Settings = () => {
   const [activeTab, setActiveTab] = useState('General');
   const { style, setStyle, autoDarkMode, setAutoDarkMode } = useAppearance();
-  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role, branches, gradesLocked, setGradesLocked } = useUser();
+  const { schoolName, setSchoolName, schoolMotto, setSchoolMotto, role, branches, gradesLocked, setGradesLocked, registrationOpen, setRegistrationOpen } = useUser();
 
   const tabs = [
     { id: 'General', icon: Building },
@@ -190,6 +190,30 @@ export const Settings = () => {
                       </div>
                       <div className={`w-10 h-5 rounded-full relative transition-colors ${gradesLocked ? 'bg-rose-600' : 'bg-emerald-600'}`}>
                         <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${gradesLocked ? 'right-0.5' : 'left-0.5'}`} />
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setRegistrationOpen(!registrationOpen)}
+                      className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                        !registrationOpen
+                          ? 'border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400'
+                          : 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${!registrationOpen ? 'bg-rose-500' : 'bg-emerald-500'} text-white`}>
+                          {registrationOpen ? <Unlock size={18} /> : <Lock size={18} />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold uppercase tracking-tight">Public Registration {!registrationOpen ? 'Closed' : 'Open'}</p>
+                          <p className="text-[10px] font-medium opacity-80">
+                            {registrationOpen ? 'New students can apply online.' : 'Online applications are currently disabled.'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`w-10 h-5 rounded-full relative transition-colors ${!registrationOpen ? 'bg-rose-600' : 'bg-emerald-600'}`}>
+                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${!registrationOpen ? 'right-0.5' : 'left-0.5'}`} />
                       </div>
                     </div>
                   </div>

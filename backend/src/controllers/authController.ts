@@ -81,7 +81,20 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = result.rows[0];
+    // Since Students and Parents can share the same ID (digital_id/username),
+    // we must check which user actually matches the provided password.
+    let user = null;
+    for (const potentialUser of result.rows) {
+      const isMatch = await bcrypt.compare(password, potentialUser.password_hash);
+      if (isMatch) {
+        user = potentialUser;
+        break;
+      }
+    }
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     // Check status
     if (user.status === 'Pending') {
@@ -89,12 +102,6 @@ export const login = async (req: Request, res: Response) => {
     }
     if (user.status === 'Revoked') {
       return res.status(403).json({ error: 'Your account has been revoked.' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const token = jwt.sign(

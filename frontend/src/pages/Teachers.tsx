@@ -4,21 +4,53 @@ import { mockTeachers, mockSchedules, mockClasses } from '../data/mockData';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { useStore } from '../context/useStore';
 import { ArrowLeft } from 'lucide-react';
 
 export const Teachers = () => {
   const navigate = useNavigate();
   const { role } = useUser();
-  const { setTeacherExaminerStatus } = useStore();
   const isAdmin = role === 'school-admin' || role === 'super-admin';
   const isVP = role === 'vice-principal';
-  const [teachers, setTeachers] = useState<any[]>(mockTeachers);
+  
+  const [teachers, setTeachers] = useState<any[]>([]);
   const [viewingSchedule, setViewingSchedule] = useState<string | null>(null);
   const [promotingTeacher, setPromotingTeacher] = useState<any | null>(null);
   const [viewingProfile, setViewingProfile] = useState<any | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [viewMode, setViewMode] = useState<'directory' | 'leaderboard'>('directory');
+  const [credentials, setCredentials] = useState<any>(null);
+
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getToken = () => localStorage.getItem('abdi_adama_token') || '';
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`${API}/api/teachers`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (res.ok) setTeachers(await res.json());
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+
+  const [sections, setSections] = useState<any[]>([]);
+
+  useState(() => { 
+    fetchData(); 
+    fetchSections();
+  });
+
+  const fetchSections = async () => {
+    try {
+      const res = await fetch(`${API}/api/academic/sections`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      if (res.ok) setSections(await res.json());
+    } catch (err) {
+      console.error('Fetch sections error:', err);
+    }
+  };
 
 
   if (viewingSchedule) {
@@ -62,42 +94,89 @@ export const Teachers = () => {
     ));
   };
 
-  const handlePromote = (e: React.FormEvent) => {
+  const handlePromote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!promotingTeacher) return;
-    setTeacherExaminerStatus(promotingTeacher.id, Boolean(promotingTeacher.isExaminer));
-    setTeachers(prev => prev.map(t =>
-      t.id === promotingTeacher.id ? promotingTeacher : t
-    ));
-    setPromotingTeacher(null);
+    
+    try {
+      const headers = { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}` 
+      };
+
+      // 1. Assign Room Teacher
+      if (promotingTeacher.isRoomTeacher && promotingTeacher.assignedRoomSectionId) {
+        await fetch(`${API}/api/teachers/${promotingTeacher.id}/assign-room`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ section_id: promotingTeacher.assignedRoomSectionId })
+        });
+      }
+
+      // 2. Assign Examiner
+      if (promotingTeacher.isExaminer) {
+        await fetch(`${API}/api/teachers/${promotingTeacher.id}/assign-examiner`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            exam_title: promotingTeacher.examTitle,
+            exam_date: promotingTeacher.examDate,
+            assigned_class: promotingTeacher.assignedExamClass
+          })
+        });
+      }
+
+      // 3. Assign Department Head
+      if (promotingTeacher.isDeptHead) {
+        await fetch(`${API}/api/teachers/${promotingTeacher.id}/assign-dept-head`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ department_name: promotingTeacher.deptSubject })
+        });
+      }
+
+      setPromotingTeacher(null);
+      fetchData();
+      alert('Teacher roles updated successfully');
+    } catch (err: any) {
+      alert('Failed to update teacher roles');
+    }
   };
 
-  const handleAddTeacher = (e: React.FormEvent) => {
+  const handleAddTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
-    const name = formData.get('name') as string;
-    const branch = formData.get('branch') as string;
-    const subjects = (formData.get('subjects') as string).split(',').map(s => s.trim());
-    
-    const newTeacher = {
-      id: `TR${Date.now()}`,
-      name,
-      branch,
-      subjects,
-      department: subjects[0] || 'General',
-      hireDate: new Date().toISOString().split('T')[0],
-      experience: 'New Joiner',
-      bio: `New teacher at ${branch} branch.`,
-      isInClass: false,
-      isRoomTeacher: false,
-      isExaminer: false,
-      isDeptHead: false,
-      classes: 0,
-      isDean: false,
+    const payload = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      branch_id: formData.get('branch_id') as string,
+      subjects: (formData.get('subjects') as string).split(',').map(s => s.trim()),
+      department: formData.get('department') as string,
+      experience: formData.get('experience') as string,
+      bio: formData.get('bio') as string,
+      age: formData.get('age') as string,
+      sex: formData.get('sex') as string,
+      emergency_contact: formData.get('emergency_contact') as string,
+      background_details: formData.get('background_details') as string
     };
 
-    setTeachers(prev => [newTeacher, ...prev]);
-    setShowAddModal(false);
+    try {
+      const res = await fetch(`${API}/api/teachers`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setCredentials(data.credentials);
+      setShowAddModal(false);
+      fetchData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to create teacher');
+    }
   };
 
   return (
@@ -176,20 +255,17 @@ export const Teachers = () => {
                     className={`flex items-center gap-3 text-left group/profile ${(isAdmin || isVP) ? 'cursor-pointer' : 'cursor-default'}`}
                   >
                     <div className={`w-12 h-12 bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/20 rounded-2xl flex items-center justify-center text-purple-700 dark:text-purple-400 font-black text-lg shadow-inner transition-all group-hover/profile:scale-110 group-hover/profile:rotate-3`}>
-                      {teacher.name.split(' ').map((n: string) => n[0]).join('')}
+                      {teacher.name?.split(' ').map((n: string) => n[0]).join('') || 'T'}
                     </div>
                     <div>
                       <p className={`text-sm font-black text-slate-800 dark:text-white transition-colors group-hover/profile:text-blue-600 dark:group-hover/profile:text-blue-400`}>{teacher.name}</p>
                       <div className="flex flex-wrap gap-1.5 mt-1">
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">{teacher.branch} CAMPUS</p>
-                        {teacher.isRoomTeacher && (
-                          <span className="text-[8px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-md font-black uppercase tracking-tighter border border-emerald-200/50 dark:border-emerald-800/50">Room Teacher ({teacher.assignedRoomClass})</span>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">{teacher.digital_id}</p>
+                        {teacher.is_room_teacher && (
+                          <span className="text-[8px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-md font-black uppercase tracking-tighter border border-emerald-200/50 dark:border-emerald-800/50">Room Teacher ({teacher.room_grade_level} {teacher.room_section_name})</span>
                         )}
-                        {teacher.isExaminer && (
+                        {teacher.is_examiner && (
                           <span className="text-[8px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded-md font-black uppercase tracking-tighter border border-blue-200/50 dark:border-blue-800/50">Examiner</span>
-                        )}
-                        {teacher.isDeptHead && (
-                          <span className="text-[8px] bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 px-1.5 py-0.5 rounded-md font-black uppercase tracking-tighter border border-purple-200/50 dark:border-purple-800/50">Dept Head</span>
                         )}
                       </div>
                     </div>
@@ -356,16 +432,16 @@ export const Teachers = () => {
 
                   {promotingTeacher.isRoomTeacher && (
                     <div className="space-y-1 animate-in slide-in-from-top-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Class</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase">Assigned Class (Section)</label>
                       <select
                         required
-                        value={promotingTeacher.assignedRoomClass || ''}
-                        onChange={(e) => setPromotingTeacher({ ...promotingTeacher, assignedRoomClass: e.target.value })}
+                        value={promotingTeacher.assignedRoomSectionId || ''}
+                        onChange={(e) => setPromotingTeacher({ ...promotingTeacher, assignedRoomSectionId: e.target.value })}
                         className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                       >
-                        <option value="">Select a class...</option>
-                        {mockClasses.map(c => (
-                          <option key={c.id} value={c.name}>{c.name}</option>
+                        <option value="">Select a section...</option>
+                        {sections.map(s => (
+                          <option key={s.id} value={s.id}>{s.grade_level} - {s.section_name}</option>
                         ))}
                       </select>
                     </div>
@@ -611,13 +687,13 @@ export const Teachers = () => {
             <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-purple-200">
-                  {viewingProfile.name.split(' ').map((n: string) => n[0]).join('')}
+                  {viewingProfile.name?.split(' ').map((n: string) => n[0]).join('') || 'T'}
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
                     Teacher Profile
                   </h3>
-                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{viewingProfile.name}</p>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{viewingProfile.digital_id}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -687,25 +763,66 @@ export const Teachers = () => {
               <div className="space-y-4">
                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                      <BookOpen size={16} />
-                     Current Teaching Load
+                     Current Role & Assignments
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                     {(viewingProfile.teachingLoads || []).length > 0 ? (
-                        viewingProfile.teachingLoads.map((load: any, i: number) => (
-                           <div key={i} className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                              <div>
-                                 <p className="text-[10px] font-black text-school-primary uppercase tracking-widest">{load.grade} - Section {load.section}</p>
-                                 <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{load.subject}</p>
-                              </div>
-                              <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 shadow-sm">
-                                 <GraduationCap size={14} />
-                              </div>
+                     {viewingProfile.is_room_teacher && (
+                        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-800 flex justify-between items-center">
+                           <div>
+                              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Room Teacher</p>
+                              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{viewingProfile.room_grade_level} - {viewingProfile.room_section_name}</p>
                            </div>
-                        ))
-                     ) : (
-                        <p className="text-xs text-slate-500 italic">No teaching loads assigned.</p>
+                           <DoorOpen size={14} className="text-emerald-500" />
+                        </div>
                      )}
+                     {viewingProfile.is_examiner && (
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-800 flex justify-between items-center">
+                           <div>
+                              <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Examiner</p>
+                              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Active Status</p>
+                           </div>
+                           <Medal size={14} className="text-blue-500" />
+                        </div>
+                     )}
+                     {(viewingProfile.exam_assignments || []).map((exam: any, i: number) => (
+                        <div key={i} className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-800 flex justify-between items-center">
+                           <div>
+                              <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Exam: {exam.exam_title}</p>
+                              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{exam.assigned_class} • {new Date(exam.exam_date).toLocaleDateString()}</p>
+                           </div>
+                           <Calendar size={14} className="text-amber-500" />
+                        </div>
+                     ))}
                   </div>
+              </div>
+
+              <div className="space-y-4">
+                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Trophy size={16} />
+                    Background & History
+                 </h4>
+                 <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-800">
+                    <div className="grid grid-cols-2 gap-6 mb-6">
+                       <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Age</p>
+                          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{viewingProfile.age || 'N/A'}</p>
+                       </div>
+                       <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sex</p>
+                          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{viewingProfile.sex || 'N/A'}</p>
+                       </div>
+                    </div>
+                    <div className="space-y-4">
+                       <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Emergency Contact</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{viewingProfile.emergency_contact || 'No emergency contact provided'}</p>
+                       </div>
+                       <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Professional History</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{viewingProfile.background_details || 'No detailed history available'}</p>
+                       </div>
+                    </div>
+                 </div>
               </div>
 
               <div className="space-y-4">
@@ -728,7 +845,7 @@ export const Teachers = () => {
                     </div>
                     <div>
                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</p>
-                       <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{viewingProfile.id.toLowerCase()}@abdiadama.edu</p>
+                       <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{viewingProfile.email || 'N/A'}</p>
                     </div>
                  </div>
                  <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl flex items-center gap-4">
@@ -770,36 +887,113 @@ export const Teachers = () => {
                 <X size={20} />
               </button>
             </div>
-            <form className="p-6 space-y-4" onSubmit={handleAddTeacher}>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
-                <input name="name" required type="text" placeholder="e.g. Ato Bekele" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+            <form className="p-6 space-y-4 overflow-y-auto max-h-[70vh]" onSubmit={handleAddTeacher}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Full Name</label>
+                  <input name="name" required type="text" placeholder="e.g. Ato Bekele" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
+                  <input name="email" type="email" placeholder="email@example.com" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Branch</label>
-                <select name="branch" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                  <option value="Main">Main Branch</option>
-                  <option value="Bole">Bole Branch</option>
-                  <option value="Megenagna">Megenagna Branch</option>
-                  <option value="Adama">Adama Branch</option>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Branch Assignment</label>
+                <select name="branch_id" required className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                  <option value="a1352e40-f603-45c8-81a8-556bd9a6f9ff">Main Branch</option>
                 </select>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Department</label>
+                  <input name="department" required type="text" placeholder="e.g. STEM" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Degree / Experience</label>
+                  <input name="experience" required type="text" placeholder="e.g. Masters in Physics" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
+              </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Subjects (comma separated)</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Subjects (comma separated)</label>
                 <input name="subjects" required type="text" placeholder="e.g. Mathematics, Physics" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Age</label>
+                  <input name="age" type="number" placeholder="e.g. 35" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sex</label>
+                  <select name="sex" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Emergency Contact</label>
+                <input name="emergency_contact" type="text" placeholder="e.g. Spouse: +251..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Background Details (History)</label>
+                <textarea name="background_details" rows={2} placeholder="Previous school history, achievements..." className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Teacher Biography (Short)</label>
+                <textarea name="bio" rows={3} placeholder="Tell us about the teacher's background..." className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none" />
+              </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50">
-                <p className="text-[10px] text-blue-700 dark:text-blue-400 font-medium leading-relaxed">
-                  <strong>Account Notice:</strong> Upon registration, the teacher will be assigned a Digital ID (e.g., TR1714...). They can use this ID to log in for the first time.
+                <p className="text-[10px] text-blue-700 dark:text-blue-400 font-medium leading-relaxed uppercase tracking-tighter">
+                  <strong>Digital ID Notice:</strong> A unique Teacher ID and random 6-digit password will be generated automatically.
                 </p>
               </div>
               <div className="pt-4">
-                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2">
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
                   <Check size={18} />
-                  <span>Register Teacher</span>
+                  <span>Finalize Teacher Registration</span>
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Credentials Modal */}
+      {credentials && (
+        <div className="fixed inset-0 z-[300] bg-slate-950/80 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] border border-white/20 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
+            <div className="p-10 text-center space-y-6">
+              <div className="w-20 h-20 bg-blue-600 text-white rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-blue-500/40 -rotate-3">
+                <Award size={40} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Teacher Registered!</h3>
+                <p className="text-slate-500 font-medium">New professional credentials generated.</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 text-left">
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-4">Official Teacher ID</p>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white tracking-widest">{credentials.teacherUsername}</p>
+                </div>
+
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 text-left">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Temporary Password</p>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white">{credentials.tempPassword}</p>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-slate-400 font-medium leading-relaxed italic">
+                Please provide these credentials to the teacher. They will be prompted to change their password upon first login.
+              </p>
+
+              <button 
+                onClick={() => setCredentials(null)}
+                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}

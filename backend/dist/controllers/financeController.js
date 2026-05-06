@@ -1,4 +1,30 @@
 import { withRLS } from '../utils/dbClient.js';
+// ─── FINANCE SUMMARY (Dashboard) ─────────────────────────────
+export const getFinanceSummary = async (req, res) => {
+    const user = req.user;
+    try {
+        const summary = await withRLS(req, async (client) => {
+            const branchFilter = user.role !== 'super-admin' && user.role !== 'auditor'
+                ? `AND t.branch_id = '${user.branch_id}'` : '';
+            const result = await client.query(`
+        SELECT
+          COALESCE(SUM(CASE WHEN t.type = 'Income' THEN t.amount ELSE 0 END), 0) as total_revenue,
+          COALESCE(SUM(CASE WHEN t.type = 'Expense' THEN t.amount ELSE 0 END), 0) as total_expenses,
+          (SELECT COALESCE(SUM(monthly_fee + bus_fee + penalty_fee), 0)
+           FROM students WHERE fee_status != 'paid' ${user.role !== 'super-admin' ? `AND branch_id = '${user.branch_id}'` : ''}) as pending_fees,
+          COALESCE(SUM(CASE WHEN DATE_TRUNC('month', t.date::date) = DATE_TRUNC('month', NOW()) THEN t.amount ELSE 0 END), 0) as monthly_revenue
+        FROM finance_transactions t
+        WHERE t.type = 'Income' ${branchFilter}
+      `);
+            return result.rows[0];
+        });
+        res.json(summary);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch finance summary' });
+    }
+};
 export const getTransactions = async (req, res) => {
     const { branch_id } = req.query;
     try {

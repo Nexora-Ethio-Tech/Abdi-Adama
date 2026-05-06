@@ -57,12 +57,10 @@ export const toggleRegistration = async (req, res) => {
  * Submit online application (public endpoint - no auth required)
  */
 export const submitApplication = async (req, res) => {
-    const { name, dob, parent_name, phone, email, previous_school, last_grade, grade_applying, transcript_url, transcript_size_kb, branch_id } = req.body;
+    const { name, dob, parent_name, phone, email, previous_school, last_grade, grade_applying, branch_id } = req.body;
+    const transcript_url = req.file ? `/uploads/transcripts/${req.file.filename}` : null;
+    const transcript_size_kb = req.file ? Math.round(req.file.size / 1024) : 0;
     try {
-        // Validate file size (2MB = 2048 KB)
-        if (transcript_size_kb && transcript_size_kb > 2048) {
-            return res.status(400).json({ error: 'Transcript file exceeds 2MB limit' });
-        }
         // Format phone number with Ethiopian prefix
         const formattedPhone = phone.startsWith('+251') ? phone : `+251${phone.replace(/^0+/, '')}`;
         await withRLS(req, async (client) => {
@@ -179,8 +177,12 @@ export const reviewApplication = async (req, res) => {
         SET status = $1, reviewed_by = $2, reviewed_at = NOW(), updated_at = NOW()
         WHERE id = $3
       `, [newStatus, user.id, applicationId]);
-            // TODO: Send notification via SMS/Email
-            console.log(`Notification to ${application.phone}/${application.email}: ${notificationMessage}`);
+            // Save communication log
+            await client.query(`
+                INSERT INTO bulk_communications 
+                  (sent_by, recipient_count, message_type, subject, message, application_ids)
+                VALUES ($1, 1, $2, $3, $4, $5)
+            `, [user.id, action, `Application Update: ${newStatus}`, notificationMessage, [applicationId]]);
         });
         res.json({ message: 'Application reviewed successfully' });
     }

@@ -10,13 +10,13 @@ export const withRLS = async (req, callback) => {
         await client.query('BEGIN');
         // If we have an authenticated user, set the local session variables for RLS
         if (user) {
-            await client.query(`SET LOCAL app.current_user_id = '${user.id}'`);
-            await client.query(`SET LOCAL app.current_role = '${user.role}'`);
-            await client.query(`SET LOCAL app.current_branch_id = '${user.branch_id || ''}'`);
+            await client.query('SELECT set_config(\'app.current_user_id\', $1, true)', [user.id || '']);
+            await client.query('SELECT set_config(\'app.user_role\', $1, true)', [user.role || '']);
+            await client.query('SELECT set_config(\'app.current_branch_id\', $1, true)', [user.branch_id || '']);
         }
         else {
             // For public/unauthenticated routes
-            await client.query(`SET LOCAL app.current_role = 'anon'`);
+            await client.query('SELECT set_config(\'app.user_role\', \'anon\', true)');
         }
         const result = await callback(client);
         await client.query('COMMIT');

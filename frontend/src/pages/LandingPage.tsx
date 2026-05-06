@@ -27,7 +27,8 @@ import {
   Zap,
   Globe,
   Quote,
-  GraduationCap
+  GraduationCap,
+  Lock
 } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
@@ -35,7 +36,8 @@ import { useTranslation } from 'react-i18next';
 export const LandingPage = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { schoolName, schoolMotto } = useUser();
+  const { schoolName, schoolMotto, registrationOpen } = useUser();
+
   const { publicPosts } = useStore();
   const [showAdmission, setShowAdmission] = useState(false);
 
@@ -211,11 +213,17 @@ export const LandingPage = () => {
 
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => setShowAdmission(true)}
-                  className="px-10 py-5 bg-school-primary hover:bg-school-primary/90 text-white rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl shadow-school-primary/30 flex items-center gap-3 group shine"
+                  onClick={() => registrationOpen && setShowAdmission(true)}
+                  disabled={!registrationOpen}
+                  className={`px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all flex items-center gap-3 group shine ${
+                    registrationOpen 
+                    ? 'bg-school-primary hover:bg-school-primary/90 text-white shadow-2xl shadow-school-primary/30' 
+                    : 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed border-2 border-dashed border-slate-400'
+                  }`}
                 >
-                  {t('landing.applyBtn')}
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  {registrationOpen ? t('landing.applyBtn') : 'Admission Closed'}
+                  {registrationOpen && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+                  {!registrationOpen && <Lock size={16} />}
                 </button>
                 <button
                   onClick={() => navigate('/login')}
@@ -381,10 +389,17 @@ export const LandingPage = () => {
                 <span className="text-[10px] font-black text-school-primary uppercase tracking-[0.2em] mb-4 px-4 py-1.5 bg-school-primary/10 rounded-full">{prog.level}</span>
                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{prog.title}</h3>
                 <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm mb-8">{prog.desc}</p>
-                <button onClick={() => setShowAdmission(true)} className="mt-auto flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest hover:text-school-primary transition-colors group/btn">
-                  {t('landing.programs.explore')}
-                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                <button 
+                  onClick={() => registrationOpen && setShowAdmission(true)} 
+                  disabled={!registrationOpen}
+                  className={`mt-auto flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-colors group/btn ${
+                    registrationOpen ? 'text-slate-900 dark:text-white hover:text-school-primary' : 'text-slate-400'
+                  }`}
+                >
+                  {registrationOpen ? t('landing.programs.explore') : 'Closed'}
+                  {registrationOpen && <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />}
                 </button>
+
               </motion.div>
             ))}
           </div>
@@ -578,14 +593,20 @@ export const LandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
              <motion.button
-               whileHover={{ scale: 1.05, y: -5 }}
-               whileTap={{ scale: 0.95 }}
-               onClick={() => setShowAdmission(true)}
-               className="px-12 py-6 bg-school-primary text-white rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-2xl shadow-school-primary/40 flex items-center gap-4 hover:bg-school-primary/90 transition-all shine"
+               whileHover={registrationOpen ? { scale: 1.05, y: -5 } : {}}
+               whileTap={registrationOpen ? { scale: 0.95 } : {}}
+               onClick={() => registrationOpen && setShowAdmission(true)}
+               disabled={!registrationOpen}
+               className={`px-12 py-6 rounded-[2rem] font-black uppercase tracking-widest text-sm flex items-center gap-4 transition-all ${
+                 registrationOpen 
+                 ? 'bg-school-primary text-white shadow-2xl shadow-school-primary/40 hover:bg-school-primary/90 shine' 
+                 : 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed grayscale'
+               }`}
              >
-               {t('landing.cta.startAdmission')}
-               <CheckCircle2 size={24} />
+               {registrationOpen ? t('landing.cta.startAdmission') : 'Admission Closed'}
+               {registrationOpen ? <CheckCircle2 size={24} /> : <Lock size={20} />}
              </motion.button>
+
              <motion.button
                whileHover={{ scale: 1.05, y: -5 }}
                whileTap={{ scale: 0.95 }}

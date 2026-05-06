@@ -1,3 +1,4 @@
+import { NotificationService } from '../services/notificationService.js';
 import { Request, Response } from 'express';
 import { withRLS } from '../utils/dbClient.js';
 import bcrypt from 'bcrypt';
@@ -65,16 +66,13 @@ export const toggleRegistration = async (req: Request, res: Response) => {
 export const submitApplication = async (req: Request, res: Response) => {
     const {
         name, dob, parent_name, phone, email,
-        previous_school, last_grade, grade_applying,
-        transcript_url, transcript_size_kb, branch_id
+        previous_school, last_grade, grade_applying, branch_id
     } = req.body;
 
-    try {
-        // Validate file size (2MB = 2048 KB)
-        if (transcript_size_kb && transcript_size_kb > 2048) {
-            return res.status(400).json({ error: 'Transcript file exceeds 2MB limit' });
-        }
+    const transcript_url = req.file ? `/uploads/transcripts/${req.file.filename}` : null;
+    const transcript_size_kb = req.file ? Math.round(req.file.size / 1024) : 0;
 
+    try {
         // Format phone number with Ethiopian prefix
         const formattedPhone = phone.startsWith('+251') ? phone : `+251${phone.replace(/^0+/, '')}`;
 
@@ -213,8 +211,12 @@ export const reviewApplication = async (req: Request, res: Response) => {
         WHERE id = $3
       `, [newStatus, user.id, applicationId]);
 
-            // TODO: Send notification via SMS/Email
-            console.log(`Notification to ${application.phone}/${application.email}: ${notificationMessage}`);
+            // Save communication log
+            await client.query(`
+                INSERT INTO bulk_communications 
+                  (sent_by, recipient_count, message_type, subject, message, application_ids)
+                VALUES ($1, 1, $2, $3, $4, $5)
+            `, [user.id, action, `Application Update: ${newStatus}`, notificationMessage, [applicationId]]);
         });
 
         res.json({ message: 'Application reviewed successfully' });
@@ -460,8 +462,13 @@ export const bulkSendExamNotification = async (req: Request, res: Response) => {
           VALUES ($1, $2, $3, $4, 'sent')
         `, [commId, recipient.id, recipient.phone, recipient.email]);
 
-                // TODO: Actually send SMS/Email here
-                console.log(`Sending ${message_type} to ${recipient.name}: ${message}`);
+                // Notification is handled via NotificationService (mock until SMS provider is purchased)
+                await NotificationService.notifyParent(
+                    recipient.phone,
+                    recipient.name,
+                    message_type as 'attendance' | 'finance' | 'general',
+                    message
+                );
             }
         });
 

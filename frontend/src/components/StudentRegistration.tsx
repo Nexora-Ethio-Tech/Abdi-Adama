@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, RefreshCw, Upload, Search, CheckCircle, AlertCircle, FileText, Info, Check, X, HeartPulse, Mail, Clock, MapPin, BookOpen, Shield } from 'lucide-react';
-import { mockStudents } from '../data/mockData';
 import { useUser } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
 
@@ -47,10 +46,16 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
   const [selectedSemester, setSelectedSemester] = useState('Semester 2');
   const [registrationOpen, setRegistrationOpen] = useState(true);
   const [showExamConfig, setShowExamConfig] = useState(false);
-  const [examConfig, setExamConfig] = useState({ date: '2026-05-15', time: '09:00', location: 'Main Campus Hall A', subjects: 'Math, English, Science', notes: 'Bring pencils and eraser. No calculators allowed.' });
   const [emailToast, setEmailToast] = useState<string | null>(null);
   const [showFeeModal, setShowFeeModal] = useState(false);
   const [selectedAppForFee, setSelectedAppForFee] = useState<PendingApp | null>(null);
+  const [examConfig, setExamConfig] = useState({
+    date: '',
+    time: '',
+    location: '',
+    subjects: 'Mathematics, English, General Knowledge',
+    notes: ''
+  });
   const [customFees, setCustomFees] = useState({
     monthly_fee: 4500,
     bus_fee: 1500,
@@ -106,11 +111,6 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
       }
     }
   };
-
-  const filteredStudents = mockStudents.filter(s =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.id.includes(searchQuery)
-  );
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -656,8 +656,8 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
 
             {searchQuery && (
               <div className="mt-4 border border-slate-100 dark:border-slate-800 rounded-xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredStudents.length > 0 ? (
-                  filteredStudents.map(student => (
+                {pendingApps.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.id.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
+                  pendingApps.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.id.toLowerCase().includes(searchQuery.toLowerCase())).map(student => (
                     <button
                       key={student.id}
                       onClick={() => setSelectedStudent(student)}
@@ -671,7 +671,7 @@ export const StudentRegistration = ({ isAdminView = true }: StudentRegistrationP
                         </div>
                         <div className="text-left">
                           <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{student.name}</p>
-                          <p className="text-xs text-slate-500 uppercase font-medium">ID: {student.id} • Grade: {student.grade}</p>
+                          <p className="text-xs text-slate-500 uppercase font-medium">ID: {student.id} • Grade: {student.lastGrade}</p>
                         </div>
                       </div>
                       <CheckCircle size={20} className={selectedStudent?.id === student.id ? 'text-blue-600' : 'text-slate-200'} />

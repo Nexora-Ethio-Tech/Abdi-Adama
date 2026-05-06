@@ -33,6 +33,8 @@ interface UserContextType {
   branches: Branch[];
   gradesLocked: boolean;
   setGradesLocked: (locked: boolean) => void;
+  registrationOpen: boolean;
+  setRegistrationOpen: (open: boolean) => void;
   schoolName: MultilingualText;
   setSchoolName: (name: MultilingualText) => void;
   schoolMotto: MultilingualText;
@@ -60,6 +62,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true); // Block rendering until verified
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [gradesLocked, setGradesLocked] = useState(false);
+  const [registrationOpen, setRegistrationOpen] = useState(() => {
+    return localStorage.getItem('registration_open') !== 'false';
+  });
 
   const [schoolName, setSchoolName] = useState<MultilingualText>(() => {
     const saved = localStorage.getItem('school_name');
@@ -163,6 +168,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('school_motto', JSON.stringify(schoolMotto));
   }, [schoolMotto]);
 
+  useEffect(() => {
+    localStorage.setItem('registration_open', registrationOpen.toString());
+  }, [registrationOpen]);
+
   const role = user?.role || null;
 
 
@@ -214,6 +223,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       branches: mockBranches,
       gradesLocked,
       setGradesLocked,
+      registrationOpen,
+      setRegistrationOpen,
       schoolName,
       setSchoolName,
       schoolMotto,

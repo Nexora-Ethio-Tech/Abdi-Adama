@@ -12,10 +12,12 @@ import {
     bulkSendExamNotification
 } from '../controllers/admissionsController.js';
 
+import { uploadTranscript } from '../middleware/uploadMiddleware.js';
+
 const router = Router();
 
 // Public endpoint - no auth required
-router.post('/apply', submitApplication);
+router.post('/apply', uploadTranscript.single('transcript'), submitApplication);
 
 // All other routes require authentication
 router.use(authenticateToken);
